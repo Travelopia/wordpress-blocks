@@ -6,6 +6,7 @@
 const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const WebpackNotifierPlugin = require( 'webpack-notifier' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 
 // Config.
 module.exports = ( env ) => {
@@ -71,6 +72,7 @@ module.exports = ( env ) => {
 			new MiniCssExtractPlugin( {
 				filename: `./dist/[name].css`,
 			} ),
+			new DependencyExtractionWebpackPlugin( {} ),
 		],
 		performance: {
 			hints: false,

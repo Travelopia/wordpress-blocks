@@ -1,4 +1,8 @@
 parameters:
 	level: max
+	scanFiles:
+		- plugin.php
+	scanDirectories:
+		- vendor
 	paths:
 		- inc
