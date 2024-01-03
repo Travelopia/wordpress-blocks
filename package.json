@@ -6,9 +6,11 @@
     "start": "npm ci && composer install && npm run build",
     "build": "webpack --config ./webpack.config.js --mode production --env=production",
     "dev": "webpack --config ./webpack.config.js --mode production --env=development --watch",
+    "lint": "npm run lint:js && npm run lint:css && npm run lint:php",
     "lint:js": "eslint src",
     "lint:css": "stylelint src",
     "lint:php": "composer run lint",
+    "lint-test": "npm run lint && npm run static-analysis:php",
     "static-analysis:php": "composer static-analysis"
   },
   "repository": {
