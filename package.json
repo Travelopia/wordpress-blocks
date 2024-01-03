@@ -1,0 +1,53 @@
+{
+  "name": "travelopia-wordpress-blocks",
+  "version": "1.0.0",
+  "description": "Custom blocks for the Gutenberg Block Editor.",
+  "scripts": {
+    "build": "webpack --config ./webpack.config.js --mode production --env=production",
+    "dev": "webpack --config ./webpack.config.js --mode production --env=development --watch",
+    "lint:js": "eslint src",
+    "lint:css": "stylelint src",
+    "lint:php": "composer run lint",
+    "static-analysis:php": "composer static-analysis"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Travelopia/wordpress-blocks.git"
+  },
+  "author": "Travelopia Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Travelopia/wordpress-blocks/issues"
+  },
+  "homepage": "https://github.com/Travelopia/wordpress-blocks#readme",
+  "devDependencies": {
+    "@types/wordpress__block-editor": "^11.5.9",
+    "@types/wordpress__blocks": "^12.5.13",
+    "@wordpress/blocks": "^12.25.0",
+    "@wordpress/components": "^25.14.0",
+    "@wordpress/dependency-extraction-webpack-plugin": "^4.31.0",
+    "@wordpress/dom-ready": "^3.48.0",
+    "@wordpress/editor": "^13.25.0",
+    "@wordpress/element": "^5.25.0",
+    "@wordpress/eslint-plugin": "^17.5.0",
+    "@wordpress/i18n": "^4.48.0",
+    "@wordpress/server-side-render": "^4.25.0",
+    "@wordpress/stylelint-config": "^21.31.0",
+    "autoprefixer": "^10.4.16",
+    "classnames": "^2.3.2",
+    "css-loader": "^6.8.1",
+    "eslint": "^8.56.0",
+    "mini-css-extract-plugin": "^2.7.6",
+    "postcss": "^8.4.32",
+    "postcss-loader": "^7.3.3",
+    "sass": "^1.69.5",
+    "sass-loader": "^13.3.2",
+    "stylelint": "^14.16.1",
+    "terser-webpack-plugin": "^5.3.9",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-notifier": "^1.15.0"
+  }
+}
