@@ -6,6 +6,9 @@ import { BlockConfiguration } from '@wordpress/blocks';
 import {
 	InnerBlocks,
 } from '@wordpress/block-editor';
+import {
+	blockTable as icon,
+} from '@wordpress/icons';
 
 /**
  * Internal dependencies.
@@ -24,6 +27,7 @@ export const name: string = 'travelopia/table';
 
 export const settings: BlockConfiguration = {
 	apiVersion: 2,
+	icon,
 	title: __( 'Table', 'tp' ),
 	description: __( 'Create structured content in rows and columns to display information.', 'tp' ),
 	category: 'layout',
