@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Custom blocks for the Gutenberg Block Editor.",
   "scripts": {
+    "start": "npm ci && composer install && npm run build",
     "build": "webpack --config ./webpack.config.js --mode production --env=production",
     "dev": "webpack --config ./webpack.config.js --mode production --env=development --watch",
     "lint:js": "eslint src",
@@ -31,6 +32,7 @@
     "@wordpress/element": "^5.25.0",
     "@wordpress/eslint-plugin": "^17.5.0",
     "@wordpress/i18n": "^4.48.0",
+    "@wordpress/icons": "^9.39.0",
     "@wordpress/server-side-render": "^4.25.0",
     "@wordpress/stylelint-config": "^21.31.0",
     "autoprefixer": "^10.4.16",

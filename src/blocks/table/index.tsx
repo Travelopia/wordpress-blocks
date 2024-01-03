@@ -8,6 +8,11 @@ import {
 } from '@wordpress/block-editor';
 
 /**
+ * Internal dependencies.
+ */
+import edit from './edit';
+
+/**
  * Styles.
  */
 import './editor.scss';
@@ -16,10 +21,11 @@ import './editor.scss';
  * Block data.
  */
 export const name: string = 'travelopia/table';
+
 export const settings: BlockConfiguration = {
 	apiVersion: 2,
 	title: __( 'Table', 'tp' ),
-	description: __( 'Section block.', 'tp' ),
+	description: __( 'Create structured content in rows and columns to display information.', 'tp' ),
 	category: 'layout',
 	keywords: [ __( 'table', 'tp' ) ],
 	attributes: {
@@ -30,14 +36,8 @@ export const settings: BlockConfiguration = {
 	supports: {
 		anchor: true,
 	},
-	edit() {
-		// Return block.
-		return (
-			<p>Hello, World :)</p>
-		);
-	},
+	edit,
 	save() {
-		// Return inner block content.
 		return <InnerBlocks.Content />;
 	},
 };
