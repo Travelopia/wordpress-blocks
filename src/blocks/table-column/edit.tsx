@@ -5,6 +5,7 @@ import {
 	useBlockProps,
 	useInnerBlocksProps,
 } from '@wordpress/block-editor';
+import { BlockEditProps } from '@wordpress/blocks';
 
 /**
  * External dependencies.
@@ -18,13 +19,13 @@ import classnames from 'classnames';
  *
  * @return {JSX.Element} JSX Component.
  */
-function TableColumnEdit( props: BlockEditAttributes ): JSX.Element {
+function TableColumnEdit( props: BlockEditProps<any> ): JSX.Element {
 	const { className } = props;
 	const blockProps = useBlockProps( {
 		className: classnames( className, 'travelopia-table__column' ),
 	} );
 	const innerBlocksProps = useInnerBlocksProps( { ...blockProps }, {
-		allowedBlocks: [ 'core/paragraph' ],
+		template: [ [ 'travelopia/table-cell' ] ],
 		templateLock: false,
 	} );
 

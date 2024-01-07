@@ -2,8 +2,10 @@
  * WordPress dependencies.
  */
 import {
-	useBlockProps, useInnerBlocksProps,
+	useBlockProps,
+	useInnerBlocksProps,
 } from '@wordpress/block-editor';
+import { BlockEditProps } from '@wordpress/blocks';
 
 /**
  * External dependencies.
@@ -17,7 +19,7 @@ import classnames from 'classnames';
  *
  * @return {JSX.Element} JSX Component.
  */
-function TableRowEdit( props: BlockEditAttributes ): JSX.Element {
+function TableRowEdit( props: BlockEditProps<any> ): JSX.Element {
 	const { className } = props;
 	const blockProps = useBlockProps( {
 		className: classnames( className, 'travelopia-table__row' ),

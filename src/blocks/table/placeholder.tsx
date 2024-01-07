@@ -7,7 +7,10 @@ import {
 	Placeholder,
 } from '@wordpress/components';
 import { useState } from '@wordpress/element';
-import { createBlock } from '@wordpress/blocks';
+import {
+	BlockEditProps,
+	createBlock,
+} from '@wordpress/blocks';
 import {
 	select,
 	dispatch,
@@ -20,7 +23,7 @@ import {
  *
  * @return {JSX.Element} JSX Component.
  */
-export function TablePlaceholder( props: BlockEditAttributes ): JSX.Element {
+export function TablePlaceholder( props: BlockEditProps<any> ): JSX.Element {
 	const { setAttributes, clientId } = props;
 	const [ rows, setRows ] = useState( 2 );
 	const [ columns, setColumns ] = useState( 2 );
@@ -54,7 +57,7 @@ export function TablePlaceholder( props: BlockEditAttributes ): JSX.Element {
 						for ( let j: number = 0; j < columns; j++ ) {
 							columnBlocks.push(
 								createBlock( 'travelopia/table-column', {}, [
-									createBlock( 'core/paragraph', { placeholder: __( 'Cell content', 'tp' ) } ),
+									createBlock( 'travelopia/table-cell' ),
 								] )
 							);
 						}

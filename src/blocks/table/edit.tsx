@@ -5,6 +5,7 @@ import {
 	useBlockProps,
 	useInnerBlocksProps,
 } from '@wordpress/block-editor';
+import { BlockEditProps } from '@wordpress/blocks';
 
 /**
  * Internal dependencies.
@@ -23,7 +24,7 @@ import classnames from 'classnames';
  *
  * @return {JSX.Element} JSX Component.
  */
-function TableEdit( props: BlockEditAttributes ): JSX.Element {
+function TableEdit( props: BlockEditProps<any> ): JSX.Element {
 	const { className, attributes } = props;
 	const blockProps = useBlockProps( {
 		className: classnames( className, 'travelopia-table' ),
