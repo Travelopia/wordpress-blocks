@@ -22,8 +22,7 @@ function TableRowEdit( props: BlockEditAttributes ): JSX.Element {
 	const blockProps = useBlockProps( {
 		className: classnames( className, 'travelopia-table__row' ),
 	} );
-	const innerBlocksProps = useInnerBlocksProps( {
-		...blockProps,
+	const innerBlocksProps = useInnerBlocksProps( { ...blockProps }, {
 		allowedBlocks: [ 'travelopia/table-column' ],
 	} );
 

@@ -23,9 +23,9 @@ function TableColumnEdit( props: BlockEditAttributes ): JSX.Element {
 	const blockProps = useBlockProps( {
 		className: classnames( className, 'travelopia-table__column' ),
 	} );
-	const innerBlocksProps = useInnerBlocksProps( {
-		...blockProps,
+	const innerBlocksProps = useInnerBlocksProps( { ...blockProps }, {
 		allowedBlocks: [ 'core/paragraph' ],
+		templateLock: false,
 	} );
 
 	return (
