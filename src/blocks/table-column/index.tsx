@@ -16,37 +16,21 @@ import {
 import edit from './edit';
 
 /**
- * Styles.
- */
-import './editor.scss';
-
-/**
  * Block data.
  */
-export const name: string = 'travelopia/table';
+export const name: string = 'travelopia/table-column';
 
 export const settings: BlockConfiguration = {
 	apiVersion: 2,
 	icon,
-	title: __( 'Table', 'tp' ),
-	description: __( 'Create structured content in rows and columns to display information.', 'tp' ),
+	title: __( 'Column', 'tp' ),
+	description: __( 'Individual column of the table.', 'tp' ),
+	parent: [ 'travelopia/table-row' ],
 	category: 'text',
-	keywords: [ __( 'table', 'tp' ) ],
-	attributes: {
-		anchor: {
-			type: 'string',
-		},
-		rows: {
-			type: 'number',
-			default: 0,
-		},
-		columns: {
-			type: 'number',
-			default: 0,
-		},
-	},
+	keywords: [ __( 'column', 'tp' ) ],
+	attributes: {},
 	supports: {
-		anchor: true,
+		html: true,
 	},
 	edit,
 	save() {
