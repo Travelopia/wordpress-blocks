@@ -44,6 +44,12 @@ export const settings: BlockConfiguration = {
 			type: 'number',
 			default: 0,
 		},
+		blockId: {
+			type: 'string',
+		},
+	},
+	providesContext: {
+		'travelopia/table-id': 'blockId' as never,
 	},
 	supports: {
 		anchor: true,

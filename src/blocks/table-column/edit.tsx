@@ -44,7 +44,7 @@ function TableColumnEdit( {
 
 	// Avoid nesting of table, row, and column blocks.
 	const allowedBlocks = getBlockTypes().reduce( ( acc: string[], block: Block ) => {
-		if ( [ tableBlockName, rowBlockName, columnBlockName ].includes( block.name ) ) {
+		if ( ! [ tableBlockName, rowBlockName, columnBlockName ].includes( block.name ) ) {
 			acc.push( block.name );
 		}
 		return acc;
