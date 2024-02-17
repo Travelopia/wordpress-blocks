@@ -12,6 +12,11 @@ import * as tableColumn from './table-column';
 import * as tableCell from './table-cell';
 
 /**
+ * Internal dependencies.
+ */
+import './block-toolbar';
+
+/**
  * Add blocks.
  */
 const blocks = [
