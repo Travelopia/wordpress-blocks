@@ -34,6 +34,6 @@ export const settings: BlockConfiguration = {
 	},
 	edit,
 	save() {
-		return <InnerBlocks.Content />;
+		return <tr><InnerBlocks.Content /></tr>;
 	},
 };

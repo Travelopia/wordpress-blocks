@@ -56,6 +56,6 @@ export const settings: BlockConfiguration = {
 	},
 	edit,
 	save() {
-		return <InnerBlocks.Content />;
+		return <table><InnerBlocks.Content /></table>;
 	},
 };
