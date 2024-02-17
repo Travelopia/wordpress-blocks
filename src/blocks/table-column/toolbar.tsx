@@ -6,6 +6,7 @@ import { createBlock } from '@wordpress/blocks';
 import { BlockControls } from '@wordpress/block-editor';
 import { ToolbarDropdownMenu } from '@wordpress/components';
 import { select, dispatch } from '@wordpress/data';
+import { DropdownOption } from '@wordpress/components/build-types/dropdown-menu/types';
 import {
 	tableColumnAfter,
 	tableColumnBefore,
@@ -56,7 +57,7 @@ export default function Toolbar( {
 	 *
 	 * @param {0|-1} insertionIndex Insertion index. -1 for before and 0 for after.
 	 */
-	const onInsertRow = ( insertionIndex: 0 | -1 ) => {
+	const onInsertRow = ( insertionIndex: 0 | -1 = 0 ) => {
 		// Get table block.
 		const tableBlock = getBlock( tableId );
 
@@ -125,17 +126,44 @@ export default function Toolbar( {
 	};
 
 	/**
-	 * Insert column before.
+	 * Insert column.
+	 *
+	 * @param {0|-1} insertionIndex Insertion index. -1 for before and 0 for after.
 	 */
-	const onInsertColumnBefore = () => {
-		console.log( 'Insert Column Before' );
-	};
+	const onInsertColumn = ( insertionIndex: 0 | -1 = 0 ) => {
+		// Get table block.
+		const tableBlock = getBlock( tableId );
 
-	/**
-	 * Insert column after.
-	 */
-	const onInsertColumnAfter = () => {
-		console.log( 'Insert Column After' );
+		// Check if the table block exists.
+		if ( ! tableBlock ) {
+			return;
+		}
+
+		// Loop through the table row blocks and insert a new column block.
+		tableBlock.innerBlocks.forEach( ( rowBlock ) => {
+			// Check the name of the row block.
+			if ( rowBlock.name !== rowBlockName ) {
+				return;
+			}
+
+			// Check if the column block can be inserted.
+			if ( ! canInsertBlockType( columnBlockName, rowBlock.clientId ) ) {
+				return;
+			}
+
+			// Create a new column block.
+			const newColumnBlock = createBlock( columnBlockName, {}, [
+				createBlock( cellBlockName ),
+			] );
+
+			// Insert the new column block.
+			insertBlock( newColumnBlock, tableColumn + insertionIndex, rowBlock.clientId );
+		} );
+
+		// Update the table block attributes.
+		updateBlockAttributes( tableId, {
+			columns: tableBlock.attributes?.columns + 1,
+		} );
 	};
 
 	/**
@@ -155,6 +183,11 @@ export default function Toolbar( {
 
 		// Loop through the table row blocks.
 		tableBlock.innerBlocks.forEach( ( rowBlock ) => {
+			// Check the name of the row block.
+			if ( rowBlock.name !== rowBlockName ) {
+				return;
+			}
+
 			// Get the current column block.
 			const currentColumnBlock = rowBlock.innerBlocks[ tableColumn - 1 ];
 
@@ -169,6 +202,11 @@ export default function Toolbar( {
 
 		// Remove the columns.
 		removeBlocks( columnsToRemove );
+
+		// Update the table block attributes.
+		updateBlockAttributes( tableId, {
+			columns: tableBlock.attributes?.columns - 1,
+		} );
 	};
 
 	const tableControls = [
@@ -182,7 +220,7 @@ export default function Toolbar( {
 			icon: tableRowAfter,
 			title: __( 'Insert row after' ),
 			isDisabled: ! isSelected,
-			onClick: () => onInsertRow( 0 ),
+			onClick: onInsertRow,
 		},
 		{
 			icon: tableRowDelete,
@@ -194,13 +232,13 @@ export default function Toolbar( {
 			icon: tableColumnBefore,
 			title: __( 'Insert column before' ),
 			isDisabled: ! isSelected,
-			onClick: onInsertColumnBefore,
+			onClick: () => onInsertColumn( -1 ),
 		},
 		{
 			icon: tableColumnAfter,
 			title: __( 'Insert column after' ),
 			isDisabled: ! isSelected,
-			onClick: onInsertColumnAfter,
+			onClick: onInsertColumn,
 		},
 		{
 			icon: tableColumnDelete,
@@ -208,7 +246,7 @@ export default function Toolbar( {
 			isDisabled: ! isSelected,
 			onClick: onDeleteColumn,
 		},
-	];
+	] as DropdownOption[];
 
 	return (
 		<>
