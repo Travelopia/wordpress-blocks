@@ -18,6 +18,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies.
  */
+import Toolbar from './toolbar';
 import { name as columnBlockName } from './index';
 import { name as tableBlockName } from '../table';
 import { name as rowBlockName } from '../table-row';
@@ -30,6 +31,8 @@ import { name as cellBlockName } from '../table-cell';
  * @param {string}   props.className     Class name.
  * @param {string}   props.clientId      Client ID.
  * @param {Function} props.setAttributes Set attributes.
+ * @param {boolean}  props.isSelected    Is block selected.
+ * @param {Object}   props.context       Block context.
  *
  * @return {JSX.Element} JSX Component.
  */
@@ -37,18 +40,27 @@ function TableColumnEdit( {
 	className,
 	clientId,
 	setAttributes,
+	isSelected,
+	context,
 }: BlockEditProps<any> ): JSX.Element {
 	const blockProps = useBlockProps( {
 		className: classnames( className, 'travelopia-table__column' ),
 	} );
 
+	const tableId = context[ 'travelopia/table-id' ] as string;
+
 	// Avoid nesting of table, row, and column blocks.
-	const allowedBlocks = getBlockTypes().reduce( ( acc: string[], block: Block ) => {
-		if ( ! [ tableBlockName, rowBlockName, columnBlockName ].includes( block.name ) ) {
-			acc.push( block.name );
-		}
-		return acc;
-	}, [] );
+	const allowedBlocks = getBlockTypes().reduce(
+		( acc: string[], block: Block ) => {
+			if (
+				! [ tableBlockName, rowBlockName, columnBlockName ].includes( block.name )
+			) {
+				acc.push( block.name );
+			}
+			return acc;
+		},
+		[],
+	);
 
 	const innerBlocksProps = useInnerBlocksProps(
 		{ ...blockProps },
@@ -81,7 +93,17 @@ function TableColumnEdit( {
 		setAttributes( { row, column } );
 	}, [ row, column, setAttributes ] );
 
-	return <td { ...innerBlocksProps } />;
+	return (
+		<>
+			<Toolbar
+				isSelected={ isSelected }
+				tableRow={ row }
+				tableColumn={ column }
+				tableId={ tableId }
+			/>
+			<td { ...innerBlocksProps } />
+		</>
+	);
 }
 
 export default TableColumnEdit;
