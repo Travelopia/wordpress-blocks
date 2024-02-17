@@ -8,7 +8,7 @@ import {
 } from '@wordpress/block-editor';
 import { useEffect } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
-import { BlockEditProps, getBlockTypes, Block } from '@wordpress/blocks';
+import { BlockEditProps } from '@wordpress/blocks';
 
 /**
  * External dependencies.
@@ -19,9 +19,6 @@ import classnames from 'classnames';
  * Internal dependencies.
  */
 import Toolbar from './toolbar';
-import { name as columnBlockName } from './index';
-import { name as tableBlockName } from '../table';
-import { name as rowBlockName } from '../table-row';
 import { name as cellBlockName } from '../table-cell';
 
 /**
@@ -49,25 +46,11 @@ function TableColumnEdit( {
 
 	const tableId = context[ 'travelopia/table-id' ] as string;
 
-	// Avoid nesting of table, row, and column blocks.
-	const allowedBlocks = getBlockTypes().reduce(
-		( acc: string[], block: Block ) => {
-			if (
-				! [ tableBlockName, rowBlockName, columnBlockName ].includes( block.name )
-			) {
-				acc.push( block.name );
-			}
-			return acc;
-		},
-		[],
-	);
-
 	const innerBlocksProps = useInnerBlocksProps(
 		{ ...blockProps },
 		{
 			template: [ [ cellBlockName ] ],
 			templateLock: false,
-			allowedBlocks,
 		},
 	);
 
