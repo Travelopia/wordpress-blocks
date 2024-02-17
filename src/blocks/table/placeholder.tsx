@@ -1,3 +1,6 @@
+/**
+ * WordPress dependencies.
+ */
 import { __ } from '@wordpress/i18n';
 import { BlockIcon } from '@wordpress/block-editor';
 import { blockTable as icon } from '@wordpress/icons';
@@ -15,6 +18,13 @@ import {
 	select,
 	dispatch,
 } from '@wordpress/data';
+
+/**
+ * Internal dependencies.
+ */
+import { name as rowBlockName } from '../table-row';
+import { name as columnBlockName } from '../table-column';
+import { name as cellBlockName } from '../table-cell';
 
 /**
  * Edit function.
@@ -56,14 +66,14 @@ export function TablePlaceholder( props: BlockEditProps<any> ): JSX.Element {
 						const columnBlocks = [];
 						for ( let j: number = 0; j < columns; j++ ) {
 							columnBlocks.push(
-								createBlock( 'travelopia/table-column', {}, [
-									createBlock( 'travelopia/table-cell' ),
+								createBlock( columnBlockName, {}, [
+									createBlock( cellBlockName ),
 								] )
 							);
 						}
 
 						innerBlocks.push(
-							createBlock( 'travelopia/table-row', {}, columnBlocks )
+							createBlock( rowBlockName, {}, columnBlocks )
 						);
 					}
 

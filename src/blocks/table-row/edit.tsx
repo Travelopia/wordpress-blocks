@@ -13,6 +13,11 @@ import { BlockEditProps } from '@wordpress/blocks';
 import classnames from 'classnames';
 
 /**
+ * Internal dependencies.
+ */
+import { name as columnBlockName } from '../table-column';
+
+/**
  * Edit function.
  *
  * @param {Object} props Edit properties.
@@ -25,7 +30,7 @@ function TableRowEdit( props: BlockEditProps<any> ): JSX.Element {
 		className: classnames( className, 'travelopia-table__row' ),
 	} );
 	const innerBlocksProps = useInnerBlocksProps( { ...blockProps }, {
-		allowedBlocks: [ 'travelopia/table-column' ],
+		allowedBlocks: [ columnBlockName ],
 	} );
 
 	return (

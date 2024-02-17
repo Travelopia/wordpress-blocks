@@ -8,14 +8,15 @@ import {
 import { BlockEditProps } from '@wordpress/blocks';
 
 /**
- * Internal dependencies.
- */
-import { TablePlaceholder } from './placeholder';
-
-/**
  * External dependencies.
  */
 import classnames from 'classnames';
+
+/**
+ * Internal dependencies.
+ */
+import { TablePlaceholder } from './placeholder';
+import { name as rowBlockName } from '../table-row';
 
 /**
  * Edit function.
@@ -30,7 +31,7 @@ function TableEdit( props: BlockEditProps<any> ): JSX.Element {
 		className: classnames( className, 'travelopia-table' ),
 	} );
 	const innerBlocksProps = useInnerBlocksProps( {}, {
-		allowedBlocks: [ 'travelopia/table-row' ],
+		allowedBlocks: [ rowBlockName ],
 	} );
 
 	return (
