@@ -40,9 +40,9 @@ export function TablePlaceholder( props: BlockEditProps<any> ): JSX.Element {
 
 	return (
 		<Placeholder
-			label={ __( 'Table' ) }
+			label={ __( 'Table', 'tp' ) }
 			icon={ <BlockIcon icon={ icon } showColors /> }
-			instructions={ __( 'Insert a table for sharing data.' ) }
+			instructions={ __( 'Insert a table for sharing data.', 'tp' ) }
 		>
 			<form
 				className="travelopia-table__placeholder-form"
@@ -83,7 +83,7 @@ export function TablePlaceholder( props: BlockEditProps<any> ): JSX.Element {
 			>
 				<TextControl
 					type="number"
-					label={ __( 'Column count' ) }
+					label={ __( 'Column count', 'tp' ) }
 					value={ columns }
 					onChange={ ( totalColumns: string ) => setColumns( parseInt( totalColumns ) ) }
 					min="1"
@@ -91,7 +91,7 @@ export function TablePlaceholder( props: BlockEditProps<any> ): JSX.Element {
 				/>
 				<TextControl
 					type="number"
-					label={ __( 'Row count' ) }
+					label={ __( 'Row count', 'tp' ) }
 					value={ rows }
 					onChange={ ( totalRows: string ) => setRows( parseInt( totalRows ) ) }
 					min="1"
@@ -101,7 +101,7 @@ export function TablePlaceholder( props: BlockEditProps<any> ): JSX.Element {
 					variant="primary"
 					type="submit"
 				>
-					{ __( 'Create Table' ) }
+					{ __( 'Create Table', 'tp' ) }
 				</Button>
 			</form>
 		</Placeholder>

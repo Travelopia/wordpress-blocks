@@ -212,37 +212,37 @@ export default function Toolbar( {
 	const tableControls = [
 		{
 			icon: tableRowBefore,
-			title: __( 'Insert row before' ),
+			title: __( 'Insert row before', 'tp' ),
 			isDisabled: ! isSelected,
 			onClick: () => onInsertRow( -1 ),
 		},
 		{
 			icon: tableRowAfter,
-			title: __( 'Insert row after' ),
+			title: __( 'Insert row after', 'tp' ),
 			isDisabled: ! isSelected,
 			onClick: onInsertRow,
 		},
 		{
 			icon: tableRowDelete,
-			title: __( 'Delete row' ),
+			title: __( 'Delete row', 'tp' ),
 			isDisabled: ! isSelected,
 			onClick: onDeleteRow,
 		},
 		{
 			icon: tableColumnBefore,
-			title: __( 'Insert column before' ),
+			title: __( 'Insert column before', 'tp' ),
 			isDisabled: ! isSelected,
 			onClick: () => onInsertColumn( -1 ),
 		},
 		{
 			icon: tableColumnAfter,
-			title: __( 'Insert column after' ),
+			title: __( 'Insert column after', 'tp' ),
 			isDisabled: ! isSelected,
 			onClick: onInsertColumn,
 		},
 		{
 			icon: tableColumnDelete,
-			title: __( 'Delete column' ),
+			title: __( 'Delete column', 'tp' ),
 			isDisabled: ! isSelected,
 			onClick: onDeleteColumn,
 		},
@@ -254,7 +254,7 @@ export default function Toolbar( {
 			<BlockControls group="other">
 				<ToolbarDropdownMenu
 					icon={ table }
-					label={ __( 'Edit table' ) }
+					label={ __( 'Edit table', 'tp' ) }
 					controls={ tableControls }
 				/>
 			</BlockControls>
