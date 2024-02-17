@@ -2,8 +2,12 @@
  * WordPress dependencies.
  */
 import { __ } from '@wordpress/i18n';
+import {
+	BlockConfiguration,
+	BlockEditProps,
+	createBlock,
+} from '@wordpress/blocks';
 import { addFilter } from '@wordpress/hooks';
-import { BlockConfiguration, BlockEditProps } from '@wordpress/blocks';
 import { BlockControls } from '@wordpress/block-editor';
 import { ToolbarDropdownMenu } from '@wordpress/components';
 import { select, dispatch } from '@wordpress/data';
@@ -16,6 +20,13 @@ import {
 	tableRowDelete,
 	table,
 } from '@wordpress/icons';
+
+/**
+ * Internal dependencies.
+ */
+import { name as rowBlockName } from './table-row';
+import { name as columnBlockName } from './table-column';
+import { name as cellBlockName } from './table-cell';
 
 /**
  * Add context of table row and column to the block.
@@ -68,21 +79,50 @@ addFilter( 'editor.BlockEdit', 'travelopia/table-toolbar', ( BlockEdit ) => {
 		}
 
 		// @ts-ignore - canRemoveBlock is not defined in the type.
-		const { getBlock, canRemoveBlock } = select( 'core/block-editor' );
-		const { removeBlock, removeBlocks } = dispatch( 'core/block-editor' );
+		const { getBlock, canRemoveBlock, canInsertBlockType } =
+			select( 'core/block-editor' );
+		const { removeBlock, removeBlocks, insertBlock, updateBlockAttributes } =
+			dispatch( 'core/block-editor' );
 
 		/**
-		 * Insert row before.
+		 * Insert row.
+		 *
+		 * @param {0|-1} insertionIndex Insertion index. -1 for before and 0 for after.
 		 */
-		const onInsertRowBefore = () => {
-			console.log( 'Insert Row Before' );
-		};
+		const onInsertRow = ( insertionIndex: 0 | -1 ) => {
+			// Get table block.
+			const tableBlock = getBlock( tableId );
 
-		/**
-		 * Insert row after.
-		 */
-		const onInsertRowAfter = () => {
-			console.log( 'Insert Row After' );
+			// Check if the table block exists.
+			if ( ! tableBlock ) {
+				return;
+			}
+
+			// Check if the row block can be inserted.
+			if ( ! canInsertBlockType( rowBlockName, tableId ) ) {
+				return;
+			}
+
+			// Create column blocks.
+			const columnBlocks = [];
+
+			// Loop through the table columns count attribute.
+			for ( let i = 0; i < tableBlock.attributes?.columns || 0; i++ ) {
+				columnBlocks.push(
+					createBlock( columnBlockName, {}, [ createBlock( cellBlockName ) ] ),
+				);
+			}
+
+			// Create a new row block.
+			const newRowBlock = createBlock( rowBlockName, {}, columnBlocks );
+
+			// Insert the new row block.
+			insertBlock( newRowBlock, tableRow + insertionIndex, tableId );
+
+			// Update the table block attributes.
+			updateBlockAttributes( tableId, {
+				rows: tableBlock.attributes?.rows + 1,
+			} );
 		};
 
 		/**
@@ -101,12 +141,20 @@ addFilter( 'editor.BlockEdit', 'travelopia/table-toolbar', ( BlockEdit ) => {
 			const currentRowBlock = tableBlock.innerBlocks[ tableRow - 1 ];
 
 			// Check if the current row block is removable.
-			if ( ! currentRowBlock?.clientId || ! canRemoveBlock( currentRowBlock.clientId ) ) {
+			if (
+				! currentRowBlock?.clientId ||
+				! canRemoveBlock( currentRowBlock.clientId )
+			) {
 				return;
 			}
 
 			// Remove the current row block.
 			removeBlock( currentRowBlock.clientId );
+
+			// Update the table block attributes.
+			updateBlockAttributes( tableId, {
+				rows: tableBlock.attributes?.rows - 1,
+			} );
 		};
 
 		/**
@@ -144,7 +192,10 @@ addFilter( 'editor.BlockEdit', 'travelopia/table-toolbar', ( BlockEdit ) => {
 				const currentColumnBlock = rowBlock.innerBlocks[ tableColumn - 1 ];
 
 				// Check if the current column block is removable.
-				if ( currentColumnBlock?.clientId && canRemoveBlock( currentColumnBlock.clientId ) ) {
+				if (
+					currentColumnBlock?.clientId &&
+					canRemoveBlock( currentColumnBlock.clientId )
+				) {
 					columnsToRemove.push( currentColumnBlock.clientId );
 				}
 			} );
@@ -158,13 +209,13 @@ addFilter( 'editor.BlockEdit', 'travelopia/table-toolbar', ( BlockEdit ) => {
 				icon: tableRowBefore,
 				title: __( 'Insert row before' ),
 				isDisabled: ! isSelected,
-				onClick: onInsertRowBefore,
+				onClick: () => onInsertRow( -1 ),
 			},
 			{
 				icon: tableRowAfter,
 				title: __( 'Insert row after' ),
 				isDisabled: ! isSelected,
-				onClick: onInsertRowAfter,
+				onClick: () => onInsertRow( 0 ),
 			},
 			{
 				icon: tableRowDelete,
