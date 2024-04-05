@@ -6,16 +6,18 @@ import {
 	useInnerBlocksProps,
 } from '@wordpress/block-editor';
 import { BlockEditProps } from '@wordpress/blocks';
-
-/**
- * Internal dependencies.
- */
-import { TablePlaceholder } from './placeholder';
+import { useEffect } from '@wordpress/element';
 
 /**
  * External dependencies.
  */
 import classnames from 'classnames';
+
+/**
+ * Internal dependencies.
+ */
+import { TablePlaceholder } from './placeholder';
+import { name as rowBlockName } from '../table-row';
 
 /**
  * Edit function.
@@ -25,13 +27,18 @@ import classnames from 'classnames';
  * @return {JSX.Element} JSX Component.
  */
 function TableEdit( props: BlockEditProps<any> ): JSX.Element {
-	const { className, attributes } = props;
+	const { className, attributes, clientId, setAttributes } = props;
 	const blockProps = useBlockProps( {
 		className: classnames( className, 'travelopia-table' ),
 	} );
 	const innerBlocksProps = useInnerBlocksProps( {}, {
-		allowedBlocks: [ 'travelopia/table-row' ],
+		allowedBlocks: [ rowBlockName ],
 	} );
+
+	// Set blockId attribute.
+	useEffect( () => {
+		setAttributes( { blockId: clientId } );
+	}, [ clientId, setAttributes ] );
 
 	return (
 		<figure { ...blockProps }>

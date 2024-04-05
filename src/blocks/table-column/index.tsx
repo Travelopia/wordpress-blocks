@@ -28,12 +28,23 @@ export const settings: BlockConfiguration = {
 	parent: [ 'travelopia/table-row' ],
 	category: 'text',
 	keywords: [ __( 'column', 'tp' ) ],
-	attributes: {},
+	attributes: {
+		row: {
+			type: 'number',
+		},
+		column: {
+			type: 'number',
+		},
+	},
+	providesContext: {
+		'travelopia/table-row': 'row' as never,
+		'travelopia/table-column': 'column' as never,
+	},
 	supports: {
 		html: true,
 	},
 	edit,
 	save() {
-		return <InnerBlocks.Content />;
+		return <td><InnerBlocks.Content /></td>;
 	},
 };
