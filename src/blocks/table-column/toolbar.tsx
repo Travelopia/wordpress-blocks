@@ -2,7 +2,7 @@
  * WordPress dependencies.
  */
 import { __ } from '@wordpress/i18n';
-import { createBlock } from '@wordpress/blocks';
+import { BlockInstance, createBlock } from '@wordpress/blocks';
 import { BlockControls } from '@wordpress/block-editor';
 import { ToolbarDropdownMenu } from '@wordpress/components';
 import { select, dispatch } from '@wordpress/data';
@@ -241,27 +241,40 @@ export default function Toolbar( {
 			}
 
 			// Prepare variables.
-			let updatedColumnId: string = '';
+			let columnToMergeInto: BlockInstance | undefined;
+			let columnToMergeFrom: BlockInstance | undefined;
 
 			// Traverse columns in current row.
 			rowBlock.innerBlocks.forEach( ( columnBlock, columnIndex ) => {
 				if ( columnIndex + 1 === tableColumn - 1 ) {
-					// If it is the previous column, increment the colspan.
-					const currentAttributes = getBlockAttributes( columnBlock.clientId );
-					updateBlockAttributes( columnBlock.clientId, { colSpan: parseInt( currentAttributes?.colSpan ?? 1 ) + 1 } );
-
-					// Save ID for later.
-					updatedColumnId = columnBlock.clientId;
+					columnToMergeInto = columnBlock;
 				} else if ( columnIndex + 1 === tableColumn ) {
-					// If it is the current column, move children to previous column and delete current column.
-					moveBlocksToPosition(
-						columnBlock.innerBlocks.map( ( block ) => block.clientId ),
-						columnBlock.clientId,
-						updatedColumnId
-					);
-					removeBlock( columnBlock.clientId );
+					columnToMergeFrom = columnBlock;
 				}
 			} );
+
+			if ( ! columnToMergeFrom || ! columnToMergeInto ) {
+				return;
+			}
+
+			// Get colspans.
+			const mergeIntoAttributes = getBlockAttributes( columnToMergeInto.clientId );
+			const mergeFromAttributes = getBlockAttributes( columnToMergeFrom.clientId );
+			const mergeIntoColspan: number = parseInt( mergeIntoAttributes?.colSpan ?? 1 );
+			const mergeFromColspan: number = parseInt( mergeFromAttributes?.colSpan ?? 1 );
+
+			// Update colspan.
+			updateBlockAttributes( columnToMergeInto.clientId, { colSpan: mergeIntoColspan + mergeFromColspan } );
+
+			// If it is the current column, move children to previous column and delete current column.
+			moveBlocksToPosition(
+				columnToMergeFrom.innerBlocks.map( ( block ) => block.clientId ),
+				columnToMergeFrom.clientId,
+				columnToMergeInto.clientId
+			);
+
+			// Remove block that is being merged from.
+			removeBlock( columnToMergeFrom.clientId );
 		} );
 	};
 
