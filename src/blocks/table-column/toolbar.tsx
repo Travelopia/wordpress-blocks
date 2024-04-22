@@ -224,7 +224,7 @@ export default function Toolbar( {
 	/**
 	 * Merge column left.
 	 */
-	const onMergeColumnLeft = () => {
+	const onMergeColumnLeft = (): void => {
 		// Get table block.
 		const tableBlock = getBlock( tableId );
 
@@ -234,10 +234,10 @@ export default function Toolbar( {
 		}
 
 		// Traverse rows.
-		tableBlock.innerBlocks.forEach( ( rowBlock, index ) => {
+		tableBlock.innerBlocks.some( ( rowBlock, index ): boolean => {
 			// Get current row.
 			if ( rowBlock.name !== rowBlockName || index + 1 !== tableRow || ! rowBlock.innerBlocks.length ) {
-				return;
+				return false;
 			}
 
 			// Prepare variables.
@@ -245,16 +245,26 @@ export default function Toolbar( {
 			let columnToMergeFrom: BlockInstance | undefined;
 
 			// Traverse columns in current row.
-			rowBlock.innerBlocks.forEach( ( columnBlock, columnIndex ) => {
+			rowBlock.innerBlocks.some( ( columnBlock, columnIndex ): boolean => {
+				// Get column to merge from and into.
 				if ( columnIndex + 1 === tableColumn - 1 ) {
 					columnToMergeInto = columnBlock;
 				} else if ( columnIndex + 1 === tableColumn ) {
 					columnToMergeFrom = columnBlock;
 				}
+
+				// Short circuit if we found them.
+				if ( columnToMergeInto && columnToMergeFrom ) {
+					return true;
+				}
+
+				// We haven't found them, loop some more.
+				return false;
 			} );
 
+			// Check if we have a "to" and "from" column.
 			if ( ! columnToMergeFrom || ! columnToMergeInto ) {
-				return;
+				return false;
 			}
 
 			// Get colspans.
@@ -275,9 +285,15 @@ export default function Toolbar( {
 
 			// Remove block that is being merged from.
 			removeBlock( columnToMergeFrom.clientId );
+
+			// Short-circuit loop.
+			return true;
 		} );
 	};
 
+	/**
+	 * Table controls.
+	 */
 	const tableControls = [
 		{
 			icon: tableRowBefore,
@@ -323,6 +339,9 @@ export default function Toolbar( {
 		},
 	] as DropdownOption[];
 
+	/**
+	 * Return block controls.
+	 */
 	return (
 		<>
 			{ /* @ts-ignore - Group is not defined in the prop-type. */ }
