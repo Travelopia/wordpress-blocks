@@ -8,6 +8,7 @@ import { ToolbarDropdownMenu } from '@wordpress/components';
 import { select, dispatch } from '@wordpress/data';
 import { DropdownOption } from '@wordpress/components/build-types/dropdown-menu/types';
 import {
+	arrowLeft,
 	tableColumnAfter,
 	tableColumnBefore,
 	tableColumnDelete,
@@ -46,11 +47,22 @@ export default function Toolbar( {
 	tableRow: number;
 	tableColumn: number;
 } ): JSX.Element {
-	// @ts-ignore - canRemoveBlock is not defined in the type.
-	const { getBlock, canRemoveBlock, canInsertBlockType } =
-		select( 'core/block-editor' );
-	const { removeBlock, removeBlocks, insertBlock, updateBlockAttributes } =
-		dispatch( 'core/block-editor' );
+	const {
+		getBlock,
+		canInsertBlockType,
+		getBlockAttributes,
+		// @ts-ignore
+		canRemoveBlock,
+	} = select( 'core/block-editor' );
+
+	const {
+		removeBlock,
+		removeBlocks,
+		insertBlock,
+		updateBlockAttributes,
+		// @ts-ignore
+		moveBlocksToPosition,
+	} = dispatch( 'core/block-editor' );
 
 	/**
 	 * Insert row.
@@ -209,6 +221,50 @@ export default function Toolbar( {
 		} );
 	};
 
+	/**
+	 * Merge column left.
+	 */
+	const onMergeColumnLeft = () => {
+		// Get table block.
+		const tableBlock = getBlock( tableId );
+
+		// Check if the table block exists.
+		if ( ! tableBlock ) {
+			return;
+		}
+
+		// Traverse rows.
+		tableBlock.innerBlocks.forEach( ( rowBlock, index ) => {
+			// Get current row.
+			if ( rowBlock.name !== rowBlockName || index + 1 !== tableRow || ! rowBlock.innerBlocks.length ) {
+				return;
+			}
+
+			// Prepare variables.
+			let updatedColumnId: string = '';
+
+			// Traverse columns in current row.
+			rowBlock.innerBlocks.forEach( ( columnBlock, columnIndex ) => {
+				if ( columnIndex + 1 === tableColumn - 1 ) {
+					// If it is the previous column, increment the colspan.
+					const currentAttributes = getBlockAttributes( columnBlock.clientId );
+					updateBlockAttributes( columnBlock.clientId, { colSpan: parseInt( currentAttributes?.colSpan ?? 1 ) + 1 } );
+
+					// Save ID for later.
+					updatedColumnId = columnBlock.clientId;
+				} else if ( columnIndex + 1 === tableColumn ) {
+					// If it is the current column, move children to previous column and delete current column.
+					moveBlocksToPosition(
+						columnBlock.innerBlocks.map( ( block ) => block.clientId ),
+						columnBlock.clientId,
+						updatedColumnId
+					);
+					removeBlock( columnBlock.clientId );
+				}
+			} );
+		} );
+	};
+
 	const tableControls = [
 		{
 			icon: tableRowBefore,
@@ -245,6 +301,12 @@ export default function Toolbar( {
 			title: __( 'Delete column', 'tp' ),
 			isDisabled: ! isSelected,
 			onClick: onDeleteColumn,
+		},
+		{
+			icon: arrowLeft,
+			title: __( 'Merge column left', 'tp' ),
+			isDisabled: tableColumn < 2,
+			onClick: onMergeColumnLeft,
 		},
 	] as DropdownOption[];
 

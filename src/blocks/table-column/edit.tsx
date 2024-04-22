@@ -36,6 +36,7 @@ import { name as cellBlockName } from '../table-cell';
 function TableColumnEdit( {
 	className,
 	clientId,
+	attributes,
 	setAttributes,
 	isSelected,
 	context,
@@ -84,7 +85,11 @@ function TableColumnEdit( {
 				tableColumn={ column }
 				tableId={ tableId }
 			/>
-			<td { ...innerBlocksProps } />
+			<td
+				{ ...innerBlocksProps }
+				colSpan={ attributes.colSpan }
+				rowSpan={ attributes.rowSpan }
+			/>
 		</>
 	);
 }
