@@ -35,6 +35,12 @@ export const settings: BlockConfiguration = {
 		column: {
 			type: 'number',
 		},
+		colSpan: {
+			type: 'number',
+		},
+		rowSpan: {
+			type: 'number',
+		},
 	},
 	providesContext: {
 		'travelopia/table-row': 'row' as never,

@@ -27,6 +27,7 @@ import { name as cellBlockName } from '../table-cell';
  * @param {Object}   props               Edit properties.
  * @param {string}   props.className     Class name.
  * @param {string}   props.clientId      Client ID.
+ * @param {Object}   props.attributes    Attributes.
  * @param {Function} props.setAttributes Set attributes.
  * @param {boolean}  props.isSelected    Is block selected.
  * @param {Object}   props.context       Block context.
@@ -36,6 +37,7 @@ import { name as cellBlockName } from '../table-cell';
 function TableColumnEdit( {
 	className,
 	clientId,
+	attributes,
 	setAttributes,
 	isSelected,
 	context,
@@ -84,7 +86,11 @@ function TableColumnEdit( {
 				tableColumn={ column }
 				tableId={ tableId }
 			/>
-			<td { ...innerBlocksProps } />
+			<td
+				{ ...innerBlocksProps }
+				colSpan={ attributes.colSpan }
+				rowSpan={ attributes.rowSpan }
+			/>
 		</>
 	);
 }
