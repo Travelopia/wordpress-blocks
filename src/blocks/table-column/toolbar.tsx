@@ -18,6 +18,10 @@ import {
 	tableRowDelete,
 	table,
 } from '@wordpress/icons';
+import {
+	useState,
+	useEffect,
+} from '@wordpress/element';
 
 /**
  * Internal dependencies.
@@ -64,6 +68,36 @@ export default function Toolbar( {
 		// @ts-ignore
 		moveBlocksToPosition,
 	} = dispatch( 'core/block-editor' );
+
+	const [ maximumColumnsInCurrentRow, setMaximumColumnsInCurrentRow ] = useState( 0 );
+
+	/**
+	 * Set maximum columns in current row.
+	 */
+	useEffect( (): void => {
+		// Get table block.
+		const tableBlock = getBlock( tableId );
+
+		// Check if we have a block.
+		if ( ! tableBlock ) {
+			setMaximumColumnsInCurrentRow( 0 );
+			return;
+		}
+
+		// Traverse rows.
+		tableBlock.innerBlocks.some( ( rowBlock, index ): boolean => {
+			// Get current row.
+			if ( rowBlock.name !== rowBlockName || index + 1 !== tableRow || ! rowBlock.innerBlocks.length ) {
+				return false;
+			}
+
+			// Set maximum columns in current row.
+			setMaximumColumnsInCurrentRow( rowBlock.innerBlocks.length );
+
+			// Short-circuit loop.
+			return true;
+		} );
+	}, [ tableRow, tableColumn, getBlock, tableId ] );
 
 	/**
 	 * Insert row.
@@ -406,7 +440,7 @@ export default function Toolbar( {
 		{
 			icon: arrowRight,
 			title: __( 'Merge column right', 'tp' ),
-			// isDisabled: tableColumn >= 2,
+			isDisabled: tableColumn === maximumColumnsInCurrentRow,
 			onClick: onMergeColumnRight,
 		},
 	] as DropdownOption[];
