@@ -27,6 +27,7 @@ import { name as cellBlockName } from '../table-cell';
  * @param {Object}   props               Edit properties.
  * @param {string}   props.className     Class name.
  * @param {string}   props.clientId      Client ID.
+ * @param {Object}   props.attributes    Attributes.
  * @param {Function} props.setAttributes Set attributes.
  * @param {boolean}  props.isSelected    Is block selected.
  * @param {Object}   props.context       Block context.
