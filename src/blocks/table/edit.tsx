@@ -49,7 +49,9 @@ function TableEdit( props: BlockEditProps<any> ): JSX.Element {
 			}
 			{
 				( 0 !== attributes.rows || 0 !== attributes.columns ) &&
-				<table { ...innerBlocksProps } />
+				<table>
+					<tbody { ...innerBlocksProps } />
+				</table>
 			}
 		</figure>
 	);
