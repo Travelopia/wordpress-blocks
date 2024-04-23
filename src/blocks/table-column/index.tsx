@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { BlockConfiguration } from '@wordpress/blocks';
 import {
 	InnerBlocks,
+	useBlockProps,
 } from '@wordpress/block-editor';
 import {
 	blockTable as icon,
@@ -48,9 +49,15 @@ export const settings: BlockConfiguration = {
 	},
 	supports: {
 		html: true,
+		color: {
+			background: true,
+			text: true,
+		},
+		align: true,
 	},
 	edit,
 	save() {
-		return <td><InnerBlocks.Content /></td>;
+		const blockProps = useBlockProps.save();
+		return <td {...blockProps}><InnerBlocks.Content /></td>;
 	},
 };
