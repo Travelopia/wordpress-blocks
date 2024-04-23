@@ -11,6 +11,7 @@ import {
 	arrowLeft,
 	arrowRight,
 	arrowUp,
+	arrowDown,
 	tableColumnAfter,
 	tableColumnBefore,
 	tableColumnDelete,
@@ -426,6 +427,62 @@ export default function Toolbar( {
 	};
 
 	/**
+	 * Merge column down.
+	 */
+	const onMergeColumnDown = (): void => {
+		// Get table block.
+		const tableBlock = getBlock( tableId );
+
+		// Check if the table block exists.
+		if ( ! tableBlock ) {
+			return;
+		}
+
+		// Prepare variables.
+		let columnToMergeInto: BlockInstance | undefined;
+		let columnToMergeFrom: BlockInstance | undefined;
+
+		// Traverse rows.
+		tableBlock.innerBlocks.some( ( rowBlock, rowIndex ): boolean => {
+			// Get current row.
+			const rowNumber: number = rowIndex + 1;
+			if ( rowBlock.name !== rowBlockName || ( rowNumber !== tableRow && rowNumber !== tableRow + 1 ) || ! rowBlock.innerBlocks.length ) {
+				return false;
+			}
+
+			// Traverse columns in current row.
+			rowBlock.innerBlocks.some( ( columnBlock, columnIndex ): boolean => {
+				// Get column to merge from and into.
+				const columnNumber: number = columnIndex + 1;
+				if ( columnNumber === tableColumn && rowNumber === tableRow ) {
+					columnToMergeInto = columnBlock;
+				} else if ( columnNumber === tableColumn && rowNumber === tableRow + 1 ) {
+					columnToMergeFrom = columnBlock;
+				}
+
+				// Short circuit if we found them.
+				if ( columnToMergeInto && columnToMergeFrom ) {
+					return true;
+				}
+
+				// We haven't found them, loop some more.
+				return false;
+			} );
+
+			// Check if we have a "to" and "from" column.
+			if ( ! columnToMergeFrom || ! columnToMergeInto ) {
+				return false;
+			}
+
+			// Merge columns.
+			mergeColumnsVertically( columnToMergeFrom, columnToMergeInto );
+
+			// Short-circuit loop.
+			return true;
+		} );
+	};
+
+	/**
 	 * Merge columns horizontally.
 	 *
 	 * @param {Object} fromColumn From column block instance.
@@ -534,8 +591,14 @@ export default function Toolbar( {
 		{
 			icon: arrowUp,
 			title: __( 'Merge column up', 'tp' ),
-			// isDisabled: tableColumn === maximumColumnsInCurrentRow,
+			isDisabled: tableRow < 2,
 			onClick: onMergeColumnUp,
+		},
+		{
+			icon: arrowDown,
+			title: __( 'Merge column down', 'tp' ),
+			// isDisabled: tableColumn === maximumRowsInCurrentColumn,
+			onClick: onMergeColumnDown,
 		},
 	] as DropdownOption[];
 
