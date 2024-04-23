@@ -9,6 +9,7 @@ import { select, dispatch } from '@wordpress/data';
 import { DropdownOption } from '@wordpress/components/build-types/dropdown-menu/types';
 import {
 	arrowLeft,
+	arrowRight,
 	tableColumnAfter,
 	tableColumnBefore,
 	tableColumnDelete,
@@ -267,28 +268,93 @@ export default function Toolbar( {
 				return false;
 			}
 
-			// Get colspans.
-			const mergeIntoAttributes = getBlockAttributes( columnToMergeInto.clientId );
-			const mergeFromAttributes = getBlockAttributes( columnToMergeFrom.clientId );
-			const mergeIntoColspan: number = parseInt( mergeIntoAttributes?.colSpan ?? 1 );
-			const mergeFromColspan: number = parseInt( mergeFromAttributes?.colSpan ?? 1 );
-
-			// Update colspan.
-			updateBlockAttributes( columnToMergeInto.clientId, { colSpan: mergeIntoColspan + mergeFromColspan } );
-
-			// If it is the current column, move children to previous column and delete current column.
-			moveBlocksToPosition(
-				columnToMergeFrom.innerBlocks.map( ( block ) => block.clientId ),
-				columnToMergeFrom.clientId,
-				columnToMergeInto.clientId
-			);
-
-			// Remove block that is being merged from.
-			removeBlock( columnToMergeFrom.clientId );
+			// Merge columns.
+			mergeColumns( columnToMergeFrom, columnToMergeInto );
 
 			// Short-circuit loop.
 			return true;
 		} );
+	};
+
+	/**
+	 * Merge column right.
+	 */
+	const onMergeColumnRight = (): void => {
+		// Get table block.
+		const tableBlock = getBlock( tableId );
+
+		// Check if the table block exists.
+		if ( ! tableBlock ) {
+			return;
+		}
+
+		// Traverse rows.
+		tableBlock.innerBlocks.some( ( rowBlock, index ): boolean => {
+			// Get current row.
+			if ( rowBlock.name !== rowBlockName || index + 1 !== tableRow || ! rowBlock.innerBlocks.length ) {
+				return false;
+			}
+
+			// Prepare variables.
+			let columnToMergeInto: BlockInstance | undefined;
+			let columnToMergeFrom: BlockInstance | undefined;
+
+			// Traverse columns in current row.
+			rowBlock.innerBlocks.some( ( columnBlock, columnIndex ): boolean => {
+				// Get column to merge from and into.
+				if ( columnIndex + 1 === tableColumn ) {
+					columnToMergeInto = columnBlock;
+				} else if ( columnIndex + 1 === tableColumn + 1 ) {
+					columnToMergeFrom = columnBlock;
+				}
+
+				// Short circuit if we found them.
+				if ( columnToMergeInto && columnToMergeFrom ) {
+					return true;
+				}
+
+				// We haven't found them, loop some more.
+				return false;
+			} );
+
+			// Check if we have a "to" and "from" column.
+			if ( ! columnToMergeFrom || ! columnToMergeInto ) {
+				return false;
+			}
+
+			// Merge columns.
+			mergeColumns( columnToMergeFrom, columnToMergeInto );
+
+			// Short-circuit loop.
+			return true;
+		} );
+	};
+
+	/**
+	 * Merge columns.
+	 *
+	 * @param {Object} fromColumn From column block instance.
+	 * @param {Object} toColumn   To column block instance.
+	 */
+	const mergeColumns = ( fromColumn: BlockInstance, toColumn: BlockInstance ): void => {
+		// Get colspans.
+		const mergeIntoAttributes = getBlockAttributes( toColumn.clientId );
+		const mergeFromAttributes = getBlockAttributes( fromColumn.clientId );
+		const mergeIntoColspan: number = parseInt( mergeIntoAttributes?.colSpan ?? 1 );
+		const mergeFromColspan: number = parseInt( mergeFromAttributes?.colSpan ?? 1 );
+
+		// Update colspan.
+		updateBlockAttributes( toColumn.clientId, { colSpan: mergeIntoColspan + mergeFromColspan } );
+
+		// If it is the current column, move children to previous column and delete current column.
+		moveBlocksToPosition(
+			fromColumn.innerBlocks.map( ( block ) => block.clientId ),
+			fromColumn.clientId,
+			toColumn.clientId
+		);
+
+		// Remove block that is being merged from.
+		removeBlock( fromColumn.clientId );
 	};
 
 	/**
@@ -336,6 +402,12 @@ export default function Toolbar( {
 			title: __( 'Merge column left', 'tp' ),
 			isDisabled: tableColumn < 2,
 			onClick: onMergeColumnLeft,
+		},
+		{
+			icon: arrowRight,
+			title: __( 'Merge column right', 'tp' ),
+			// isDisabled: tableColumn >= 2,
+			onClick: onMergeColumnRight,
 		},
 	] as DropdownOption[];
 
