@@ -30,6 +30,7 @@ export const settings: BlockConfiguration = {
 		content: {
 			type: 'string',
 			source: 'html',
+			selector: 'span',
 		},
 	},
 	supports: {
@@ -55,7 +56,7 @@ export const settings: BlockConfiguration = {
 	save( { attributes }: BlockSaveProps<any> ) {
 		const blockProps = useBlockProps.save();
 		return (
-			<RichText.Content {...blockProps} value={ attributes.content } />
+			<RichText.Content tagName='span' {...blockProps} value={ attributes.content } />
 		);
 	},
 };
