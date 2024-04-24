@@ -45,7 +45,7 @@ export const settings: BlockConfiguration = {
 		isHead: {
 			type: 'boolean',
 			default: false,
-		}
+		},
 	},
 	providesContext: {
 		'travelopia/table-row': 'row' as never,
@@ -62,9 +62,9 @@ export const settings: BlockConfiguration = {
 	edit,
 	save( { attributes }: BlockSaveProps<any> ) {
 		const blockProps = useBlockProps.save();
-		if (attributes?.isHead)  {
-			return <th {...blockProps}><InnerBlocks.Content /></th>;
+		if ( attributes?.isHead ) {
+			return <th { ...blockProps }><InnerBlocks.Content /></th>;
 		}
-		return <td {...blockProps}><InnerBlocks.Content /></td>;
+		return <td { ...blockProps }><InnerBlocks.Content /></td>;
 	},
 };

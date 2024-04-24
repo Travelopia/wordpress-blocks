@@ -6,9 +6,9 @@ import {
 	useBlockProps,
 	useInnerBlocksProps,
 } from '@wordpress/block-editor';
-import { BlockEditProps, 
-	createBlock
- } from '@wordpress/blocks';
+import { BlockEditProps,
+	createBlock,
+} from '@wordpress/blocks';
 import { useEffect } from '@wordpress/element';
 
 /**
@@ -51,44 +51,44 @@ function TableEdit( props: BlockEditProps<any> ): JSX.Element {
 		canRemoveBlock,
 	} = select( 'core/block-editor' );
 
-	const { 
+	const {
 		insertBlock,
-		removeBlock
+		removeBlock,
 	} = dispatch( 'core/block-editor' );
-	
+
 	const insertHeader = () => {
 		const tableBlock = getBlock( attributes.blockId );
-		if ( !tableBlock ) {
+		if ( ! tableBlock ) {
 			return;
 		}
 
-		if (!canInsertBlockType(rowBlockName, attributes.blockId)) {
+		if ( ! canInsertBlockType( rowBlockName, attributes.blockId ) ) {
 			return;
 		}
 
 		const columnBlocks = [];
 
-		for (let i = 0; i < attributes?.columns || 0; i++) {
+		for ( let i = 0; i < attributes?.columns || 0; i++ ) {
 			columnBlocks.push(
-				createBlock(columnBlockName, {
-					isHead: true
-				}, [ createBlock( cellBlockName ) ])
+				createBlock( columnBlockName, {
+					isHead: true,
+				}, [ createBlock( cellBlockName ) ] )
 			);
 		}
 
-		const newRowBlock = createBlock(rowBlockName, {}, columnBlocks);
+		const newRowBlock = createBlock( rowBlockName, {}, columnBlocks );
 
-		insertBlock(newRowBlock, 0, attributes.blockId);
+		insertBlock( newRowBlock, 0, attributes.blockId );
 	};
 
 	const removeHeader = () => {
 		const tableBlock = getBlock( attributes.blockId );
-		if ( !tableBlock ) {
+		if ( ! tableBlock ) {
 			return;
 		}
 
-		const headerRowBlock = tableBlock.innerBlocks?.[0];
-		if (!headerRowBlock) {
+		const headerRowBlock = tableBlock.innerBlocks?.[ 0 ];
+		if ( ! headerRowBlock ) {
 			return;
 		}
 
@@ -107,17 +107,16 @@ function TableEdit( props: BlockEditProps<any> ): JSX.Element {
 		setAttributes( { blockId: clientId } );
 	}, [ clientId, setAttributes ] );
 
-
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={__( 'Table Options', 'tp' )}>
-					<ToggleControl 
-						label={__( 'Header', 'tp' )}
+				<PanelBody title={ __( 'Table Options', 'tp' ) }>
+					<ToggleControl
+						label={ __( 'Header', 'tp' ) }
 						checked={ attributes.hasHeader }
-						onChange={ (newValue: boolean) => {
+						onChange={ ( newValue: boolean ) => {
 							setAttributes( { hasHeader: ! attributes.hasHeader } );
-							if (newValue) {
+							if ( newValue ) {
 								insertHeader();
 							} else {
 								removeHeader();

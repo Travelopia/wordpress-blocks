@@ -48,15 +48,15 @@ export const settings: BlockConfiguration = {
 				blocks: [ block ],
 				transform: ( attributes: string[], innerBlocks: BlockInstance<{ [k: string]: any; }>[] | undefined ) => {
 					return createBlock( block, attributes, innerBlocks );
-				}
-			} ) ) as unknown as TransformBlock<Record<string,any>>[],
-		]
+				},
+			} ) ) as unknown as TransformBlock<Record<string, any>>[],
+		],
 	},
 	edit,
 	save( { attributes }: BlockSaveProps<any> ) {
 		const blockProps = useBlockProps.save();
 		return (
-			<RichText.Content tagName='span' {...blockProps} value={ attributes.content } />
+			<RichText.Content tagName="span" { ...blockProps } value={ attributes.content } />
 		);
 	},
 };
