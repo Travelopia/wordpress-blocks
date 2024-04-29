@@ -21,7 +21,7 @@ import edit from './edit';
 export const name: string = 'travelopia/table-row';
 
 export const settings: BlockConfiguration = {
-	apiVersion: 2,
+	apiVersion: 3,
 	icon,
 	title: __( 'Row', 'tp' ),
 	description: __( 'Individual row of the table.', 'tp' ),

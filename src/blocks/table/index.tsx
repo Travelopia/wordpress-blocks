@@ -26,7 +26,7 @@ import './editor.scss';
 export const name: string = 'travelopia/table';
 
 export const settings: BlockConfiguration = {
-	apiVersion: 2,
+	apiVersion: 3,
 	icon,
 	title: __( 'Table', 'tp' ),
 	description: __( 'Create structured content in rows and columns to display information.', 'tp' ),

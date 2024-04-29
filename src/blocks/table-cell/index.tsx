@@ -25,7 +25,7 @@ import edit from './edit';
 export const name: string = 'travelopia/table-cell';
 
 export const settings: BlockConfiguration = {
-	apiVersion: 2,
+	apiVersion: 3,
 	icon,
 	title: __( 'Cell', 'tp' ),
 	description: __( 'Individual cell of the table.', 'tp' ),

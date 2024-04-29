@@ -21,7 +21,7 @@ import edit from './edit';
 export const name: string = 'travelopia/table-column';
 
 export const settings: BlockConfiguration = {
-	apiVersion: 2,
+	apiVersion: 3,
 	icon,
 	title: __( 'Column', 'tp' ),
 	description: __( 'Individual column of the table.', 'tp' ),
