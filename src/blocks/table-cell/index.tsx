@@ -38,13 +38,35 @@ export const settings: BlockConfiguration = {
 	},
 	transforms: {
 		to: [
-			...[ 'core/paragraph', 'core/heading', 'core/list', 'core/image' ].map( ( block ) => ( {
+			{
 				type: 'block',
-				blocks: [ block ],
+				blocks: [ 'core/heading' ],
 				transform: ( attributes: string[], innerBlocks: BlockInstance<{ [k: string]: any; }>[] | undefined ) => {
-					return createBlock( block, attributes, innerBlocks );
+					return createBlock(
+						'core/heading', { ...attributes, level: '3' }, innerBlocks
+					);
 				},
-			} ) ) as unknown as TransformBlock<Record<string, any>>[],
+			} as unknown as TransformBlock<any>,
+			{
+				type: 'block',
+				blocks: [ 'core/paragraph' ],
+				transform: ( attributes: string[], innerBlocks: BlockInstance<{ [k: string]: any; }>[] | undefined ) => {
+					return createBlock( 'core/paragraph', attributes, innerBlocks );
+				},
+			} as unknown as TransformBlock<any>,
+			{
+				type: 'block',
+				blocks: [ 'core/list' ],
+				transform: ( attributes: string[], innerBlocks: BlockInstance<{ [k: string]: any; }>[] | undefined ) => {
+					return createBlock(
+						'core/list',
+						{},
+						[
+							createBlock( 'core/list-item', attributes, innerBlocks ),
+						]
+					);
+				},
+			} as unknown as TransformBlock<any>,
 		],
 	},
 	edit,
