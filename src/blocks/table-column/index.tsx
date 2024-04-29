@@ -52,11 +52,11 @@ export const settings: BlockConfiguration = {
 		color: {
 			text: true,
 			background: true,
-		}
+		},
 	},
 	edit,
 	save() {
 		const blockProps = useBlockProps.save();
-		return <td {...blockProps}><InnerBlocks.Content /></td>;
+		return <td { ...blockProps }><InnerBlocks.Content /></td>;
 	},
 };
