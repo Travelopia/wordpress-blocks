@@ -86,11 +86,19 @@ function TableColumnEdit( {
 				tableColumn={ column }
 				tableId={ tableId }
 			/>
-			<td
-				{ ...innerBlocksProps }
-				colSpan={ attributes.colSpan }
-				rowSpan={ attributes.rowSpan }
-			/>
+			{ attributes?.isHead ? (
+				<th
+					{ ...innerBlocksProps }
+					colSpan={ attributes.colSpan }
+					rowSpan={ attributes.rowSpan }
+				/>
+			) : (
+				<td
+					{ ...innerBlocksProps }
+					colSpan={ attributes.colSpan }
+					rowSpan={ attributes.rowSpan }
+				/>
+			) }
 		</>
 	);
 }

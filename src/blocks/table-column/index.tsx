@@ -2,7 +2,7 @@
  * WordPress dependencies.
  */
 import { __ } from '@wordpress/i18n';
-import { BlockConfiguration } from '@wordpress/blocks';
+import { BlockConfiguration, BlockSaveProps } from '@wordpress/blocks';
 import {
 	InnerBlocks,
 	useBlockProps,
@@ -42,6 +42,10 @@ export const settings: BlockConfiguration = {
 		rowSpan: {
 			type: 'number',
 		},
+		isHead: {
+			type: 'boolean',
+			default: false,
+		},
 	},
 	providesContext: {
 		'travelopia/table-row': 'row' as never,
@@ -55,8 +59,13 @@ export const settings: BlockConfiguration = {
 		},
 	},
 	edit,
-	save() {
+	save( { attributes } : BlockSaveProps<any> ) {
 		const blockProps = useBlockProps.save();
+
+		if ( attributes?.isHead ) {
+			return <th { ...blockProps }><InnerBlocks.Content /></th>;
+		}
+
 		return <td { ...blockProps }><InnerBlocks.Content /></td>;
 	},
 };

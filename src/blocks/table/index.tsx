@@ -47,6 +47,10 @@ export const settings: BlockConfiguration = {
 		blockId: {
 			type: 'string',
 		},
+		hasHeader: {
+			type: 'boolean',
+			default: false,
+		},
 	},
 	providesContext: {
 		'travelopia/table-id': 'blockId' as never,
