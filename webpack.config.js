@@ -52,7 +52,7 @@ module.exports = ( env ) => {
 		},
 		output: {
 			path: __dirname,
-			filename: `./dist/[name].js`,
+			filename: `./dist/blocks/[name].js`,
 			publicPath: '/',
 		},
 		optimization: {
@@ -70,7 +70,7 @@ module.exports = ( env ) => {
 		},
 		plugins: [
 			new MiniCssExtractPlugin( {
-				filename: `./dist/[name].css`,
+				filename: `./dist/blocks/[name].css`,
 			} ),
 			new DependencyExtractionWebpackPlugin( {} ),
 		],

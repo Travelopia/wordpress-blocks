@@ -22,7 +22,7 @@ function bootstrap(): void {
 function enqueue_block_editor_assets(): void {
 	// Get block asset details.
 	$block_assets = [];
-	$asset_file   = __DIR__ . '/../dist/blocks.asset.php';
+	$asset_file   = __DIR__ . '/../dist/blocks/blocks.asset.php';
 
 	if ( file_exists( $asset_file ) ) {
 		$block_assets = require $asset_file;
@@ -39,7 +39,7 @@ function enqueue_block_editor_assets(): void {
 	// Enqueue Block JavaScript.
 	wp_enqueue_script(
 		'travelopia-blocks',
-		plugin_dir_url( __DIR__ ) . 'dist/blocks.js',
+		plugin_dir_url( __DIR__ ) . 'dist/blocks/blocks.js',
 		$block_assets['dependencies'],
 		$block_assets['version'],
 		false
@@ -48,7 +48,7 @@ function enqueue_block_editor_assets(): void {
 	// Enqueue Block CSS.
 	wp_enqueue_style(
 		'travelopia-blocks',
-		plugin_dir_url( __DIR__ ) . 'dist/blocks.css',
+		plugin_dir_url( __DIR__ ) . 'dist/blocks/blocks.css',
 		[],
 		$block_assets['version']
 	);
