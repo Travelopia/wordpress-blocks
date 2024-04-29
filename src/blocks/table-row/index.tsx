@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 import { BlockConfiguration } from '@wordpress/blocks';
 import {
 	InnerBlocks,
-	useBlockProps,
 } from '@wordpress/block-editor';
 import {
 	blockTable as icon,
@@ -39,7 +38,6 @@ export const settings: BlockConfiguration = {
 	},
 	edit,
 	save() {
-		const blockProps = useBlockProps.save();
-		return <tr { ...blockProps }><InnerBlocks.Content /></tr>;
+		return <tr><InnerBlocks.Content /></tr>;
 	},
 };
