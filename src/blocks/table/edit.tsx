@@ -108,7 +108,7 @@ function TableEdit( props: BlockEditProps<any> ): JSX.Element {
 		<>
 			<InspectorControls>
 				<PanelBody title={ __( 'Table Options', 'tp' ) }>
-					{0 !== attributes.rows && 0 !== attributes.columns && (
+					{ 0 !== attributes.rows && 0 !== attributes.columns && (
 						<ToggleControl
 							label={ __( 'Header', 'tp' ) }
 							checked={ attributes.hasHeader }
@@ -122,7 +122,7 @@ function TableEdit( props: BlockEditProps<any> ): JSX.Element {
 							} }
 							help={ __( 'Does this table has a header row?', 'tp' ) }
 						/>
-					)}
+					) }
 				</PanelBody>
 			</InspectorControls>
 			<figure { ...blockProps }>
