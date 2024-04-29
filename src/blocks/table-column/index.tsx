@@ -2,10 +2,9 @@
  * WordPress dependencies.
  */
 import { __ } from '@wordpress/i18n';
-import { BlockConfiguration, BlockSaveProps } from '@wordpress/blocks';
+import { BlockConfiguration } from '@wordpress/blocks';
 import {
 	InnerBlocks,
-	useBlockProps,
 } from '@wordpress/block-editor';
 import {
 	blockTable as icon,
@@ -22,7 +21,7 @@ import edit from './edit';
 export const name: string = 'travelopia/table-column';
 
 export const settings: BlockConfiguration = {
-	apiVersion: 2,
+	apiVersion: 3,
 	icon,
 	title: __( 'Column', 'tp' ),
 	description: __( 'Individual column of the table.', 'tp' ),
@@ -59,13 +58,7 @@ export const settings: BlockConfiguration = {
 		},
 	},
 	edit,
-	save( { attributes } : BlockSaveProps<any> ) {
-		const blockProps = useBlockProps.save();
-
-		if ( attributes?.isHead ) {
-			return <th { ...blockProps }><InnerBlocks.Content /></th>;
-		}
-
-		return <td { ...blockProps }><InnerBlocks.Content /></td>;
+	save() {
+		return <td><InnerBlocks.Content /></td>;
 	},
 };
