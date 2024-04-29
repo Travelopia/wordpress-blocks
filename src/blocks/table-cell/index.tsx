@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { RichText } from '@wordpress/block-editor';
-import { BlockConfiguration, BlockSaveProps } from '@wordpress/blocks';
+import { BlockConfiguration, BlockInstance, BlockSaveProps, createBlock, TransformBlock } from '@wordpress/blocks';
 import {
 	blockTable as icon,
 } from '@wordpress/icons';
@@ -35,6 +35,17 @@ export const settings: BlockConfiguration = {
 	supports: {
 		html: true,
 		className: false,
+	},
+	transforms: {
+		to: [
+			...[ 'core/paragraph', 'core/heading', 'core/list', 'core/image' ].map( ( block ) => ( {
+				type: 'block',
+				blocks: [ block ],
+				transform: ( attributes: string[], innerBlocks: BlockInstance<{ [k: string]: any; }>[] | undefined ) => {
+					return createBlock( block, attributes, innerBlocks );
+				},
+			} ) ) as unknown as TransformBlock<Record<string, any>>[],
+		],
 	},
 	edit,
 	save( { attributes }: BlockSaveProps<any> ) {
