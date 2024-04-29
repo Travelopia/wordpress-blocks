@@ -8,6 +8,7 @@ import {
 	Button,
 	TextControl,
 	Placeholder,
+	ToggleControl,
 } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import {
@@ -37,6 +38,7 @@ export function TablePlaceholder( props: BlockEditProps<any> ): JSX.Element {
 	const { setAttributes, clientId } = props;
 	const [ rows, setRows ] = useState( 2 );
 	const [ columns, setColumns ] = useState( 2 );
+	const [ hasHeader, setHasHeader ] = useState( false );
 
 	return (
 		<Placeholder
@@ -51,7 +53,7 @@ export function TablePlaceholder( props: BlockEditProps<any> ): JSX.Element {
 					e.preventDefault();
 
 					// Set attributes.
-					setAttributes( { rows, columns } );
+					setAttributes( { rows, columns, hasHeader } );
 
 					// Get current block.
 					const currentBlock = select( 'core/block-editor' ).getBlock( clientId );
@@ -59,9 +61,27 @@ export function TablePlaceholder( props: BlockEditProps<any> ): JSX.Element {
 						return;
 					}
 
-					// Create row and column blocks.
 					const innerBlocks = [];
 
+					// Create header row if header is enabled.
+					if ( hasHeader ) {
+						const columnHeaderBlocks = [];
+
+						for ( let i: number = 0; i < columns; i++ ) {
+							columnHeaderBlocks.push(
+								createBlock( columnBlockName, {
+									isHead: true,
+								}, [
+									createBlock( cellBlockName ),
+								] )
+							);
+						}
+
+						const headerRowBlock = createBlock( rowBlockName, {}, columnHeaderBlocks );
+						innerBlocks.push( headerRowBlock );
+					}
+
+					// Create row and column blocks.
 					for ( let i: number = 0; i < rows; i++ ) {
 						const columnBlocks = [];
 						for ( let j: number = 0; j < columns; j++ ) {
@@ -96,6 +116,12 @@ export function TablePlaceholder( props: BlockEditProps<any> ): JSX.Element {
 					onChange={ ( totalRows: string ) => setRows( parseInt( totalRows ) ) }
 					min="1"
 					className="travelopia-table__placeholder-input"
+				/>
+				<ToggleControl
+					label={ __( 'Header', 'tp' ) }
+					checked={ hasHeader }
+					onChange={ ( header ) => setHasHeader( header ) }
+					className="travelopia-table__placeholder-toggle"
 				/>
 				<Button
 					variant="primary"
