@@ -82,6 +82,27 @@ export const createAndInsertRowContainer = ( type: string = 'tbody', tableClient
 };
 
 /**
+ * Delete row container child block.
+ *
+ * @param {string} type          Row container type.
+ * @param {string} tableClientId The table block's client ID.
+ */
+export const deleteRowContainer = ( type: string = 'thead', tableClientId: string = '' ): void => {
+	// Get table block.
+	const tableBlock = select( 'core/block-editor' ).getBlock( tableClientId );
+	if ( ! tableBlock || ! tableBlock.innerBlocks.length ) {
+		return;
+	}
+
+	// Find the child block and delete it.
+	tableBlock.innerBlocks.forEach( ( innerBlock ) => {
+		if ( innerBlock.attributes?.type === type ) {
+			dispatch( 'core/block-editor' ).removeBlock( innerBlock.clientId );
+		}
+	} );
+};
+
+/**
  * Edit function.
  *
  * @param {Object} props Edit properties.
@@ -109,8 +130,10 @@ function TableEdit( props: BlockEditProps<any> ): JSX.Element {
 	 * @param {boolean} hasThead Has THEAD.
 	 */
 	const handleTheadChange = ( hasThead: boolean ): void => {
-		if ( true === hasThead ) {
+		if ( hasThead ) {
 			createAndInsertRowContainer( 'thead', clientId );
+		} else {
+			deleteRowContainer( 'thead', clientId );
 		}
 		setAttributes( { hasThead } );
 	};
@@ -121,8 +144,10 @@ function TableEdit( props: BlockEditProps<any> ): JSX.Element {
 	 * @param {boolean} hasTfoot Has TFOOT.
 	 */
 	const handleTfootChange = ( hasTfoot: boolean ): void => {
-		if ( true === hasTfoot ) {
+		if ( hasTfoot ) {
 			createAndInsertRowContainer( 'tfoot', clientId );
+		} else {
+			deleteRowContainer( 'tfoot', clientId );
 		}
 		setAttributes( { hasTfoot } );
 	};
