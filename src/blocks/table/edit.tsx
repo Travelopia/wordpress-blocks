@@ -77,7 +77,8 @@ export const createAndInsertRowContainer = ( type: string = 'tbody', tableClient
 	if ( 'tbody' === type ) {
 		dispatch( 'core/block-editor' ).replaceInnerBlocks( tableClientId, [ rowContainerBlock ] );
 	} else {
-		dispatch( 'core/block-editor' ).insertBlock( rowContainerBlock, -1, tableClientId );
+		const position = 'thead' === type ? 0 : tableBlock.innerBlocks.length;
+		dispatch( 'core/block-editor' ).insertBlock( rowContainerBlock, position, tableClientId );
 	}
 };
 
