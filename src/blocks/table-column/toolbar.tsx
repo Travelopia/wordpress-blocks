@@ -302,46 +302,52 @@ export default function Toolbar( {
 		}
 
 		// Traverse rows.
-		tableBlock.innerBlocks.some( ( rowBlock, index ): boolean => {
-			// Get current row.
-			const rowNumber: number = index + 1;
-			if ( rowBlock.name !== rowBlockName || rowNumber !== tableRow || ! rowBlock.innerBlocks.length ) {
+		tableBlock.innerBlocks.some( ( currentRowContainerBlock ) => {
+			if ( currentRowContainerBlock.name !== rowContainerBlockName ) {
 				return false;
 			}
 
-			// Prepare variables.
-			let columnToMergeInto: BlockInstance | undefined;
-			let columnToMergeFrom: BlockInstance | undefined;
-
-			// Traverse columns in current row.
-			rowBlock.innerBlocks.some( ( columnBlock, columnIndex ): boolean => {
-				// Get column to merge from and into.
-				const columnNumber: number = columnIndex + 1;
-				if ( columnNumber === tableColumn - 1 ) {
-					columnToMergeInto = columnBlock;
-				} else if ( columnNumber === tableColumn ) {
-					columnToMergeFrom = columnBlock;
+			return currentRowContainerBlock.innerBlocks.some( ( rowBlock, index ): boolean => {
+				// Get current row.
+				const rowNumber: number = index + 1;
+				if ( rowBlock.name !== rowBlockName || rowNumber !== tableRow || ! rowBlock.innerBlocks.length ) {
+					return false;
 				}
 
-				// Short circuit if we found them.
-				if ( columnToMergeInto && columnToMergeFrom ) {
-					return true;
+				// Prepare variables.
+				let columnToMergeInto: BlockInstance | undefined;
+				let columnToMergeFrom: BlockInstance | undefined;
+
+				// Traverse columns in current row.
+				rowBlock.innerBlocks.some( ( columnBlock, columnIndex ): boolean => {
+					// Get column to merge from and into.
+					const columnNumber: number = columnIndex + 1;
+					if ( columnNumber === tableColumn - 1 ) {
+						columnToMergeInto = columnBlock;
+					} else if ( columnNumber === tableColumn ) {
+						columnToMergeFrom = columnBlock;
+					}
+
+					// Short circuit if we found them.
+					if ( columnToMergeInto && columnToMergeFrom ) {
+						return true;
+					}
+
+					// We haven't found them, loop some more.
+					return false;
+				} );
+
+				// Check if we have a "to" and "from" column.
+				if ( ! columnToMergeFrom || ! columnToMergeInto ) {
+					return false;
 				}
 
-				// We haven't found them, loop some more.
-				return false;
+				// Merge columns.
+				mergeColumnsHorizontally( columnToMergeFrom, columnToMergeInto );
+
+				// Short-circuit loop.
+				return true;
 			} );
-
-			// Check if we have a "to" and "from" column.
-			if ( ! columnToMergeFrom || ! columnToMergeInto ) {
-				return false;
-			}
-
-			// Merge columns.
-			mergeColumnsHorizontally( columnToMergeFrom, columnToMergeInto );
-
-			// Short-circuit loop.
-			return true;
 		} );
 	};
 
@@ -358,46 +364,52 @@ export default function Toolbar( {
 		}
 
 		// Traverse rows.
-		tableBlock.innerBlocks.some( ( rowBlock, index ): boolean => {
-			// Get current row.
-			const rowNumber: number = index + 1;
-			if ( rowBlock.name !== rowBlockName || rowNumber !== tableRow || ! rowBlock.innerBlocks.length ) {
+		tableBlock.innerBlocks.some( ( currentRowContainerBlock ) => {
+			if ( currentRowContainerBlock.name !== rowContainerBlockName ) {
 				return false;
 			}
 
-			// Prepare variables.
-			let columnToMergeInto: BlockInstance | undefined;
-			let columnToMergeFrom: BlockInstance | undefined;
-
-			// Traverse columns in current row.
-			rowBlock.innerBlocks.some( ( columnBlock, columnIndex ): boolean => {
-				// Get column to merge from and into.
-				const columnNumber: number = columnIndex + 1;
-				if ( columnNumber === tableColumn ) {
-					columnToMergeInto = columnBlock;
-				} else if ( columnNumber === tableColumn + 1 ) {
-					columnToMergeFrom = columnBlock;
+			return currentRowContainerBlock.innerBlocks.some( ( rowBlock, index ): boolean => {
+				// Get current row.
+				const rowNumber: number = index + 1;
+				if ( rowBlock.name !== rowBlockName || rowNumber !== tableRow || ! rowBlock.innerBlocks.length ) {
+					return false;
 				}
 
-				// Short circuit if we found them.
-				if ( columnToMergeInto && columnToMergeFrom ) {
-					return true;
+				// Prepare variables.
+				let columnToMergeInto: BlockInstance | undefined;
+				let columnToMergeFrom: BlockInstance | undefined;
+
+				// Traverse columns in current row.
+				rowBlock.innerBlocks.some( ( columnBlock, columnIndex ): boolean => {
+					// Get column to merge from and into.
+					const columnNumber: number = columnIndex + 1;
+					if ( columnNumber === tableColumn ) {
+						columnToMergeInto = columnBlock;
+					} else if ( columnNumber === tableColumn + 1 ) {
+						columnToMergeFrom = columnBlock;
+					}
+
+					// Short circuit if we found them.
+					if ( columnToMergeInto && columnToMergeFrom ) {
+						return true;
+					}
+
+					// We haven't found them, loop some more.
+					return false;
+				} );
+
+				// Check if we have a "to" and "from" column.
+				if ( ! columnToMergeFrom || ! columnToMergeInto ) {
+					return false;
 				}
 
-				// We haven't found them, loop some more.
-				return false;
+				// Merge columns.
+				mergeColumnsHorizontally( columnToMergeFrom, columnToMergeInto );
+
+				// Short-circuit loop.
+				return true;
 			} );
-
-			// Check if we have a "to" and "from" column.
-			if ( ! columnToMergeFrom || ! columnToMergeInto ) {
-				return false;
-			}
-
-			// Merge columns.
-			mergeColumnsHorizontally( columnToMergeFrom, columnToMergeInto );
-
-			// Short-circuit loop.
-			return true;
 		} );
 	};
 
@@ -418,42 +430,48 @@ export default function Toolbar( {
 		let columnToMergeFrom: BlockInstance | undefined;
 
 		// Traverse rows.
-		tableBlock.innerBlocks.some( ( rowBlock, rowIndex ): boolean => {
-			// Get current row.
-			const rowNumber: number = rowIndex + 1;
-			if ( rowBlock.name !== rowBlockName || ( rowNumber !== tableRow && rowNumber !== tableRow - 1 ) || ! rowBlock.innerBlocks.length ) {
+		tableBlock.innerBlocks.some( ( currentRowContainerBlock ) => {
+			if ( currentRowContainerBlock.name !== rowContainerBlockName ) {
 				return false;
 			}
 
-			// Traverse columns in current row.
-			rowBlock.innerBlocks.some( ( columnBlock, columnIndex ): boolean => {
-				// Get column to merge from and into.
-				const columnNumber: number = columnIndex + 1;
-				if ( columnNumber === tableColumn && rowNumber === tableRow ) {
-					columnToMergeFrom = columnBlock;
-				} else if ( columnNumber === tableColumn && rowNumber === tableRow - 1 ) {
-					columnToMergeInto = columnBlock;
+			return currentRowContainerBlock.innerBlocks.some( ( rowBlock, rowIndex ): boolean => {
+				// Get current row.
+				const rowNumber: number = rowIndex + 1;
+				if ( rowBlock.name !== rowBlockName || ( rowNumber !== tableRow && rowNumber !== tableRow - 1 ) || ! rowBlock.innerBlocks.length ) {
+					return false;
 				}
 
-				// Short circuit if we found them.
-				if ( columnToMergeInto && columnToMergeFrom ) {
-					return true;
+				// Traverse columns in current row.
+				rowBlock.innerBlocks.some( ( columnBlock, columnIndex ): boolean => {
+					// Get column to merge from and into.
+					const columnNumber: number = columnIndex + 1;
+					if ( columnNumber === tableColumn && rowNumber === tableRow ) {
+						columnToMergeFrom = columnBlock;
+					} else if ( columnNumber === tableColumn && rowNumber === tableRow - 1 ) {
+						columnToMergeInto = columnBlock;
+					}
+
+					// Short circuit if we found them.
+					if ( columnToMergeInto && columnToMergeFrom ) {
+						return true;
+					}
+
+					// We haven't found them, loop some more.
+					return false;
+				} );
+
+				// Check if we have a "to" and "from" column.
+				if ( ! columnToMergeFrom || ! columnToMergeInto ) {
+					return false;
 				}
 
-				// We haven't found them, loop some more.
-				return false;
+				// Merge columns.
+				mergeColumnsVertically( columnToMergeFrom, columnToMergeInto );
+
+				// Short-circuit loop.
+				return true;
 			} );
-
-			// Check if we have a "to" and "from" column.
-			if ( ! columnToMergeFrom || ! columnToMergeInto ) {
-				return false;
-			}
-
-			// Merge columns.
-			mergeColumnsVertically( columnToMergeFrom, columnToMergeInto );
-
-			// Short-circuit loop.
-			return true;
 		} );
 	};
 
@@ -474,42 +492,48 @@ export default function Toolbar( {
 		let columnToMergeFrom: BlockInstance | undefined;
 
 		// Traverse rows.
-		tableBlock.innerBlocks.some( ( rowBlock, rowIndex ): boolean => {
-			// Get current row.
-			const rowNumber: number = rowIndex + 1;
-			if ( rowBlock.name !== rowBlockName || ( rowNumber !== tableRow && rowNumber !== tableRow + 1 ) || ! rowBlock.innerBlocks.length ) {
+		tableBlock.innerBlocks.some( ( currentRowContainerBlock ) => {
+			if ( currentRowContainerBlock.name !== rowContainerBlockName ) {
 				return false;
 			}
 
-			// Traverse columns in current row.
-			rowBlock.innerBlocks.some( ( columnBlock, columnIndex ): boolean => {
-				// Get column to merge from and into.
-				const columnNumber: number = columnIndex + 1;
-				if ( columnNumber === tableColumn && rowNumber === tableRow ) {
-					columnToMergeInto = columnBlock;
-				} else if ( columnNumber === tableColumn && rowNumber === tableRow + 1 ) {
-					columnToMergeFrom = columnBlock;
+			return currentRowContainerBlock.innerBlocks.some( ( rowBlock, rowIndex ): boolean => {
+				// Get current row.
+				const rowNumber: number = rowIndex + 1;
+				if ( rowBlock.name !== rowBlockName || ( rowNumber !== tableRow && rowNumber !== tableRow + 1 ) || ! rowBlock.innerBlocks.length ) {
+					return false;
 				}
 
-				// Short circuit if we found them.
-				if ( columnToMergeInto && columnToMergeFrom ) {
-					return true;
+				// Traverse columns in current row.
+				rowBlock.innerBlocks.some( ( columnBlock, columnIndex ): boolean => {
+					// Get column to merge from and into.
+					const columnNumber: number = columnIndex + 1;
+					if ( columnNumber === tableColumn && rowNumber === tableRow ) {
+						columnToMergeInto = columnBlock;
+					} else if ( columnNumber === tableColumn && rowNumber === tableRow + 1 ) {
+						columnToMergeFrom = columnBlock;
+					}
+
+					// Short circuit if we found them.
+					if ( columnToMergeInto && columnToMergeFrom ) {
+						return true;
+					}
+
+					// We haven't found them, loop some more.
+					return false;
+				} );
+
+				// Check if we have a "to" and "from" column.
+				if ( ! columnToMergeFrom || ! columnToMergeInto ) {
+					return false;
 				}
 
-				// We haven't found them, loop some more.
-				return false;
+				// Merge columns.
+				mergeColumnsVertically( columnToMergeFrom, columnToMergeInto );
+
+				// Short-circuit loop.
+				return true;
 			} );
-
-			// Check if we have a "to" and "from" column.
-			if ( ! columnToMergeFrom || ! columnToMergeInto ) {
-				return false;
-			}
-
-			// Merge columns.
-			mergeColumnsVertically( columnToMergeFrom, columnToMergeInto );
-
-			// Short-circuit loop.
-			return true;
 		} );
 	};
 
