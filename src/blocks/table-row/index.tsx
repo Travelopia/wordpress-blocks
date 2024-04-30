@@ -25,10 +25,13 @@ export const settings: BlockConfiguration = {
 	icon,
 	title: __( 'Row', 'tp' ),
 	description: __( 'Individual row of the table.', 'tp' ),
-	parent: [ 'travelopia/table' ],
+	parent: [ 'travelopia/table-row-container' ],
 	category: 'text',
 	keywords: [ __( 'row', 'tp' ) ],
 	attributes: {},
+	usesContext: [
+		'travelopia/table-row-container-type',
+	],
 	supports: {
 		html: true,
 		color: {
@@ -38,6 +41,6 @@ export const settings: BlockConfiguration = {
 	},
 	edit,
 	save() {
-		return <tr><InnerBlocks.Content /></tr>;
+		return <InnerBlocks.Content />;
 	},
 };

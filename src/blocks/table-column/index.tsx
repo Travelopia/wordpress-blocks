@@ -46,6 +46,9 @@ export const settings: BlockConfiguration = {
 		'travelopia/table-row': 'row' as never,
 		'travelopia/table-column': 'column' as never,
 	},
+	usesContext: [
+		'travelopia/table-row-container-type',
+	],
 	supports: {
 		html: true,
 		color: {
@@ -55,6 +58,6 @@ export const settings: BlockConfiguration = {
 	},
 	edit,
 	save() {
-		return <td><InnerBlocks.Content /></td>;
+		return <InnerBlocks.Content />;
 	},
 };

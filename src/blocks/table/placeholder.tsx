@@ -12,19 +12,12 @@ import {
 import { useState } from '@wordpress/element';
 import {
 	BlockEditProps,
-	createBlock,
 } from '@wordpress/blocks';
-import {
-	select,
-	dispatch,
-} from '@wordpress/data';
 
 /**
  * Internal dependencies.
  */
-import { name as rowBlockName } from '../table-row';
-import { name as columnBlockName } from '../table-column';
-import { name as cellBlockName } from '../table-cell';
+import { createAndInsertRowContainer } from './edit';
 
 /**
  * Edit function.
@@ -53,32 +46,8 @@ export function TablePlaceholder( props: BlockEditProps<any> ): JSX.Element {
 					// Set attributes.
 					setAttributes( { rows, columns } );
 
-					// Get current block.
-					const currentBlock = select( 'core/block-editor' ).getBlock( clientId );
-					if ( ! currentBlock ) {
-						return;
-					}
-
-					// Create row and column blocks.
-					const innerBlocks = [];
-
-					for ( let i: number = 0; i < rows; i++ ) {
-						const columnBlocks = [];
-						for ( let j: number = 0; j < columns; j++ ) {
-							columnBlocks.push(
-								createBlock( columnBlockName, {}, [
-									createBlock( cellBlockName ),
-								] )
-							);
-						}
-
-						innerBlocks.push(
-							createBlock( rowBlockName, {}, columnBlocks )
-						);
-					}
-
-					// Add newly created row and column blocks to the table.
-					dispatch( 'core/block-editor' ).replaceInnerBlocks( clientId, innerBlocks );
+					// Create and insert row container.
+					createAndInsertRowContainer( 'tbody', clientId );
 				} }
 			>
 				<TextControl
