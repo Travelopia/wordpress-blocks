@@ -646,13 +646,13 @@ export default function Toolbar( {
 		{
 			icon: arrowUp,
 			title: __( 'Merge column up', 'tp' ),
-			isDisabled: tableRow < 2,
+			isDisabled: ( tableRow < 2 || rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead' ),
 			onClick: onMergeColumnUp,
 		},
 		{
 			icon: arrowDown,
 			title: __( 'Merge column down', 'tp' ),
-			// isDisabled: tableColumn === maximumRowsInCurrentColumn,
+			isDisabled: ( rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead' ),
 			onClick: onMergeColumnDown,
 		},
 	] as DropdownOption[];
