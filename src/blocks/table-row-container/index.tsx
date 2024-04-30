@@ -41,10 +41,14 @@ export const settings: BlockConfiguration = {
 			type: 'boolean',
 			default: false,
 		},
+		blockId: {
+			type: 'string',
+		},
 	},
 	providesContext: {
 		'travelopia/table-row-container-type': 'type' as never,
 		'travelopia/table-row-container-sticky': 'isSticky' as never,
+		'travelopia/table-row-container-id': 'blockId' as never,
 	},
 	supports: {
 		html: false,

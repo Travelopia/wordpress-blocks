@@ -48,6 +48,7 @@ export const settings: BlockConfiguration = {
 	},
 	usesContext: [
 		'travelopia/table-row-container-type',
+		'travelopia/table-row-container-id',
 	],
 	supports: {
 		html: true,

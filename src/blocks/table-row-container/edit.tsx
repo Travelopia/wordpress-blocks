@@ -24,6 +24,7 @@ import classnames from 'classnames';
  * Internal dependencies.
  */
 import { name as rowBlockName } from '../table-row';
+import { useEffect } from '@wordpress/element';
 
 /**
  * Edit function.
@@ -34,7 +35,7 @@ import { name as rowBlockName } from '../table-row';
  */
 function TableRowContainerEdit( props: BlockEditProps<any> ): JSX.Element {
 	// Block props.
-	const { className, attributes, setAttributes } = props;
+	const { className, attributes, setAttributes, clientId } = props;
 
 	// Inner block props.
 	const blockProps = useBlockProps( {
@@ -46,6 +47,10 @@ function TableRowContainerEdit( props: BlockEditProps<any> ): JSX.Element {
 
 	// Determine tag.
 	const Tag: string = attributes.type;
+
+	useEffect( () => {
+		setAttributes( { blockId: clientId } );
+	}, [ clientId, setAttributes ] );
 
 	// Return component.
 	return (

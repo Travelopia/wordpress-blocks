@@ -23,6 +23,7 @@ import {
 import {
 	useState,
 	useEffect,
+	useMemo,
 } from '@wordpress/element';
 
 /**
@@ -31,15 +32,17 @@ import {
 import { name as columnBlockName } from './index';
 import { name as rowBlockName } from '../table-row';
 import { name as cellBlockName } from '../table-cell';
+import { name as rowContainerBlockName } from '../table-row-container';
 
 /**
  * Column block toolbar.
  *
- * @param {Object}  props             Block properties.
- * @param {boolean} props.isSelected  Is block selected.
- * @param {string}  props.tableId     Table block ID.
- * @param {number}  props.tableRow    Table row index.
- * @param {number}  props.tableColumn Table column index.
+ * @param {Object}  props                Block properties.
+ * @param {boolean} props.isSelected     Is block selected.
+ * @param {string}  props.tableId        Table block ID.
+ * @param {number}  props.tableRow       Table row index.
+ * @param {number}  props.tableColumn    Table column index.
+ * @param {string}  props.rowContainerId Table row container ID.
  *
  * @return {JSX.Element} JSX Component.
  */
@@ -48,11 +51,13 @@ export default function Toolbar( {
 	tableId,
 	tableRow,
 	tableColumn,
+	rowContainerId,
 }: {
 	isSelected: boolean;
 	tableId: string;
 	tableRow: number;
 	tableColumn: number;
+	rowContainerId: string;
 } ): JSX.Element {
 	const {
 		getBlock,
@@ -72,6 +77,8 @@ export default function Toolbar( {
 	} = dispatch( 'core/block-editor' );
 
 	const [ maximumColumnsInCurrentRow, setMaximumColumnsInCurrentRow ] = useState( 0 );
+
+	const rowContainerBlock = useMemo( () => getBlock( rowContainerId ), [ rowContainerId, getBlock ] );
 
 	/**
 	 * Set maximum columns in current row.
@@ -116,7 +123,7 @@ export default function Toolbar( {
 		}
 
 		// Check if the row block can be inserted.
-		if ( ! canInsertBlockType( rowBlockName, tableId ) ) {
+		if ( ! canInsertBlockType( rowBlockName, rowContainerId ) ) {
 			return;
 		}
 
@@ -134,7 +141,7 @@ export default function Toolbar( {
 		const newRowBlock = createBlock( rowBlockName, {}, columnBlocks );
 
 		// Insert the new row block.
-		insertBlock( newRowBlock, tableRow + insertionIndex, tableId );
+		insertBlock( newRowBlock, tableRow + insertionIndex, rowContainerId );
 
 		// Update the table block attributes.
 		updateBlockAttributes( tableId, {
@@ -154,8 +161,12 @@ export default function Toolbar( {
 			return;
 		}
 
+		if ( ! rowContainerBlock ) {
+			return;
+		}
+
 		// Get current row block.
-		const currentRowBlock = tableBlock.innerBlocks[ tableRow - 1 ];
+		const currentRowBlock = rowContainerBlock.innerBlocks[ tableRow - 1 ];
 
 		// Check if the current row block is removable.
 		if (
@@ -188,25 +199,37 @@ export default function Toolbar( {
 			return;
 		}
 
+		if ( ! rowContainerBlock ) {
+			return;
+		}
+
 		// Loop through the table row blocks and insert a new column block.
-		tableBlock.innerBlocks.forEach( ( rowBlock ) => {
-			// Check the name of the row block.
-			if ( rowBlock.name !== rowBlockName ) {
+		tableBlock.innerBlocks.forEach( ( currentRowContainerBlock ) => {
+			// Check the name of the row container block.
+			if ( currentRowContainerBlock.name !== rowContainerBlockName ) {
 				return;
 			}
 
-			// Check if the column block can be inserted.
-			if ( ! canInsertBlockType( columnBlockName, rowBlock.clientId ) ) {
-				return;
-			}
+			// Loop through the row container blocks.
+			currentRowContainerBlock.innerBlocks.forEach( ( rowBlock ) => {
+				// Check the name of the row block.
+				if ( rowBlock.name !== rowBlockName ) {
+					return;
+				}
 
-			// Create a new column block.
-			const newColumnBlock = createBlock( columnBlockName, {}, [
-				createBlock( cellBlockName ),
-			] );
+				// Check if the column block can be inserted.
+				if ( ! canInsertBlockType( columnBlockName, rowBlock.clientId ) ) {
+					return;
+				}
 
-			// Insert the new column block.
-			insertBlock( newColumnBlock, tableColumn + insertionIndex, rowBlock.clientId );
+				// Create a new column block.
+				const newColumnBlock = createBlock( columnBlockName, {}, [
+					createBlock( cellBlockName ),
+				] );
+
+				// Insert the new column block.
+				insertBlock( newColumnBlock, tableColumn + insertionIndex, rowBlock.clientId );
+			} );
 		} );
 
 		// Update the table block attributes.
@@ -231,22 +254,30 @@ export default function Toolbar( {
 		const columnsToRemove: string[] = [];
 
 		// Loop through the table row blocks.
-		tableBlock.innerBlocks.forEach( ( rowBlock ) => {
-			// Check the name of the row block.
-			if ( rowBlock.name !== rowBlockName ) {
+		tableBlock.innerBlocks.forEach( ( currentRowContainerBlock ) => {
+			// Check the name of the row container block.
+			if ( currentRowContainerBlock.name !== rowContainerBlockName ) {
 				return;
 			}
 
-			// Get the current column block.
-			const currentColumnBlock = rowBlock.innerBlocks[ tableColumn - 1 ];
+			// Loop through the row container blocks.
+			currentRowContainerBlock.innerBlocks.forEach( ( rowBlock ) => {
+				// Check the name of the row block.
+				if ( rowBlock.name !== rowBlockName ) {
+					return;
+				}
 
-			// Check if the current column block is removable.
-			if (
-				currentColumnBlock?.clientId &&
-				canRemoveBlock( currentColumnBlock.clientId )
-			) {
-				columnsToRemove.push( currentColumnBlock.clientId );
-			}
+				// Get the current column block.
+				const currentColumnBlock = rowBlock.innerBlocks[ tableColumn - 1 ];
+
+				// Check if the current column block is removable.
+				if (
+					currentColumnBlock?.clientId &&
+					canRemoveBlock( currentColumnBlock.clientId )
+				) {
+					columnsToRemove.push( currentColumnBlock.clientId );
+				}
+			} );
 		} );
 
 		// Remove the columns.
@@ -543,19 +574,19 @@ export default function Toolbar( {
 		{
 			icon: tableRowBefore,
 			title: __( 'Insert row before', 'tp' ),
-			isDisabled: ! isSelected,
+			isDisabled: ( ! isSelected || rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead' ),
 			onClick: () => onInsertRow( -1 ),
 		},
 		{
 			icon: tableRowAfter,
 			title: __( 'Insert row after', 'tp' ),
-			isDisabled: ! isSelected,
+			isDisabled: ( ! isSelected || rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead' ),
 			onClick: onInsertRow,
 		},
 		{
 			icon: tableRowDelete,
 			title: __( 'Delete row', 'tp' ),
-			isDisabled: ! isSelected,
+			isDisabled: ( ! isSelected || rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead' ),
 			onClick: onDeleteRow,
 		},
 		{
