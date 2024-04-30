@@ -50,6 +50,8 @@ export const settings: BlockConfiguration = {
 	},
 	providesContext: {
 		'travelopia/table-id': 'blockId' as never,
+		'travelopia/table-total-rows': 'rows' as never,
+		'travelopia/table-total-columns': 'columns' as never,
 	},
 	supports: {
 		anchor: true,

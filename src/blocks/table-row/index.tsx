@@ -28,7 +28,23 @@ export const settings: BlockConfiguration = {
 	parent: [ 'travelopia/table' ],
 	category: 'text',
 	keywords: [ __( 'row', 'tp' ) ],
-	attributes: {},
+	attributes: {
+		isThead: {
+			type: 'boolean',
+			default: false,
+		},
+		isTfoot: {
+			type: 'boolean',
+			default: false,
+		},
+	},
+	providesContext: {
+		'travelopia/table-row-is-thead': 'isThead' as never,
+		'travelopia/table-row-is-tfoot': 'isTfoot' as never,
+	},
+	usesContext: [
+		'travelopia/table-total-rows',
+	],
 	supports: {
 		html: true,
 		color: {
