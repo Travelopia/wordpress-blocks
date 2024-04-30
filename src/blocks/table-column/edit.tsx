@@ -46,10 +46,16 @@ function TableColumnEdit( {
 		className: classnames( className, 'travelopia-table__column' ),
 	} );
 
-	const tableId = context[ 'travelopia/table-id' ] as string;
+	const tableId: string = context[ 'travelopia/table-id' ] as string;
+	const isThead: boolean = context[ 'travelopia/table-row-is-thead' ] as boolean;
+	const isTfoot: boolean = context[ 'travelopia/table-row-is-tfoot' ] as boolean;
 
 	const innerBlocksProps = useInnerBlocksProps(
-		{ ...blockProps },
+		{
+			...blockProps,
+			colSpan: attributes.colSpan,
+			rowSpan: attributes.rowSpan,
+		},
 		{
 			template: [ [ cellBlockName ] ],
 			templateLock: false,
@@ -78,6 +84,12 @@ function TableColumnEdit( {
 		setAttributes( { row, column } );
 	}, [ row, column, setAttributes ] );
 
+	// Determine tag.
+	let Tag: string = 'td';
+	if ( isThead || isTfoot ) {
+		Tag = 'th';
+	}
+
 	return (
 		<>
 			<Toolbar
@@ -86,10 +98,8 @@ function TableColumnEdit( {
 				tableColumn={ column }
 				tableId={ tableId }
 			/>
-			<td
+			<Tag
 				{ ...innerBlocksProps }
-				colSpan={ attributes.colSpan }
-				rowSpan={ attributes.rowSpan }
 			/>
 		</>
 	);

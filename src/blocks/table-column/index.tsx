@@ -46,6 +46,10 @@ export const settings: BlockConfiguration = {
 		'travelopia/table-row': 'row' as never,
 		'travelopia/table-column': 'column' as never,
 	},
+	usesContext: [
+		'travelopia/table-row-is-thead',
+		'travelopia/table-row-is-tfoot',
+	],
 	supports: {
 		html: true,
 		color: {
