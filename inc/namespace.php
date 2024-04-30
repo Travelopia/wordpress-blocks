@@ -13,13 +13,17 @@ namespace Travelopia\Blocks;
  * @return void
  */
 function bootstrap(): void {
-	add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\\enqueue_block_editor_assets' );
+	add_action( 'enqueue_block_assets', __NAMESPACE__ . '\\enqueue_block_editor_assets' );
 }
 
 /**
  * Enqueue Editor Assets.
  */
 function enqueue_block_editor_assets(): void {
+	if ( ! is_admin() ) {
+		return;
+	}
+
 	// Get block asset details.
 	$block_assets = [];
 	$asset_file   = __DIR__ . '/../dist/blocks.asset.php';
