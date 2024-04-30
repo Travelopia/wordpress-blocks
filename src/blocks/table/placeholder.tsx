@@ -22,6 +22,7 @@ import {
 /**
  * Internal dependencies.
  */
+import { name as rowContainerBlockName } from '../table-row-container';
 import { name as rowBlockName } from '../table-row';
 import { name as columnBlockName } from '../table-column';
 import { name as cellBlockName } from '../table-cell';
@@ -59,9 +60,10 @@ export function TablePlaceholder( props: BlockEditProps<any> ): JSX.Element {
 						return;
 					}
 
-					// Create row and column blocks.
-					const innerBlocks = [];
+					// Create TBODY.
+					const tBodyBlock = createBlock( rowContainerBlockName, { type: 'tbody' } );
 
+					// Add rows and columns to it.
 					for ( let i: number = 0; i < rows; i++ ) {
 						const columnBlocks = [];
 						for ( let j: number = 0; j < columns; j++ ) {
@@ -72,13 +74,13 @@ export function TablePlaceholder( props: BlockEditProps<any> ): JSX.Element {
 							);
 						}
 
-						innerBlocks.push(
+						tBodyBlock.innerBlocks.push(
 							createBlock( rowBlockName, {}, columnBlocks )
 						);
 					}
 
 					// Add newly created row and column blocks to the table.
-					dispatch( 'core/block-editor' ).replaceInnerBlocks( clientId, innerBlocks );
+					dispatch( 'core/block-editor' ).replaceInnerBlocks( clientId, [ tBodyBlock ] );
 				} }
 			>
 				<TextControl

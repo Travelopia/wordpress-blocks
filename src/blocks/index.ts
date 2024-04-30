@@ -7,6 +7,7 @@ import { registerBlockType } from '@wordpress/blocks';
  * Import blocks.
  */
 import * as table from './table';
+import * as tableRowContainer from './table-row-container';
 import * as tableRow from './table-row';
 import * as tableColumn from './table-column';
 import * as tableCell from './table-cell';
@@ -21,6 +22,7 @@ import './block-toolbar';
  */
 const blocks = [
 	table,
+	tableRowContainer,
 	tableRow,
 	tableColumn,
 	tableCell,

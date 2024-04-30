@@ -18,31 +18,39 @@ import edit from './edit';
 /**
  * Block data.
  */
-export const name: string = 'travelopia/table-row';
+export const name: string = 'travelopia/table-row-container';
 
 export const settings: BlockConfiguration = {
 	apiVersion: 3,
 	icon,
-	title: __( 'Row', 'tp' ),
-	description: __( 'Individual row of the table.', 'tp' ),
-	parent: [ 'travelopia/table-row-container' ],
+	title: __( 'Row Container', 'tp' ),
+	description: __( 'A container for a row (THEAD, TBODY, TFOOT).', 'tp' ),
+	parent: [ 'travelopia/table' ],
 	category: 'text',
-	keywords: [ __( 'row', 'tp' ) ],
+	keywords: [
+		__( 'thead', 'tp' ),
+		__( 'tbody', 'tp' ),
+		__( 'tfoot', 'tp' ),
+	],
 	attributes: {
+		type: {
+			type: 'string',
+			default: 'tbody',
+		},
 		isSticky: {
 			type: 'boolean',
 			default: false,
 		},
 	},
+	providesContext: {
+		'travelopia/table-row-container-type': 'type' as never,
+		'travelopia/table-row-container-sticky': 'isSticky' as never,
+	},
 	usesContext: [
-		'travelopia/table-row-container-type',
+		'travelopia/table-row-is-thead',
 	],
 	supports: {
-		html: true,
-		color: {
-			text: true,
-			background: true,
-		},
+		html: false,
 	},
 	edit,
 	save() {

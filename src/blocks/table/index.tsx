@@ -47,11 +47,21 @@ export const settings: BlockConfiguration = {
 		blockId: {
 			type: 'string',
 		},
+		hasThead: {
+			type: 'boolean',
+			default: false,
+		},
+		hasTfoot: {
+			type: 'boolean',
+			default: false,
+		},
 	},
 	providesContext: {
 		'travelopia/table-id': 'blockId' as never,
 		'travelopia/table-total-rows': 'rows' as never,
 		'travelopia/table-total-columns': 'columns' as never,
+		'travelopia/table-has-thead': 'hasThead' as never,
+		'travelopia/table-has-tfoot': 'hasTfoot' as never,
 	},
 	supports: {
 		anchor: true,

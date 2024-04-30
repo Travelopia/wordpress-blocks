@@ -47,8 +47,7 @@ function TableColumnEdit( {
 	} );
 
 	const tableId: string = context[ 'travelopia/table-id' ] as string;
-	const isThead: boolean = context[ 'travelopia/table-row-is-thead' ] as boolean;
-	const isTfoot: boolean = context[ 'travelopia/table-row-is-tfoot' ] as boolean;
+	const rowContainerType: string = context[ 'travelopia/table-row-container-type' ] as string;
 
 	const innerBlocksProps = useInnerBlocksProps(
 		{
@@ -86,7 +85,7 @@ function TableColumnEdit( {
 
 	// Determine tag.
 	let Tag: string = 'td';
-	if ( isThead || isTfoot ) {
+	if ( 'tbody' !== rowContainerType ) {
 		Tag = 'th';
 	}
 
