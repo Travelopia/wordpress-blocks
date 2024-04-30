@@ -32,16 +32,17 @@ import {
 import { name as columnBlockName } from './index';
 import { name as rowBlockName } from '../table-row';
 import { name as cellBlockName } from '../table-cell';
-import  { name as rowContainerBlockName } from '../table-row-container';
+import { name as rowContainerBlockName } from '../table-row-container';
 
 /**
  * Column block toolbar.
  *
- * @param {Object}  props             Block properties.
- * @param {boolean} props.isSelected  Is block selected.
- * @param {string}  props.tableId     Table block ID.
- * @param {number}  props.tableRow    Table row index.
- * @param {number}  props.tableColumn Table column index.
+ * @param {Object}  props                Block properties.
+ * @param {boolean} props.isSelected     Is block selected.
+ * @param {string}  props.tableId        Table block ID.
+ * @param {number}  props.tableRow       Table row index.
+ * @param {number}  props.tableColumn    Table column index.
+ * @param {string}  props.rowContainerId Table row container ID.
  *
  * @return {JSX.Element} JSX Component.
  */
@@ -203,14 +204,14 @@ export default function Toolbar( {
 		}
 
 		// Loop through the table row blocks and insert a new column block.
-		tableBlock.innerBlocks.forEach( ( rowContainerBlock ) => {
+		tableBlock.innerBlocks.forEach( ( currentRowContainerBlock ) => {
 			// Check the name of the row container block.
-			if ( rowContainerBlock.name !== rowContainerBlockName ) {
+			if ( currentRowContainerBlock.name !== rowContainerBlockName ) {
 				return;
 			}
 
 			// Loop through the row container blocks.
-			rowContainerBlock.innerBlocks.forEach( ( rowBlock ) => {
+			currentRowContainerBlock.innerBlocks.forEach( ( rowBlock ) => {
 				// Check the name of the row block.
 				if ( rowBlock.name !== rowBlockName ) {
 					return;
@@ -228,7 +229,7 @@ export default function Toolbar( {
 
 				// Insert the new column block.
 				insertBlock( newColumnBlock, tableColumn + insertionIndex, rowBlock.clientId );
-			});
+			} );
 		} );
 
 		// Update the table block attributes.
@@ -253,14 +254,14 @@ export default function Toolbar( {
 		const columnsToRemove: string[] = [];
 
 		// Loop through the table row blocks.
-		tableBlock.innerBlocks.forEach( ( rowContainerBlock ) => {
+		tableBlock.innerBlocks.forEach( ( currentRowContainerBlock ) => {
 			// Check the name of the row container block.
-			if ( rowContainerBlock.name !== rowContainerBlockName ) {
+			if ( currentRowContainerBlock.name !== rowContainerBlockName ) {
 				return;
 			}
 
 			// Loop through the row container blocks.
-			rowContainerBlock.innerBlocks.forEach( ( rowBlock ) => {
+			currentRowContainerBlock.innerBlocks.forEach( ( rowBlock ) => {
 				// Check the name of the row block.
 				if ( rowBlock.name !== rowBlockName ) {
 					return;
@@ -276,7 +277,7 @@ export default function Toolbar( {
 				) {
 					columnsToRemove.push( currentColumnBlock.clientId );
 				}
-			});
+			} );
 		} );
 
 		// Remove the columns.
@@ -573,19 +574,19 @@ export default function Toolbar( {
 		{
 			icon: tableRowBefore,
 			title: __( 'Insert row before', 'tp' ),
-			isDisabled: (! isSelected || rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead'),
+			isDisabled: ( ! isSelected || rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead' ),
 			onClick: () => onInsertRow( -1 ),
 		},
 		{
 			icon: tableRowAfter,
 			title: __( 'Insert row after', 'tp' ),
-			isDisabled: (! isSelected || rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead'),
+			isDisabled: ( ! isSelected || rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead' ),
 			onClick: onInsertRow,
 		},
 		{
 			icon: tableRowDelete,
 			title: __( 'Delete row', 'tp' ),
-			isDisabled: (! isSelected || rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead'),
+			isDisabled: ( ! isSelected || rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead' ),
 			onClick: onDeleteRow,
 		},
 		{

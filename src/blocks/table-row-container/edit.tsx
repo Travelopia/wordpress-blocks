@@ -48,9 +48,9 @@ function TableRowContainerEdit( props: BlockEditProps<any> ): JSX.Element {
 	// Determine tag.
 	const Tag: string = attributes.type;
 
-	useEffect(() => {
+	useEffect( () => {
 		setAttributes( { blockId: clientId } );
-	}, [clientId]);
+	}, [ clientId, setAttributes ] );
 
 	// Return component.
 	return (
