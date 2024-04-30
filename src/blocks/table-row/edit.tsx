@@ -65,12 +65,22 @@ function TableRowEdit( props: BlockEditProps<any> ): JSX.Element {
 				<InspectorControls>
 					<PanelBody title={ __( 'Row Options', 'tp' ) }>
 						{ 1 === currentIndex &&
-							<ToggleControl
-								label={ __( 'Is THEAD', 'tp' ) }
-								checked={ attributes.isThead }
-								onChange={ ( isThead: boolean ) => setAttributes( { isThead } ) }
-								help={ __( 'Is this row the header of the table?', 'tp' ) }
-							/>
+							<>
+								<ToggleControl
+									label={ __( 'Is THEAD', 'tp' ) }
+									checked={ attributes.isThead }
+									onChange={ ( isThead: boolean ) => setAttributes( { isThead } ) }
+									help={ __( 'Is this row the header of the table?', 'tp' ) }
+								/>
+								{ attributes.isThead &&
+									<ToggleControl
+										label={ __( 'Is Sticky', 'tp' ) }
+										checked={ attributes.isSticky }
+										onChange={ ( isSticky: boolean ) => setAttributes( { isSticky } ) }
+										help={ __( 'Should this row stick to the top of the table as the user scrolls?', 'tp' ) }
+									/>
+								}
+							</>
 						}
 						{ currentIndex === totalRows &&
 							<ToggleControl

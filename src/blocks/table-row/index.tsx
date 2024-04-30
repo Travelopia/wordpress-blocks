@@ -37,6 +37,10 @@ export const settings: BlockConfiguration = {
 			type: 'boolean',
 			default: false,
 		},
+		isSticky: {
+			type: 'boolean',
+			default: false,
+		},
 	},
 	providesContext: {
 		'travelopia/table-row-is-thead': 'isThead' as never,
