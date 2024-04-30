@@ -23,6 +23,7 @@ import {
 import {
 	useState,
 	useEffect,
+	useMemo,
 } from '@wordpress/element';
 
 /**
@@ -74,6 +75,8 @@ export default function Toolbar( {
 	} = dispatch( 'core/block-editor' );
 
 	const [ maximumColumnsInCurrentRow, setMaximumColumnsInCurrentRow ] = useState( 0 );
+
+	const rowContainerBlock = useMemo( () => getBlock( rowContainerId ), [ rowContainerId, getBlock ] );
 
 	/**
 	 * Set maximum columns in current row.
@@ -156,8 +159,12 @@ export default function Toolbar( {
 			return;
 		}
 
+		if ( ! rowContainerBlock ) {
+			return;
+		}
+
 		// Get current row block.
-		const currentRowBlock = tableBlock.innerBlocks[ tableRow - 1 ];
+		const currentRowBlock = rowContainerBlock.innerBlocks[ tableRow - 1 ];
 
 		// Check if the current row block is removable.
 		if (
@@ -545,19 +552,19 @@ export default function Toolbar( {
 		{
 			icon: tableRowBefore,
 			title: __( 'Insert row before', 'tp' ),
-			isDisabled: ! isSelected,
+			isDisabled: (! isSelected || rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead'),
 			onClick: () => onInsertRow( -1 ),
 		},
 		{
 			icon: tableRowAfter,
 			title: __( 'Insert row after', 'tp' ),
-			isDisabled: ! isSelected,
+			isDisabled: (! isSelected || rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead'),
 			onClick: onInsertRow,
 		},
 		{
 			icon: tableRowDelete,
 			title: __( 'Delete row', 'tp' ),
-			isDisabled: ! isSelected,
+			isDisabled: (! isSelected || rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead'),
 			onClick: onDeleteRow,
 		},
 		{
