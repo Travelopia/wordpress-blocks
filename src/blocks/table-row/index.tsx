@@ -38,6 +38,6 @@ export const settings: BlockConfiguration = {
 	},
 	edit,
 	save() {
-		return <tr><InnerBlocks.Content /></tr>;
+		return <InnerBlocks.Content />;
 	},
 };
