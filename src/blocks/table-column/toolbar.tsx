@@ -253,22 +253,30 @@ export default function Toolbar( {
 		const columnsToRemove: string[] = [];
 
 		// Loop through the table row blocks.
-		tableBlock.innerBlocks.forEach( ( rowBlock ) => {
-			// Check the name of the row block.
-			if ( rowBlock.name !== rowBlockName ) {
+		tableBlock.innerBlocks.forEach( ( rowContainerBlock ) => {
+			// Check the name of the row container block.
+			if ( rowContainerBlock.name !== rowContainerBlockName ) {
 				return;
 			}
 
-			// Get the current column block.
-			const currentColumnBlock = rowBlock.innerBlocks[ tableColumn - 1 ];
+			// Loop through the row container blocks.
+			rowContainerBlock.innerBlocks.forEach( ( rowBlock ) => {
+				// Check the name of the row block.
+				if ( rowBlock.name !== rowBlockName ) {
+					return;
+				}
 
-			// Check if the current column block is removable.
-			if (
-				currentColumnBlock?.clientId &&
-				canRemoveBlock( currentColumnBlock.clientId )
-			) {
-				columnsToRemove.push( currentColumnBlock.clientId );
-			}
+				// Get the current column block.
+				const currentColumnBlock = rowBlock.innerBlocks[ tableColumn - 1 ];
+
+				// Check if the current column block is removable.
+				if (
+					currentColumnBlock?.clientId &&
+					canRemoveBlock( currentColumnBlock.clientId )
+				) {
+					columnsToRemove.push( currentColumnBlock.clientId );
+				}
+			});
 		} );
 
 		// Remove the columns.
