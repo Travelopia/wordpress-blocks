@@ -32,6 +32,7 @@ import {
 import { name as columnBlockName } from './index';
 import { name as rowBlockName } from '../table-row';
 import { name as cellBlockName } from '../table-cell';
+import  { name as rowContainerBlockName } from '../table-row-container';
 
 /**
  * Column block toolbar.
@@ -197,25 +198,37 @@ export default function Toolbar( {
 			return;
 		}
 
+		if ( ! rowContainerBlock ) {
+			return;
+		}
+
 		// Loop through the table row blocks and insert a new column block.
-		tableBlock.innerBlocks.forEach( ( rowBlock ) => {
-			// Check the name of the row block.
-			if ( rowBlock.name !== rowBlockName ) {
+		tableBlock.innerBlocks.forEach( ( rowContainerBlock ) => {
+			// Check the name of the row container block.
+			if ( rowContainerBlock.name !== rowContainerBlockName ) {
 				return;
 			}
 
-			// Check if the column block can be inserted.
-			if ( ! canInsertBlockType( columnBlockName, rowBlock.clientId ) ) {
-				return;
-			}
+			// Loop through the row container blocks.
+			rowContainerBlock.innerBlocks.forEach( ( rowBlock ) => {
+				// Check the name of the row block.
+				if ( rowBlock.name !== rowBlockName ) {
+					return;
+				}
 
-			// Create a new column block.
-			const newColumnBlock = createBlock( columnBlockName, {}, [
-				createBlock( cellBlockName ),
-			] );
+				// Check if the column block can be inserted.
+				if ( ! canInsertBlockType( columnBlockName, rowBlock.clientId ) ) {
+					return;
+				}
 
-			// Insert the new column block.
-			insertBlock( newColumnBlock, tableColumn + insertionIndex, rowBlock.clientId );
+				// Create a new column block.
+				const newColumnBlock = createBlock( columnBlockName, {}, [
+					createBlock( cellBlockName ),
+				] );
+
+				// Insert the new column block.
+				insertBlock( newColumnBlock, tableColumn + insertionIndex, rowBlock.clientId );
+			});
 		} );
 
 		// Update the table block attributes.
