@@ -46,9 +46,6 @@ export const settings: BlockConfiguration = {
 		'travelopia/table-row-container-type': 'type' as never,
 		'travelopia/table-row-container-sticky': 'isSticky' as never,
 	},
-	usesContext: [
-		'travelopia/table-row-is-thead',
-	],
 	supports: {
 		html: false,
 	},

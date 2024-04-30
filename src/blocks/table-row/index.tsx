@@ -28,12 +28,7 @@ export const settings: BlockConfiguration = {
 	parent: [ 'travelopia/table-row-container' ],
 	category: 'text',
 	keywords: [ __( 'row', 'tp' ) ],
-	attributes: {
-		isSticky: {
-			type: 'boolean',
-			default: false,
-		},
-	},
+	attributes: {},
 	usesContext: [
 		'travelopia/table-row-container-type',
 	],
