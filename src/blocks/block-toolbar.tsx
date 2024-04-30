@@ -21,6 +21,7 @@ addFilter(
 			'travelopia/table-row',
 			'travelopia/table-column',
 			'travelopia/table-id',
+			'travelopia/table-row-container-id',
 		];
 
 		if ( settings.usesContext && Array.isArray( settings.usesContext ) ) {
@@ -49,6 +50,7 @@ addFilter( 'editor.BlockEdit', 'travelopia/table-toolbar', ( BlockEdit ) => {
 		const tableRow = context[ 'travelopia/table-row' ] as number;
 		const tableColumn = context[ 'travelopia/table-column' ] as number;
 		const tableId = context[ 'travelopia/table-id' ] as string;
+		const tableRowContainerId = context[ 'travelopia/table-row-container-id' ] as string;
 
 		if (
 			! tableRow ||
@@ -67,6 +69,7 @@ addFilter( 'editor.BlockEdit', 'travelopia/table-toolbar', ( BlockEdit ) => {
 					tableRow={ tableRow }
 					tableColumn={ tableColumn }
 					tableId={ tableId }
+					rowContainerId={ tableRowContainerId }
 				/>
 				<BlockEdit { ...props } />
 			</>

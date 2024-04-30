@@ -48,6 +48,7 @@ function TableColumnEdit( {
 
 	const tableId: string = context[ 'travelopia/table-id' ] as string;
 	const rowContainerType: string = context[ 'travelopia/table-row-container-type' ] as string;
+	const rowContainerId: string = context[ 'travelopia/table-row-container-id' ] as string;
 
 	const innerBlocksProps = useInnerBlocksProps(
 		{
@@ -96,6 +97,7 @@ function TableColumnEdit( {
 				tableRow={ row }
 				tableColumn={ column }
 				tableId={ tableId }
+				rowContainerId={ rowContainerId }
 			/>
 			<Tag
 				{ ...innerBlocksProps }

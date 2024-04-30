@@ -48,11 +48,13 @@ export default function Toolbar( {
 	tableId,
 	tableRow,
 	tableColumn,
+	rowContainerId,
 }: {
 	isSelected: boolean;
 	tableId: string;
 	tableRow: number;
 	tableColumn: number;
+	rowContainerId: string;
 } ): JSX.Element {
 	const {
 		getBlock,
@@ -116,7 +118,7 @@ export default function Toolbar( {
 		}
 
 		// Check if the row block can be inserted.
-		if ( ! canInsertBlockType( rowBlockName, tableId ) ) {
+		if ( ! canInsertBlockType( rowBlockName, rowContainerId ) ) {
 			return;
 		}
 
@@ -134,7 +136,7 @@ export default function Toolbar( {
 		const newRowBlock = createBlock( rowBlockName, {}, columnBlocks );
 
 		// Insert the new row block.
-		insertBlock( newRowBlock, tableRow + insertionIndex, tableId );
+		insertBlock( newRowBlock, tableRow + insertionIndex, rowContainerId );
 
 		// Update the table block attributes.
 		updateBlockAttributes( tableId, {
