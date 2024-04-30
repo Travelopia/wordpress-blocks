@@ -7,12 +7,19 @@ import {
 	useBlockProps,
 	useInnerBlocksProps,
 } from '@wordpress/block-editor';
-import { BlockEditProps } from '@wordpress/blocks';
+import {
+	BlockEditProps,
+	createBlock,
+} from '@wordpress/blocks';
 import { useEffect } from '@wordpress/element';
 import {
 	PanelBody,
 	ToggleControl,
 } from '@wordpress/components';
+import {
+	select,
+	dispatch,
+} from '@wordpress/data';
 
 /**
  * External dependencies.
@@ -24,6 +31,55 @@ import classnames from 'classnames';
  */
 import { TablePlaceholder } from './placeholder';
 import { name as rowContainerBlockName } from '../table-row-container';
+import { name as rowBlockName } from '../table-row';
+import { name as columnBlockName } from '../table-column';
+import { name as cellBlockName } from '../table-cell';
+
+/**
+ * Create and insert a row container.
+ *
+ * @param {string} type          Row container type.
+ * @param {string} tableClientId The table block's client ID.
+ */
+export const createAndInsertRowContainer = ( type: string = 'tbody', tableClientId: string = '' ): void => {
+	// Get table block.
+	const tableBlock = select( 'core/block-editor' ).getBlock( tableClientId );
+	if ( ! tableBlock ) {
+		return;
+	}
+
+	// Create row container.
+	const rowContainerBlock = createBlock( rowContainerBlockName, { type } );
+
+	// Determine number of rows to create.
+	let totalRows = tableBlock.attributes.rows;
+	if ( 'tbody' !== type ) {
+		totalRows = 1;
+	}
+
+	// Add rows and columns to it.
+	for ( let i: number = 0; i < totalRows; i++ ) {
+		const columnBlocks = [];
+		for ( let j: number = 0; j < tableBlock.attributes.columns; j++ ) {
+			columnBlocks.push(
+				createBlock( columnBlockName, {}, [
+					createBlock( cellBlockName ),
+				] )
+			);
+		}
+
+		rowContainerBlock.innerBlocks.push(
+			createBlock( rowBlockName, {}, columnBlocks )
+		);
+	}
+
+	// Add newly created row and column blocks to the table.
+	if ( 'tbody' === type ) {
+		dispatch( 'core/block-editor' ).replaceInnerBlocks( tableClientId, [ rowContainerBlock ] );
+	} else {
+		dispatch( 'core/block-editor' ).insertBlock( rowContainerBlock, -1, tableClientId );
+	}
+};
 
 /**
  * Edit function.
@@ -47,6 +103,30 @@ function TableEdit( props: BlockEditProps<any> ): JSX.Element {
 		setAttributes( { blockId: clientId } );
 	}, [ clientId, setAttributes ] );
 
+	/**
+	 * Handle THEAD change.
+	 *
+	 * @param {boolean} hasThead Has THEAD.
+	 */
+	const handleTheadChange = ( hasThead: boolean ): void => {
+		if ( true === hasThead ) {
+			createAndInsertRowContainer( 'thead', clientId );
+		}
+		setAttributes( { hasThead } );
+	};
+
+	/**
+	 * Handle TFOOT change.
+	 *
+	 * @param {boolean} hasTfoot Has TFOOT.
+	 */
+	const handleTfootChange = ( hasTfoot: boolean ): void => {
+		if ( true === hasTfoot ) {
+			createAndInsertRowContainer( 'tfoot', clientId );
+		}
+		setAttributes( { hasTfoot } );
+	};
+
 	return (
 		<>
 			<InspectorControls>
@@ -54,13 +134,13 @@ function TableEdit( props: BlockEditProps<any> ): JSX.Element {
 					<ToggleControl
 						label={ __( 'Has THEAD', 'tp' ) }
 						checked={ attributes.hasThead }
-						onChange={ ( hasThead: boolean ) => setAttributes( { hasThead } ) }
+						onChange={ handleTheadChange }
 						help={ __( 'Does this table have a header?', 'tp' ) }
 					/>
 					<ToggleControl
 						label={ __( 'Has TFOOT', 'tp' ) }
 						checked={ attributes.hasTfoot }
-						onChange={ ( hasTfoot: boolean ) => setAttributes( { hasTfoot } ) }
+						onChange={ handleTfootChange }
 						help={ __( 'Does this table have a footer?', 'tp' ) }
 					/>
 				</PanelBody>
