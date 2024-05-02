@@ -571,8 +571,6 @@ export default function Toolbar( {
 		// Get colspans.
 		const mergeIntoAttributes = getBlockAttributes( toColumn.clientId );
 		const mergeFromAttributes = getBlockAttributes( fromColumn.clientId );
-		const mergeIntoColspan: number = parseInt( mergeIntoAttributes?.colSpan ?? 1 );
-		const mergeFromColspan: number = parseInt( mergeFromAttributes?.colSpan ?? 1 );
 
 		// Get rowspans.
 		const mergeIntoRowspan: number = parseInt( mergeIntoAttributes?.rowSpan ?? 1 );
@@ -582,6 +580,9 @@ export default function Toolbar( {
 		if ( mergeIntoRowspan !== mergeFromRowspan ) {
 			return;
 		}
+
+		const mergeIntoColspan: number = parseInt( mergeIntoAttributes?.colSpan ?? 1 );
+		const mergeFromColspan: number = parseInt( mergeFromAttributes?.colSpan ?? 1 );
 
 		// Update colspan.
 		updateBlockAttributes( toColumn.clientId, { colSpan: mergeIntoColspan + mergeFromColspan } );
@@ -607,8 +608,6 @@ export default function Toolbar( {
 		// Get rowspans.
 		const mergeIntoAttributes = getBlockAttributes( toColumn.clientId );
 		const mergeFromAttributes = getBlockAttributes( fromColumn.clientId );
-		const mergeIntoRowspan: number = parseInt( mergeIntoAttributes?.rowSpan ?? 1 );
-		const mergeFromRowspan: number = parseInt( mergeFromAttributes?.rowSpan ?? 1 );
 
 		// Get colspans.
 		const mergeIntoColspan: number = parseInt( mergeIntoAttributes?.colSpan ?? 1 );
@@ -618,6 +617,9 @@ export default function Toolbar( {
 		if ( mergeIntoColspan !== mergeFromColspan ) {
 			return;
 		}
+
+		const mergeIntoRowspan: number = parseInt( mergeIntoAttributes?.rowSpan ?? 1 );
+		const mergeFromRowspan: number = parseInt( mergeFromAttributes?.rowSpan ?? 1 );
 
 		// Update rowspan.
 		updateBlockAttributes( toColumn.clientId, { rowSpan: mergeIntoRowspan + mergeFromRowspan } );
