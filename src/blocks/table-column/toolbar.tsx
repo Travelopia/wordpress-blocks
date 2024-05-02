@@ -307,6 +307,12 @@ export default function Toolbar( {
 				return false;
 			}
 
+			// Avoid merging thead/tfoot column with tbody column.
+			const currentRowContainerBlockAttributes = getBlockAttributes( currentRowContainerBlock.clientId );
+			if ( currentRowContainerBlockAttributes?.type !== rowContainerBlock?.attributes?.type ) {
+				return false;
+			}
+
 			return currentRowContainerBlock.innerBlocks.some( ( rowBlock, index ): boolean => {
 				// Get current row.
 				const rowNumber: number = index + 1;
@@ -366,6 +372,12 @@ export default function Toolbar( {
 		// Traverse rows.
 		tableBlock.innerBlocks.some( ( currentRowContainerBlock ) => {
 			if ( currentRowContainerBlock.name !== rowContainerBlockName ) {
+				return false;
+			}
+
+			// Avoid merging thead/tfoot column with tbody column.
+			const currentRowContainerBlockAttributes = getBlockAttributes( currentRowContainerBlock.clientId );
+			if ( currentRowContainerBlockAttributes?.type !== rowContainerBlock?.attributes?.type ) {
 				return false;
 			}
 
@@ -435,6 +447,12 @@ export default function Toolbar( {
 				return false;
 			}
 
+			// Avoid merging thead/tfoot row with tbody row.
+			const currentRowContainerBlockAttributes = getBlockAttributes( currentRowContainerBlock.clientId );
+			if ( currentRowContainerBlockAttributes?.type !== rowContainerBlock?.attributes?.type ) {
+				return false;
+			}
+
 			return currentRowContainerBlock.innerBlocks.some( ( rowBlock, rowIndex ): boolean => {
 				// Get current row.
 				const rowNumber: number = rowIndex + 1;
@@ -494,6 +512,12 @@ export default function Toolbar( {
 		// Traverse rows.
 		tableBlock.innerBlocks.some( ( currentRowContainerBlock ) => {
 			if ( currentRowContainerBlock.name !== rowContainerBlockName ) {
+				return false;
+			}
+
+			// Avoid merging thead/tfoot row with tbody row.
+			const currentRowContainerBlockAttributes = getBlockAttributes( currentRowContainerBlock.clientId );
+			if ( currentRowContainerBlockAttributes?.type !== rowContainerBlock?.attributes?.type ) {
 				return false;
 			}
 
