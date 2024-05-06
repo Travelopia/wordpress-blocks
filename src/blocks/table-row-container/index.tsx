@@ -16,6 +16,11 @@ import {
 import edit from './edit';
 
 /**
+ * Styles
+ */
+import './editor.scss';
+
+/**
  * Block data.
  */
 export const name: string = 'travelopia/table-row-container';
