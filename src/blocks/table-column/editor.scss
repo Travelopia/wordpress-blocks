@@ -1,0 +1,17 @@
+.travelopia-table__column {
+
+	&.alignleft {
+		display: flex;
+		justify-content: flex-start;
+	}
+
+	&.aligncenter {
+		display: flex;
+		justify-content: center;
+	}
+
+	&.alignright {
+		display: flex;
+		justify-content: flex-end;
+	}
+}
