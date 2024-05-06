@@ -5,6 +5,7 @@ import {
 	useBlockProps,
 	useInnerBlocksProps,
 	store as blockEditorStore,
+	InspectorControls,
 } from '@wordpress/block-editor';
 import { useEffect } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
@@ -20,6 +21,8 @@ import classnames from 'classnames';
  */
 import Toolbar from './toolbar';
 import { name as cellBlockName } from '../table-cell';
+import { PanelBody, ToggleControl } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Edit function.
@@ -43,7 +46,9 @@ function TableColumnEdit( {
 	context,
 }: BlockEditProps<any> ): JSX.Element {
 	const blockProps = useBlockProps( {
-		className: classnames( className, 'travelopia-table__column' ),
+		className: classnames( className, 'travelopia-table__column', {
+			'sticky-column': attributes.isSticky,
+		} ),
 	} );
 
 	const tableId: string = context[ 'travelopia/table-id' ] as string;
@@ -92,6 +97,16 @@ function TableColumnEdit( {
 
 	return (
 		<>
+			<InspectorControls>
+				<PanelBody title={ __( 'Column Options', 'tp' ) }>
+					<ToggleControl
+						label={ __( 'Is Sticky', 'tp' ) }
+						checked={ attributes.isSticky }
+						onChange={ ( isSticky: boolean ) => setAttributes( { isSticky } ) }
+						help={ __( 'Is this column sticky?', 'tp' ) }
+					/>
+				</PanelBody>
+			</InspectorControls>
 			<Toolbar
 				isSelected={ isSelected }
 				tableRow={ row }
