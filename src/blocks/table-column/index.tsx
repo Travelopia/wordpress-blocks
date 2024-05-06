@@ -43,7 +43,7 @@ export const settings: BlockConfiguration = {
 		},
 		isSticky: {
 			type: 'boolean',
-		}
+		},
 	},
 	providesContext: {
 		'travelopia/table-row': 'row' as never,
