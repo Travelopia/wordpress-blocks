@@ -13,7 +13,7 @@ module.exports = ( env ) => {
 	// Build configuration.
 	const buildConfig = {
 		entry: {
-			blocks: `./src/blocks/index.ts`,
+			blocks: `./src/editor/blocks/index.ts`,
 		},
 		module: {
 			rules: [
@@ -52,7 +52,7 @@ module.exports = ( env ) => {
 		},
 		output: {
 			path: __dirname,
-			filename: `./dist/[name].js`,
+			filename: `./dist/editor/[name].js`,
 			publicPath: '/',
 		},
 		optimization: {
@@ -70,7 +70,7 @@ module.exports = ( env ) => {
 		},
 		plugins: [
 			new MiniCssExtractPlugin( {
-				filename: `./dist/[name].css`,
+				filename: `./dist/editor/[name].css`,
 			} ),
 			new DependencyExtractionWebpackPlugin( {} ),
 		],
@@ -88,6 +88,24 @@ module.exports = ( env ) => {
 		buildConfig.devtool = 'source-map';
 	}
 
+	// Front-end styles.
+	const styleConfig = {
+		...buildConfig,
+		entry: {
+			table: `./src/front-end/table/index.ts`,
+		},
+		output: {
+			...buildConfig.output,
+			filename: `./dist/front-end/[name]/index.js`,
+		},
+		plugins: [
+			new MiniCssExtractPlugin( {
+				filename: `./dist/front-end/[name]/index.css`,
+			} ),
+			new DependencyExtractionWebpackPlugin( {} ),
+		],
+	};
+
 	// Return combined config.
-	return [ buildConfig ];
+	return [ buildConfig, styleConfig ];
 };
