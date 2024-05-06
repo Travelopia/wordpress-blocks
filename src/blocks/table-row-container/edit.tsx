@@ -61,7 +61,7 @@ function TableRowContainerEdit( props: BlockEditProps<any> ): JSX.Element {
 				<InspectorControls>
 					<PanelBody title={ __( 'Row Container Options', 'tp' ) }>
 						<ToggleControl
-							label={ __( 'Is Sticky', 'tp' ) }
+							label={ __( 'Is Sticky vertically', 'tp' ) }
 							checked={ attributes.isSticky }
 							onChange={ ( isSticky: boolean ) => setAttributes( { isSticky } ) }
 							help={ __( 'Is this container sticky?', 'tp' ) }
