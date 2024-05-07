@@ -36,6 +36,8 @@ function register(): void {
 /**
  * Render this block.
  *
+ * @see https://github.com/WordPress/WordPress/blob/master/wp-includes/blocks/calendar.php#L15
+ *
  * @param string|null $content Original content.
  * @param mixed[]     $block   Parsed block.
  *
