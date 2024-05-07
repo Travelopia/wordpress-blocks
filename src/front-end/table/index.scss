@@ -1,1 +1,29 @@
-// stylelint-disable no-empty-source
+.travelopia-table {
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+    &__column {
+
+        &--sticky {
+            position: sticky !important;
+            left: 0;
+            z-index: 1;
+        }
+    }
+
+    &__row-container {
+
+        &--sticky {
+
+            tr th {
+                position: sticky !important;
+                top: 0;
+                z-index: 1;
+            }
+        }
+    }
+}
