@@ -97,7 +97,7 @@ function render( ?string $content = null, array $block = [] ): null|string {
 							<?php
 							echo get_block_wrapper_attributes( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 								[
-									'class' => get_css_classes( $row_block['attrs'], [ 'travelopia-table__row ' ] ),
+									'class' => get_css_classes( $row_block['attrs'] ?? [], [ 'travelopia-table__row ' ] ),
 									'style' => get_css_styles( $row_block['attrs'] ?? [] ),
 								]
 							);
@@ -118,7 +118,7 @@ function render( ?string $content = null, array $block = [] ): null|string {
 															! empty( $column_block['attrs']['isSticky'] ) ? 'travelopia-table__column--sticky' : '',
 														]
 													),
-													'style'   => get_css_styles( $column_block['attrs'] ?? [] ),
+													'style'   => get_css_styles( $column_block['attrs'] ),
 													'colspan' => $column_block['attrs']['colSpan'] ?? '',
 													'rowspan' => $column_block['attrs']['rowSpan'] ?? '',
 												]
