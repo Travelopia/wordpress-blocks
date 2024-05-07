@@ -115,7 +115,7 @@ function render( ?string $content = null, array $block = [] ): null|string {
 														$column_block['attrs'],
 														[
 															'travelopia-table__column',
-															! empty( $row_container_block['attrs']['isSticky'] ) ? 'travelopia-table__column--sticky' : '',
+															! empty( $column_block['attrs']['isSticky'] ) ? 'travelopia-table__column--sticky' : '',
 														]
 													),
 													'style'   => get_css_styles( $column_block['attrs'] ?? [] ),
