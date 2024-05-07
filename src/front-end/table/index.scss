@@ -1,41 +1,41 @@
 .travelopia-table {
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        border-spacing: 0;
-    }
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		border-spacing: 0;
+	}
 
-    &__column {
+	&__column {
 
-        &--sticky {
-            position: sticky !important;
-            left: 0;
-            z-index: 1;
-        }
+		&--sticky {
+			position: sticky !important;
+			left: 0;
+			z-index: 1;
+		}
 
-        &.alignleft {
-            text-align: left;
-        }
-    
-        &.aligncenter {
-            text-align: center;
-        }
-    
-        &.alignright {
-            text-align: right;
-        }
-    }
+		&.alignleft {
+			text-align: left;
+		}
 
-    &__row-container {
+		&.aligncenter {
+			text-align: center;
+		}
 
-        &--sticky {
+		&.alignright {
+			text-align: right;
+		}
+	}
 
-            tr th {
-                position: sticky !important;
-                top: 0;
-                z-index: 1;
-            }
-        }
-    }
+	&__row-container {
+
+		&--sticky {
+
+			tr th {
+				position: sticky !important;
+				top: 0;
+				z-index: 1;
+			}
+		}
+	}
 }
