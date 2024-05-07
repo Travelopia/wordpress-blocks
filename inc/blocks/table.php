@@ -56,116 +56,122 @@ function render( ?string $content = null, array $block = [] ): null|string {
 		<table 
 		<?php
 		echo get_block_wrapper_attributes( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			array(
-				'class' => get_css_classes( $block['attrs'] ?? array() ),
-				'style' => get_css_styles( $block['attrs'] ?? array() ),
-			)
+			[
+				'class' => get_css_classes( $block['attrs'] ),
+				'style' => get_css_styles( $block['attrs'] ),
+			]
 		);
 		?>
 		>
 
-		<?php if ( ! empty( $block['innerBlocks'] ) ) : ?>
-			<?php foreach ( $block['innerBlocks'] as $row_container_block ) : ?>
-				<?php if ( TABLE_ROW_CONTAINER_BLOCK_NAME === $row_container_block['blockName'] && ! empty( $row_container_block['attrs'] ) && ! empty( $row_container_block['innerBlocks'] ) && is_array( $row_container_block['innerBlocks'] ) ) : ?>
-					<!-- Row container -->
-					<?php if ( empty( $row_container_block['attrs']['type'] ) ) : ?>
-						<tbody class="travelopia-table__row-container">
-					<?php elseif ( 'thead' === $row_container_block['attrs']['type'] ) : ?>
-						<thead class="travelopia-table__row-container">
-					<?php elseif ( 'tfoot' === $row_container_block['attrs']['type'] ) : ?>
-						<tfoot class="travelopia-table__row-container">
-					<?php else : ?>
-						<tbody class="travelopia-table__row-container">
-					<?php endif; ?>
-
-						<?php foreach ( $row_container_block['innerBlocks'] as $row_block ) : ?>
-							<!-- Row -->
-							<?php if ( TABLE_ROW_BLOCK_NAME === $row_block['blockName'] && ! empty( $row_block['innerBlocks'] ) && is_array( $row_block['innerBlocks'] ) ) : ?>
-								<tr
-								<?php
-								echo get_block_wrapper_attributes( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-									array(
-										'class' => 'travelopia-table__row ' . get_css_classes( $row_block['attrs'] ?? array() ),
-										'style' => get_css_styles( $row_block['attrs'] ?? array() ),
-									)
-								);
-								?>
-								>
-									<?php foreach ( $row_block['innerBlocks'] as $column_block ) : ?>
-										<!-- Column -->
-										<?php if ( TABLE_COLUMN_BLOCK_NAME === $column_block['blockName'] && ! empty( $column_block['attrs'] ) && ! empty( $column_block['innerBlocks'] ) && is_array( $column_block['innerBlocks'] ) ) : ?>
-											<?php if ( empty( $row_container_block['attrs']['type'] ) ) : ?>
-												<td
-												<?php
-												echo get_block_wrapper_attributes( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-													array(
-														'class'   => 'travelopia-table__column ' . get_css_classes( $column_block['attrs'] ?? array() ),
-														'style'   => get_css_styles( $column_block['attrs'] ?? array() ),
-														'colspan' => $column_block['attrs']['colSpan'] ?? '',
-														'rowspan' => $column_block['attrs']['rowSpan'] ?? '',
-													)
-												);
-												?>
-												>
-											<?php else : ?>
-												<th>
-											<?php endif; ?>
-
-												<?php foreach ( $column_block['innerBlocks'] as $cell_block ) : ?>
-													<?php if ( TABLE_CELL_BLOCK_NAME === $cell_block['blockName'] && ! empty( $cell_block['innerHTML'] ) ) : ?>
-														<?php echo $cell_block['innerHTML']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-													<?php else : ?>
-														<?php echo render_block( $cell_block ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-													<?php endif; ?>
-												<?php endforeach; ?>
-
-											<?php if ( empty( $row_container_block['attrs']['type'] ) ) : ?>
-												</td>
-											<?php else : ?>
-												</th>
-											<?php endif; ?>
-										<?php endif; ?>
-									<?php endforeach; ?>
-								</tr>
-							<?php endif; ?>
-						<?php endforeach; ?>
-					
-					<?php if ( empty( $row_container_block['attrs']['type'] ) ) : ?>
-						</tbody>
-					<?php elseif ( 'thead' === $row_container_block['attrs']['type'] ) : ?>
-						</thead>
-					<?php elseif ( 'tfoot' === $row_container_block['attrs']['type'] ) : ?>
-						</tfoot>
-					<?php else : ?>
-						</tbody>
-					<?php endif; ?>
+		<?php foreach ( $block['innerBlocks'] as $row_container_block ) : ?>
+			<?php if ( TABLE_ROW_CONTAINER_BLOCK_NAME === $row_container_block['blockName'] && ! empty( $row_container_block['attrs'] ) && ! empty( $row_container_block['innerBlocks'] ) && is_array( $row_container_block['innerBlocks'] ) ) : ?>
+				<!-- Row container -->
+				<?php if ( empty( $row_container_block['attrs']['type'] ) ) : ?>
+					<tbody class="travelopia-table__row-container">
+				<?php elseif ( 'thead' === $row_container_block['attrs']['type'] ) : ?>
+					<thead class="travelopia-table__row-container">
+				<?php elseif ( 'tfoot' === $row_container_block['attrs']['type'] ) : ?>
+					<tfoot class="travelopia-table__row-container">
+				<?php else : ?>
+					<tbody class="travelopia-table__row-container">
 				<?php endif; ?>
-			<?php endforeach; ?>
-		<?php endif; ?>
+
+					<?php foreach ( $row_container_block['innerBlocks'] as $row_block ) : ?>
+						<!-- Row -->
+						<?php if ( TABLE_ROW_BLOCK_NAME === $row_block['blockName'] && ! empty( $row_block['innerBlocks'] ) && is_array( $row_block['innerBlocks'] ) ) : ?>
+							<tr
+							<?php
+							echo get_block_wrapper_attributes( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								[
+									'class' => 'travelopia-table__row ' . get_css_classes( $row_block['attrs'] ),
+									'style' => get_css_styles( $row_block['attrs'] ?? [] ),
+								]
+							);
+							?>
+							>
+								<?php foreach ( $row_block['innerBlocks'] as $column_block ) : ?>
+									<!-- Column -->
+									<?php if ( TABLE_COLUMN_BLOCK_NAME === $column_block['blockName'] && ! empty( $column_block['attrs'] ) && ! empty( $column_block['innerBlocks'] ) && is_array( $column_block['innerBlocks'] ) ) : ?>
+										<?php if ( empty( $row_container_block['attrs']['type'] ) ) : ?>
+											<td
+											<?php
+											echo get_block_wrapper_attributes( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+												[
+													'class'   => 'travelopia-table__column ' . get_css_classes( $column_block['attrs'] ),
+													'style'   => get_css_styles( $column_block['attrs'] ?? [] ),
+													'colspan' => $column_block['attrs']['colSpan'] ?? '',
+													'rowspan' => $column_block['attrs']['rowSpan'] ?? '',
+												]
+											);
+											?>
+											>
+										<?php else : ?>
+											<th>
+										<?php endif; ?>
+
+											<?php foreach ( $column_block['innerBlocks'] as $cell_block ) : ?>
+												<?php if ( TABLE_CELL_BLOCK_NAME === $cell_block['blockName'] && ! empty( $cell_block['innerHTML'] ) ) : ?>
+													<?php echo $cell_block['innerHTML']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+												<?php else : ?>
+													<?php echo render_block( $cell_block ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+												<?php endif; ?>
+											<?php endforeach; ?>
+
+										<?php if ( empty( $row_container_block['attrs']['type'] ) ) : ?>
+											</td>
+										<?php else : ?>
+											</th>
+										<?php endif; ?>
+									<?php endif; ?>
+								<?php endforeach; ?>
+							</tr>
+						<?php endif; ?>
+					<?php endforeach; ?>
+				
+				<?php if ( empty( $row_container_block['attrs']['type'] ) ) : ?>
+					</tbody>
+				<?php elseif ( 'thead' === $row_container_block['attrs']['type'] ) : ?>
+					</thead>
+				<?php elseif ( 'tfoot' === $row_container_block['attrs']['type'] ) : ?>
+					</tfoot>
+				<?php else : ?>
+					</tbody>
+				<?php endif; ?>
+			<?php endif; ?>
+		<?php endforeach; ?>
 
 		</table>
 	</div>
 
 	<?php
 
-	$content = ob_get_clean();
+	$block_content = ob_get_clean();
 
-	return $content;
+	if ( empty( $block_content ) ) {
+		return $content;
+	}
+
+	return $block_content;
 }
 
 /**
  * Build an array with CSS classes and inline styles defining the colors
  * which will be applied to the table markup in the front-end.
  *
- * @param array $attributes Table block attributes.
+ * @param mixed[] $attributes Table block attributes.
  *
- * @return array Colors CSS classes and inline styles.
+ * @return array{ css_classes: string[], inline_styles: string } Colors CSS classes and inline styles.
  */
-function build_css_colors( $attributes ) {
-	$colors = array(
-		'css_classes'   => array(),
+function build_css_colors( $attributes ): array {
+	$colors = [
+		'css_classes'   => [],
 		'inline_styles' => '',
-	);
+	];
+
+	if ( ! is_array( $attributes ) ) {
+		return $colors;
+	}
 
 	// Text color.
 	$has_named_text_color  = array_key_exists( 'textColor', $attributes );
@@ -217,11 +223,15 @@ function build_css_colors( $attributes ) {
 /**
  * Returns the align class.
  *
- * @param array $attributes The block attributes.
+ * @param mixed[] $attributes The block attributes.
  *
  * @return string Returns the align class.
  */
-function get_align_class( $attributes ) {
+function get_align_class( $attributes ): string {
+	if ( ! is_array( $attributes ) ) {
+		return '';
+	}
+
 	$align_classes = [
 		'left'   => 'alignleft',
 		'center' => 'aligncenter',
@@ -238,10 +248,14 @@ function get_align_class( $attributes ) {
 /**
  * Return classes for the table block.
  *
- * @param array $attributes The block attributes.
+ * @param mixed[] $attributes The block attributes.
  * @return string Returns the classes for the navigation block.
  */
 function get_css_classes( $attributes ) {
+	if ( ! is_array( $attributes ) ) {
+		return '';
+	}
+
 	$colors      = build_css_colors( $attributes );
 	$align_class = get_align_class( $attributes );
 
@@ -255,11 +269,15 @@ function get_css_classes( $attributes ) {
 /**
  * Get styles.
  *
- * @param array $attributes The block attributes.
+ * @param mixed[] $attributes The block attributes.
  *
  * @return string Returns the styles for the block.
  */
 function get_css_styles( $attributes ) {
+	if ( ! is_array( $attributes ) ) {
+		return '';
+	}
+
 	$colors       = build_css_colors( $attributes );
 	$block_styles = isset( $attributes['styles'] ) ? $attributes['styles'] : '';
 	return $block_styles . $colors['inline_styles'];
