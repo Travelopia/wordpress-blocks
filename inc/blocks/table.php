@@ -67,14 +67,27 @@ function render( ?string $content = null, array $block = [] ): null|string {
 		<?php foreach ( $block['innerBlocks'] as $row_container_block ) : ?>
 			<?php if ( TABLE_ROW_CONTAINER_BLOCK_NAME === $row_container_block['blockName'] && ! empty( $row_container_block['attrs'] ) && ! empty( $row_container_block['innerBlocks'] ) && is_array( $row_container_block['innerBlocks'] ) ) : ?>
 				<!-- Row container -->
+				<?php
+				$block_attributes = get_block_wrapper_attributes(
+					[
+						'class' => get_css_classes(
+							$row_container_block['attrs'],
+							[
+								'travelopia-table__row-container',
+								! empty( $row_container_block['attrs']['isSticky'] ) ? 'travelopia-table__row-container--sticky' : '',
+							]
+						),
+					]
+				);
+				?>
 				<?php if ( empty( $row_container_block['attrs']['type'] ) ) : ?>
-					<tbody class="travelopia-table__row-container">
+					<tbody <?php echo $block_attributes; // phpcs:ignore ?>>
 				<?php elseif ( 'thead' === $row_container_block['attrs']['type'] ) : ?>
-					<thead class="travelopia-table__row-container">
+					<thead <?php echo $block_attributes; // phpcs:ignore ?>>
 				<?php elseif ( 'tfoot' === $row_container_block['attrs']['type'] ) : ?>
-					<tfoot class="travelopia-table__row-container">
+					<tfoot <?php echo $block_attributes; // phpcs:ignore ?>>
 				<?php else : ?>
-					<tbody class="travelopia-table__row-container">
+					<tbody <?php echo $block_attributes; // phpcs:ignore ?>>
 				<?php endif; ?>
 
 					<?php foreach ( $row_container_block['innerBlocks'] as $row_block ) : ?>
@@ -84,7 +97,7 @@ function render( ?string $content = null, array $block = [] ): null|string {
 							<?php
 							echo get_block_wrapper_attributes( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 								[
-									'class' => 'travelopia-table__row ' . get_css_classes( $row_block['attrs'] ),
+									'class' => get_css_classes( $row_block['attrs'], [ 'travelopia-table__row ' ] ),
 									'style' => get_css_styles( $row_block['attrs'] ?? [] ),
 								]
 							);
@@ -98,7 +111,13 @@ function render( ?string $content = null, array $block = [] ): null|string {
 											<?php
 											echo get_block_wrapper_attributes( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 												[
-													'class'   => 'travelopia-table__column ' . get_css_classes( $column_block['attrs'] ),
+													'class'   => get_css_classes(
+														$column_block['attrs'],
+														[
+															'travelopia-table__column',
+															! empty( $row_container_block['attrs']['isSticky'] ) ? 'travelopia-table__column--sticky' : '',
+														]
+													),
 													'style'   => get_css_styles( $column_block['attrs'] ?? [] ),
 													'colspan' => $column_block['attrs']['colSpan'] ?? '',
 													'rowspan' => $column_block['attrs']['rowSpan'] ?? '',
@@ -248,10 +267,12 @@ function get_align_class( $attributes ): string {
 /**
  * Return classes for the table block.
  *
- * @param mixed[] $attributes The block attributes.
+ * @param mixed[]  $attributes The block attributes.
+ * @param string[] $additional_classes Additional classes to add to the block.
+ *
  * @return string Returns the classes for the navigation block.
  */
-function get_css_classes( $attributes ) {
+function get_css_classes( $attributes, $additional_classes = [] ) {
 	if ( ! is_array( $attributes ) ) {
 		return '';
 	}
@@ -262,6 +283,14 @@ function get_css_classes( $attributes ) {
 	$classes = array_merge(
 		$colors['css_classes'],
 		$align_class ? [ $align_class ] : [],
+		$additional_classes,
+	);
+
+	$classes = array_filter(
+		$classes,
+		function( $class ) {
+			return ! empty( $class );
+		}
 	);
 	return implode( ' ', $classes );
 }
