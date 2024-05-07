@@ -16,11 +16,6 @@ import {
 import edit from './edit';
 
 /**
- * Styles
- */
-import './editor.scss';
-
-/**
  * Block data.
  */
 export const name: string = 'travelopia/table-column';
@@ -61,7 +56,7 @@ export const settings: BlockConfiguration = {
 			text: true,
 			background: true,
 		},
-		align: true,
+		align: [ 'left', 'center', 'right' ],
 	},
 	edit,
 	save() {
