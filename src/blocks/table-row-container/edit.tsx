@@ -40,7 +40,7 @@ function TableRowContainerEdit( props: BlockEditProps<any> ): JSX.Element {
 	// Inner block props.
 	const blockProps = useBlockProps( {
 		className: classnames( className, 'travelopia-table__row-container', {
-			'sticky-row-container': attributes.isSticky,
+			'travelopia-table__row-container--sticky': attributes.isSticky,
 		} ),
 	} );
 	const innerBlocksProps = useInnerBlocksProps( { ...blockProps }, {

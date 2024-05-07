@@ -47,7 +47,7 @@ function TableColumnEdit( {
 }: BlockEditProps<any> ): JSX.Element {
 	const blockProps = useBlockProps( {
 		className: classnames( className, 'travelopia-table__column', {
-			'sticky-column': attributes.isSticky,
+			'travelopia-table__column--sticky': attributes.isSticky,
 		} ),
 	} );
 
