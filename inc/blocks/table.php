@@ -270,7 +270,7 @@ function get_align_class( $attributes ): string {
  * @param mixed[]  $attributes The block attributes.
  * @param string[] $additional_classes Additional classes to add to the block.
  *
- * @return string Returns the classes for the navigation block.
+ * @return string Returns the classes for the block.
  */
 function get_css_classes( $attributes, $additional_classes = [] ) {
 	if ( ! is_array( $attributes ) ) {
