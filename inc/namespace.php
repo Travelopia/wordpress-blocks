@@ -28,7 +28,7 @@ function enqueue_block_editor_assets(): void {
 
 	// Get block asset details.
 	$block_assets = [];
-	$asset_file   = __DIR__ . '/../dist/blocks.asset.php';
+	$asset_file   = __DIR__ . '/../dist/editor/blocks.asset.php';
 
 	if ( file_exists( $asset_file ) ) {
 		$block_assets = require $asset_file;
@@ -77,7 +77,7 @@ function register_front_end_styles(): void {
 		];
 	}
 
-	wp_register_style( 'travelopia-table', plugin_dir_url( __DIR__ ) . 'dist/front-end/table/index.css', $assets_data['dependencies'] ?? [], $assets_data['version'] ?? '1', true );
+	wp_register_style( 'travelopia-table', plugin_dir_url( __DIR__ ) . 'dist/front-end/table/index.css', $assets_data['dependencies'] ?? [], $assets_data['version'] ?? '1' );
 }
 
 /**
