@@ -182,7 +182,7 @@ function build_css_colors( $attributes ) {
 		// Add the color class.
 		$colors['css_classes'][] = sprintf( 'has-%s-color', $attributes['textColor'] );
 	} elseif ( $has_picked_text_color ) {
-		// Add the custom color inline style.
+		// Add the picked color inline style.
 		$colors['inline_styles'] .= sprintf( 'color: %s;', $attributes['customTextColor'] );
 	} elseif ( $has_custom_text_color ) {
 		// Add the custom color inline style.
@@ -204,7 +204,7 @@ function build_css_colors( $attributes ) {
 		// Add the background-color class.
 		$colors['css_classes'][] = sprintf( 'has-%s-background-color', $attributes['backgroundColor'] );
 	} elseif ( $has_picked_background_color ) {
-		// Add the custom background-color inline style.
+		// Add the picked background-color inline style.
 		$colors['inline_styles'] .= sprintf( 'background-color: %s;', $attributes['customBackgroundColor'] );
 	} elseif ( $has_custom_background_color ) {
 		// Add the custom background-color inline style.
