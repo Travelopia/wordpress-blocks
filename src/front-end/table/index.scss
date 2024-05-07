@@ -13,6 +13,18 @@
             left: 0;
             z-index: 1;
         }
+
+        &.alignleft {
+            text-align: left;
+        }
+    
+        &.aligncenter {
+            text-align: center;
+        }
+    
+        &.alignright {
+            text-align: right;
+        }
     }
 
     &__row-container {
