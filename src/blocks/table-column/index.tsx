@@ -59,6 +59,7 @@ export const settings: BlockConfiguration = {
 			text: true,
 			background: true,
 		},
+		align: [ 'left', 'center', 'right' ],
 	},
 	edit,
 	save() {
