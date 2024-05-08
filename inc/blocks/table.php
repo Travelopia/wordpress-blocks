@@ -91,7 +91,7 @@ function render( ?string $content = null, array $block = [] ): null|string {
  *
  * @param mixed[] $row_container_block The row container block.
  *
- * @return void|string
+ * @return null|string
  */
 function render_row_container_block( $row_container_block ) {
 
@@ -104,7 +104,7 @@ function render_row_container_block( $row_container_block ) {
 		empty( $row_container_block['innerBlocks'] ) ||
 		! is_array( $row_container_block['innerBlocks'] )
 	) {
-		return;
+		return null;
 	}
 	?>
 	<?php
@@ -149,7 +149,10 @@ function render_row_container_block( $row_container_block ) {
 
 	<?php
 	$row_container_content = ob_get_clean();
-	return $row_container_content ?? '';
+	if ( empty( $row_container_content ) ) {
+		return null;
+	}
+	return $row_container_content;
 }
 
 /**
@@ -157,7 +160,7 @@ function render_row_container_block( $row_container_block ) {
  *
  * @param mixed[] $row_block The row block.
  *
- * @return void|string
+ * @return null|string
  */
 function render_row_block( $row_block ) {
 
@@ -169,7 +172,7 @@ function render_row_block( $row_block ) {
 		empty( $row_block['innerBlocks'] ) ||
 		! is_array( $row_block['innerBlocks'] )
 	) {
-		return;
+		return null;
 	}
 
 	$row_attributes = get_block_wrapper_attributes( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -189,7 +192,10 @@ function render_row_block( $row_block ) {
 	</tr>
 	<?php
 	$row_content = ob_get_clean();
-	return $row_content ?? '';
+	if ( empty( $row_content ) ) {
+		return null;
+	}
+	return $row_content;
 }
 
 /**
@@ -197,7 +203,7 @@ function render_row_block( $row_block ) {
  *
  * @param mixed[] $column_block The column block.
  *
- * @return void|string
+ * @return null|string
  */
 function render_column_block( $column_block ) {
 	if (
@@ -209,7 +215,7 @@ function render_column_block( $column_block ) {
 		empty( $column_block['innerBlocks'] ) ||
 		! is_array( $column_block['innerBlocks'] )
 	) {
-		return;
+		return null;
 	}
 
 	$column_attributes = get_block_wrapper_attributes( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -253,7 +259,10 @@ function render_column_block( $column_block ) {
 	<?php endif; ?>
 	<?php
 	$column_content = ob_get_clean();
-	return $column_content ?? '';
+	if ( empty( $column_content ) ) {
+		return null;
+	}
+	return $column_content;
 }
 
 /**
