@@ -19,6 +19,7 @@ import classnames from 'classnames';
  * Internal dependencies.
  */
 import { name as columnBlockName } from '../table-column';
+import { useEffect } from '@wordpress/element';
 
 /**
  * Edit function.
@@ -29,7 +30,7 @@ import { name as columnBlockName } from '../table-column';
  */
 function TableRowEdit( props: BlockEditProps<any> ): JSX.Element {
 	// Block props.
-	const { className } = props;
+	const { className, clientId, setAttributes } = props;
 
 	// Inner block props.
 	const blockProps = useBlockProps( {
@@ -39,6 +40,10 @@ function TableRowEdit( props: BlockEditProps<any> ): JSX.Element {
 		allowedBlocks: [ columnBlockName ],
 		templateLock: false,
 	} );
+
+	useEffect( () => {
+		setAttributes( { blockId: clientId } );
+	}, [clientId] );
 
 	return (
 		<tr { ...innerBlocksProps } />

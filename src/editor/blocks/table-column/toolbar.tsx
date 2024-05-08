@@ -52,12 +52,16 @@ export default function Toolbar( {
 	tableRow,
 	tableColumn,
 	rowContainerId,
+	rowId,
+	columnId,
 }: {
 	isSelected: boolean;
 	tableId: string;
 	tableRow: number;
 	tableColumn: number;
 	rowContainerId: string;
+	rowId: string;
+	columnId: string;
 } ): JSX.Element {
 	const {
 		getBlock,
@@ -65,6 +69,7 @@ export default function Toolbar( {
 		getBlockAttributes,
 		// @ts-ignore
 		canRemoveBlock,
+		getAdjacentBlockClientId,
 	} = select( 'core/block-editor' );
 
 	const {
@@ -301,60 +306,27 @@ export default function Toolbar( {
 			return;
 		}
 
-		// Traverse rows.
-		tableBlock.innerBlocks.some( ( currentRowContainerBlock ) => {
-			if ( currentRowContainerBlock.name !== rowContainerBlockName ) {
-				return false;
-			}
+		console.log('initiated on ', rowId, columnId);
+		const currentBlock = getBlock( columnId );
+		if ( ! currentBlock ) {
+			console.log('No current block');
+			return;
+		}
 
-			// Avoid merging thead/tfoot column with tbody column.
-			const currentRowContainerBlockAttributes = getBlockAttributes( currentRowContainerBlock.clientId );
-			if ( currentRowContainerBlockAttributes?.type !== rowContainerBlock?.attributes?.type ) {
-				return false;
-			}
+		const previousBlockClientId = getAdjacentBlockClientId( columnId, -1 );
+		if ( ! previousBlockClientId ) {
+			console.log('No previous exists');
+			return;
+		}
 
-			return currentRowContainerBlock.innerBlocks.some( ( rowBlock, index ): boolean => {
-				// Get current row.
-				const rowNumber: number = index + 1;
-				if ( rowBlock.name !== rowBlockName || rowNumber !== tableRow || ! rowBlock.innerBlocks.length ) {
-					return false;
-				}
+		const previousBlock = getBlock( previousBlockClientId );
+		if ( ! previousBlock ) {
+			console.log('No previous block');
+			return;
+		}
 
-				// Prepare variables.
-				let columnToMergeInto: BlockInstance | undefined;
-				let columnToMergeFrom: BlockInstance | undefined;
-
-				// Traverse columns in current row.
-				rowBlock.innerBlocks.some( ( columnBlock, columnIndex ): boolean => {
-					// Get column to merge from and into.
-					const columnNumber: number = columnIndex + 1;
-					if ( columnNumber === tableColumn - 1 ) {
-						columnToMergeInto = columnBlock;
-					} else if ( columnNumber === tableColumn ) {
-						columnToMergeFrom = columnBlock;
-					}
-
-					// Short circuit if we found them.
-					if ( columnToMergeInto && columnToMergeFrom ) {
-						return true;
-					}
-
-					// We haven't found them, loop some more.
-					return false;
-				} );
-
-				// Check if we have a "to" and "from" column.
-				if ( ! columnToMergeFrom || ! columnToMergeInto ) {
-					return false;
-				}
-
-				// Merge columns.
-				mergeColumnsHorizontally( columnToMergeFrom, columnToMergeInto );
-
-				// Short-circuit loop.
-				return true;
-			} );
-		} );
+		// Merge columns.
+		mergeColumnsHorizontally( currentBlock, previousBlock );
 	};
 
 	/**
@@ -369,60 +341,26 @@ export default function Toolbar( {
 			return;
 		}
 
-		// Traverse rows.
-		tableBlock.innerBlocks.some( ( currentRowContainerBlock ) => {
-			if ( currentRowContainerBlock.name !== rowContainerBlockName ) {
-				return false;
-			}
+		console.log('initiated on ', rowId, columnId);
+		const currentBlock = getBlock( columnId );
+		if ( ! currentBlock ) {
+			console.log('No current block');
+			return;
+		}
+		const nextBlockClientId = getAdjacentBlockClientId( columnId, 1 );
+		if ( ! nextBlockClientId ) {
+			console.log('No next exists');
+			return;
+		}
 
-			// Avoid merging thead/tfoot column with tbody column.
-			const currentRowContainerBlockAttributes = getBlockAttributes( currentRowContainerBlock.clientId );
-			if ( currentRowContainerBlockAttributes?.type !== rowContainerBlock?.attributes?.type ) {
-				return false;
-			}
+		const nextBlock = getBlock( nextBlockClientId );
+		if ( ! nextBlock ) {
+			console.log('No next block');
+			return;
+		}
 
-			return currentRowContainerBlock.innerBlocks.some( ( rowBlock, index ): boolean => {
-				// Get current row.
-				const rowNumber: number = index + 1;
-				if ( rowBlock.name !== rowBlockName || rowNumber !== tableRow || ! rowBlock.innerBlocks.length ) {
-					return false;
-				}
-
-				// Prepare variables.
-				let columnToMergeInto: BlockInstance | undefined;
-				let columnToMergeFrom: BlockInstance | undefined;
-
-				// Traverse columns in current row.
-				rowBlock.innerBlocks.some( ( columnBlock, columnIndex ): boolean => {
-					// Get column to merge from and into.
-					const columnNumber: number = columnIndex + 1;
-					if ( columnNumber === tableColumn ) {
-						columnToMergeInto = columnBlock;
-					} else if ( columnNumber === tableColumn + 1 ) {
-						columnToMergeFrom = columnBlock;
-					}
-
-					// Short circuit if we found them.
-					if ( columnToMergeInto && columnToMergeFrom ) {
-						return true;
-					}
-
-					// We haven't found them, loop some more.
-					return false;
-				} );
-
-				// Check if we have a "to" and "from" column.
-				if ( ! columnToMergeFrom || ! columnToMergeInto ) {
-					return false;
-				}
-
-				// Merge columns.
-				mergeColumnsHorizontally( columnToMergeFrom, columnToMergeInto );
-
-				// Short-circuit loop.
-				return true;
-			} );
-		} );
+		// Merge columns.
+		mergeColumnsHorizontally( nextBlock, currentBlock );
 	};
 
 	/**
