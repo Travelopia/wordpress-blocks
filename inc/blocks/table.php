@@ -67,102 +67,11 @@ function render( ?string $content = null, array $block = [] ): null|string {
 		?>
 		>
 
-		<?php foreach ( $block['innerBlocks'] as $row_container_block ) : ?>
-			<?php if ( TABLE_ROW_CONTAINER_BLOCK_NAME === $row_container_block['blockName'] && ! empty( $row_container_block['attrs'] ) && ! empty( $row_container_block['innerBlocks'] ) && is_array( $row_container_block['innerBlocks'] ) ) : ?>
-				<!-- Row container -->
-				<?php
-				$block_attributes = get_block_wrapper_attributes(
-					[
-						'class' => get_css_classes(
-							$row_container_block['attrs'],
-							[
-								'travelopia-table__row-container',
-								! empty( $row_container_block['attrs']['isSticky'] ) ? 'travelopia-table__row-container--sticky' : '',
-							]
-						),
-					]
-				);
-				?>
-				<?php if ( empty( $row_container_block['attrs']['type'] ) ) : ?>
-					<tbody <?php echo $block_attributes; // phpcs:ignore ?>>
-				<?php elseif ( 'thead' === $row_container_block['attrs']['type'] ) : ?>
-					<thead <?php echo $block_attributes; // phpcs:ignore ?>>
-				<?php elseif ( 'tfoot' === $row_container_block['attrs']['type'] ) : ?>
-					<tfoot <?php echo $block_attributes; // phpcs:ignore ?>>
-				<?php else : ?>
-					<tbody <?php echo $block_attributes; // phpcs:ignore ?>>
-				<?php endif; ?>
-
-					<?php foreach ( $row_container_block['innerBlocks'] as $row_block ) : ?>
-						<!-- Row -->
-						<?php if ( TABLE_ROW_BLOCK_NAME === $row_block['blockName'] && ! empty( $row_block['innerBlocks'] ) && is_array( $row_block['innerBlocks'] ) ) : ?>
-							<tr
-							<?php
-							echo get_block_wrapper_attributes( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-								[
-									'class' => get_css_classes( $row_block['attrs'] ?? [], [ 'travelopia-table__row ' ] ),
-									'style' => get_css_styles( $row_block['attrs'] ?? [] ),
-								]
-							);
-							?>
-							>
-								<?php foreach ( $row_block['innerBlocks'] as $column_block ) : ?>
-									<!-- Column -->
-									<?php if ( TABLE_COLUMN_BLOCK_NAME === $column_block['blockName'] && ! empty( $column_block['attrs'] ) && ! empty( $column_block['innerBlocks'] ) && is_array( $column_block['innerBlocks'] ) ) : ?>
-										<?php if ( empty( $row_container_block['attrs']['type'] ) ) : ?>
-											<td
-											<?php
-											echo get_block_wrapper_attributes( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-												[
-													'class'   => get_css_classes(
-														$column_block['attrs'],
-														[
-															'travelopia-table__column',
-															! empty( $column_block['attrs']['isSticky'] ) ? 'travelopia-table__column--sticky' : '',
-														]
-													),
-													'style'   => get_css_styles( $column_block['attrs'] ),
-													'colspan' => $column_block['attrs']['colSpan'] ?? '',
-													'rowspan' => $column_block['attrs']['rowSpan'] ?? '',
-												]
-											);
-											?>
-											>
-										<?php else : ?>
-											<th>
-										<?php endif; ?>
-
-											<?php foreach ( $column_block['innerBlocks'] as $cell_block ) : ?>
-												<?php if ( TABLE_CELL_BLOCK_NAME === $cell_block['blockName'] && ! empty( $cell_block['innerHTML'] ) ) : ?>
-													<?php echo $cell_block['innerHTML']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-												<?php else : ?>
-													<?php echo render_block( $cell_block ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-												<?php endif; ?>
-											<?php endforeach; ?>
-
-										<?php if ( empty( $row_container_block['attrs']['type'] ) ) : ?>
-											</td>
-										<?php else : ?>
-											</th>
-										<?php endif; ?>
-									<?php endif; ?>
-								<?php endforeach; ?>
-							</tr>
-						<?php endif; ?>
-					<?php endforeach; ?>
-				
-				<?php if ( empty( $row_container_block['attrs']['type'] ) ) : ?>
-					</tbody>
-				<?php elseif ( 'thead' === $row_container_block['attrs']['type'] ) : ?>
-					</thead>
-				<?php elseif ( 'tfoot' === $row_container_block['attrs']['type'] ) : ?>
-					</tfoot>
-				<?php else : ?>
-					</tbody>
-				<?php endif; ?>
-			<?php endif; ?>
-		<?php endforeach; ?>
-
+		<?php
+		foreach ( $block['innerBlocks'] as $row_container_block ) {
+			echo render_row_container_block( $row_container_block ); // phpcs:ignore
+		}
+		?>
 		</table>
 	</div>
 
@@ -175,6 +84,176 @@ function render( ?string $content = null, array $block = [] ): null|string {
 	}
 
 	return $block_content;
+}
+
+/**
+ * Render row container block.
+ *
+ * @param mixed[] $row_container_block The row container block.
+ *
+ * @return void|string
+ */
+function render_row_container_block( $row_container_block ) {
+
+	if (
+		empty( $row_container_block ) ||
+		! is_array( $row_container_block ) ||
+		empty( $row_container_block['blockName'] ) ||
+		TABLE_ROW_CONTAINER_BLOCK_NAME !== $row_container_block['blockName'] ||
+		empty( $row_container_block['attrs'] ) ||
+		empty( $row_container_block['innerBlocks'] ) ||
+		! is_array( $row_container_block['innerBlocks'] )
+	) {
+		return;
+	}
+	?>
+	<?php
+	$block_attributes = get_block_wrapper_attributes(
+		[
+			'class' => get_css_classes(
+				$row_container_block['attrs'],
+				[
+					'travelopia-table__row-container',
+					! empty( $row_container_block['attrs']['isSticky'] ) ? 'travelopia-table__row-container--sticky' : '',
+				]
+			),
+		]
+	);
+	ob_start();
+	?>
+	<?php if ( empty( $row_container_block['attrs']['type'] ) ) : ?>
+		<tbody <?php echo $block_attributes; // phpcs:ignore ?>>
+	<?php elseif ( 'thead' === $row_container_block['attrs']['type'] ) : ?>
+		<thead <?php echo $block_attributes; // phpcs:ignore ?>>
+	<?php elseif ( 'tfoot' === $row_container_block['attrs']['type'] ) : ?>
+		<tfoot <?php echo $block_attributes; // phpcs:ignore ?>>
+	<?php else : ?>
+		<tbody <?php echo $block_attributes; // phpcs:ignore ?>>
+	<?php endif; ?>
+
+		<?php
+		foreach ( $row_container_block['innerBlocks'] as $row_block ) {
+			echo render_row_block( $row_block ); // phpcs:ignore
+		}
+		?>
+
+	<?php if ( empty( $row_container_block['attrs']['type'] ) ) : ?>
+		</tbody>
+	<?php elseif ( 'thead' === $row_container_block['attrs']['type'] ) : ?>
+		</thead>
+	<?php elseif ( 'tfoot' === $row_container_block['attrs']['type'] ) : ?>
+		</tfoot>
+	<?php else : ?>
+		</tbody>
+	<?php endif; ?>
+
+	<?php
+	$row_container_content = ob_get_clean();
+	return $row_container_content ?? '';
+}
+
+/**
+ * Render row block.
+ *
+ * @param mixed[] $row_block The row block.
+ *
+ * @return void|string
+ */
+function render_row_block( $row_block ) {
+
+	if (
+		empty( $row_block ) ||
+		! is_array( $row_block ) ||
+		empty( $row_block['blockName'] ) ||
+		TABLE_ROW_BLOCK_NAME !== $row_block['blockName'] ||
+		empty( $row_block['innerBlocks'] ) ||
+		! is_array( $row_block['innerBlocks'] )
+	) {
+		return;
+	}
+
+	$row_attributes = get_block_wrapper_attributes( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		[
+			'class' => get_css_classes( $row_block['attrs'] ?? [], [ 'travelopia-table__row ' ] ),
+			'style' => get_css_styles( $row_block['attrs'] ?? [] ),
+		]
+	);
+	ob_start();
+	?>
+	<tr <?php echo $row_attributes; // phpcs:ignore ?>>
+		<?php
+		foreach ( $row_block['innerBlocks'] as $column_block ) {
+			echo render_column_block( $column_block ); // phpcs:ignore
+		}
+		?>
+	</tr>
+	<?php
+	$row_content = ob_get_clean();
+	return $row_content ?? '';
+}
+
+/**
+ * Render column block.
+ *
+ * @param mixed[] $column_block The column block.
+ *
+ * @return void|string
+ */
+function render_column_block( $column_block ) {
+	if (
+		empty( $column_block ) ||
+		! is_array( $column_block ) ||
+		empty( $column_block['blockName'] ) ||
+		TABLE_COLUMN_BLOCK_NAME !== $column_block['blockName'] ||
+		empty( $column_block['attrs'] ) ||
+		empty( $column_block['innerBlocks'] ) ||
+		! is_array( $column_block['innerBlocks'] )
+	) {
+		return;
+	}
+
+	$column_attributes = get_block_wrapper_attributes( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		[
+			'class'   => get_css_classes(
+				$column_block['attrs'],
+				[
+					'travelopia-table__column',
+					! empty( $column_block['attrs']['isSticky'] ) ? 'travelopia-table__column--sticky' : '',
+				]
+			),
+			'style'   => get_css_styles( $column_block['attrs'] ),
+			'colspan' => $column_block['attrs']['colSpan'] ?? '',
+			'rowspan' => $column_block['attrs']['rowSpan'] ?? '',
+		]
+	);
+
+	ob_start();
+	?>
+
+	<?php if ( empty( $column_block['attrs']['type'] ) ) : ?>
+		<td <?php echo $column_attributes; //phpcs:ignore ?>>
+	<?php else : ?>
+		<th <?php echo $column_attributes; //phpcs:ignore ?>>
+	<?php endif; ?>
+
+		<?php
+		foreach ( $column_block['innerBlocks'] as $cell_block ) {
+			if ( TABLE_CELL_BLOCK_NAME === $cell_block['blockName'] && ! empty( $cell_block['innerHTML'] ) ) {
+				echo $cell_block['innerHTML']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			} else {
+				echo render_block( $cell_block ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			}
+		}
+		?>
+
+	<?php if ( empty( $column_block['attrs']['type'] ) ) : ?>
+		</td>
+	<?php else : ?>
+		</th>
+	<?php endif; ?>
+	<?php
+	$column_content = ob_get_clean();
+	return $column_content ?? '';
 }
 
 /**
