@@ -49,6 +49,7 @@ function render( ?string $content = null, array $block = [] ): null|string {
 		return $content;
 	}
 
+	// Enqueue table block styles.
 	wp_enqueue_style( 'travelopia-table' );
 
 	ob_start();
@@ -242,7 +243,7 @@ function build_css_colors( $attributes ): array {
 }
 
 /**
- * Returns the align class.
+ * Return the align CSS class.
  *
  * @param mixed[] $attributes The block attributes.
  *
