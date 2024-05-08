@@ -41,6 +41,9 @@ export const settings: BlockConfiguration = {
 		rowSpan: {
 			type: 'number',
 		},
+		isSticky: {
+			type: 'boolean',
+		},
 	},
 	providesContext: {
 		'travelopia/table-row': 'row' as never,
@@ -56,6 +59,7 @@ export const settings: BlockConfiguration = {
 			text: true,
 			background: true,
 		},
+		align: [ 'left', 'center', 'right' ],
 	},
 	edit,
 	save() {
