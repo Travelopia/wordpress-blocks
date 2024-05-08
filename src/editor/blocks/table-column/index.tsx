@@ -44,10 +44,14 @@ export const settings: BlockConfiguration = {
 		isSticky: {
 			type: 'boolean',
 		},
+		blockId: {
+			type: 'string',
+		}
 	},
 	providesContext: {
 		'travelopia/table-row': 'row' as never,
 		'travelopia/table-column': 'column' as never,
+		'travelopia/table-column-id': 'blockId' as never,
 	},
 	usesContext: [
 		'travelopia/table-row-container-type',
