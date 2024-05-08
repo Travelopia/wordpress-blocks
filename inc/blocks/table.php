@@ -52,37 +52,31 @@ function render( ?string $content = null, array $block = [] ): null|string {
 	// Enqueue table block styles.
 	wp_enqueue_style( 'travelopia-table' );
 
+	$table_attributes = get_block_wrapper_attributes(
+		[
+			'class' => get_css_classes( $block['attrs'] ),
+			'style' => get_css_styles( $block['attrs'] ),
+		]
+	);
+
 	ob_start();
-
 	?>
-	<div class="travelopia-table">
-		<table 
-		<?php
-		echo get_block_wrapper_attributes( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			[
-				'class' => get_css_classes( $block['attrs'] ),
-				'style' => get_css_styles( $block['attrs'] ),
-			]
-		);
-		?>
-		>
 
-		<?php
-		foreach ( $block['innerBlocks'] as $row_container_block ) {
-			echo render_row_container_block( $row_container_block ); // phpcs:ignore
-		}
-		?>
+	<div class="travelopia-table">
+		<table <?php echo wp_kses_data( $table_attributes ); ?>>
+			<?php
+			foreach ( $block['innerBlocks'] as $row_container_block ) {
+				echo render_row_container_block( $row_container_block ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			}
+			?>
 		</table>
 	</div>
 
 	<?php
-
 	$block_content = ob_get_clean();
-
 	if ( empty( $block_content ) ) {
 		return $content;
 	}
-
 	return $block_content;
 }
 
@@ -106,8 +100,8 @@ function render_row_container_block( $row_container_block ) {
 	) {
 		return null;
 	}
-	?>
-	<?php
+
+	// Get block attributes.
 	$block_attributes = get_block_wrapper_attributes(
 		[
 			'class' => get_css_classes(
@@ -121,19 +115,20 @@ function render_row_container_block( $row_container_block ) {
 	);
 	ob_start();
 	?>
+
 	<?php if ( empty( $row_container_block['attrs']['type'] ) ) : ?>
-		<tbody <?php echo $block_attributes; // phpcs:ignore ?>>
+		<tbody <?php echo wp_kses_data( $block_attributes ); ?>>
 	<?php elseif ( 'thead' === $row_container_block['attrs']['type'] ) : ?>
-		<thead <?php echo $block_attributes; // phpcs:ignore ?>>
+		<thead <?php echo wp_kses_data( $block_attributes ); ?>>
 	<?php elseif ( 'tfoot' === $row_container_block['attrs']['type'] ) : ?>
-		<tfoot <?php echo $block_attributes; // phpcs:ignore ?>>
+		<tfoot <?php echo wp_kses_data( $block_attributes ); ?>>
 	<?php else : ?>
-		<tbody <?php echo $block_attributes; // phpcs:ignore ?>>
+		<tbody <?php echo wp_kses_data( $block_attributes ); ?>>
 	<?php endif; ?>
 
 		<?php
 		foreach ( $row_container_block['innerBlocks'] as $row_block ) {
-			echo render_row_block( $row_block ); // phpcs:ignore
+			echo render_row_block( $row_block ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 		?>
 
@@ -175,21 +170,25 @@ function render_row_block( $row_block ) {
 		return null;
 	}
 
-	$row_attributes = get_block_wrapper_attributes( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	// Get block attributes.
+	$row_attributes = get_block_wrapper_attributes(
 		[
 			'class' => get_css_classes( $row_block['attrs'] ?? [], [ 'travelopia-table__row ' ] ),
 			'style' => get_css_styles( $row_block['attrs'] ?? [] ),
 		]
 	);
+
 	ob_start();
 	?>
-	<tr <?php echo $row_attributes; // phpcs:ignore ?>>
+
+	<tr <?php echo wp_kses_data( $row_attributes ); ?>>
 		<?php
 		foreach ( $row_block['innerBlocks'] as $column_block ) {
-			echo render_column_block( $column_block ); // phpcs:ignore
+			echo render_column_block( $column_block ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 		?>
 	</tr>
+
 	<?php
 	$row_content = ob_get_clean();
 	if ( empty( $row_content ) ) {
@@ -218,7 +217,8 @@ function render_column_block( $column_block ) {
 		return null;
 	}
 
-	$column_attributes = get_block_wrapper_attributes( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	// Get block attributes.
+	$column_attributes = get_block_wrapper_attributes(
 		[
 			'class'   => get_css_classes(
 				$column_block['attrs'],
@@ -237,15 +237,15 @@ function render_column_block( $column_block ) {
 	?>
 
 	<?php if ( empty( $column_block['attrs']['type'] ) ) : ?>
-		<td <?php echo $column_attributes; //phpcs:ignore ?>>
+		<td <?php echo wp_kses_data( $column_attributes ); ?>>
 	<?php else : ?>
-		<th <?php echo $column_attributes; //phpcs:ignore ?>>
+		<th <?php echo wp_kses_data( $column_attributes ); ?>>
 	<?php endif; ?>
 
 		<?php
 		foreach ( $column_block['innerBlocks'] as $cell_block ) {
 			if ( TABLE_CELL_BLOCK_NAME === $cell_block['blockName'] && ! empty( $cell_block['innerHTML'] ) ) {
-				echo $cell_block['innerHTML']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo wp_kses_post( $cell_block['innerHTML'] );
 			} else {
 				echo render_block( $cell_block ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
@@ -257,6 +257,7 @@ function render_column_block( $column_block ) {
 	<?php else : ?>
 		</th>
 	<?php endif; ?>
+
 	<?php
 	$column_content = ob_get_clean();
 	if ( empty( $column_content ) ) {
