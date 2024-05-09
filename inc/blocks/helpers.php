@@ -15,7 +15,7 @@ namespace Travelopia\Blocks\Helpers;
  *
  * @return array{ css_classes: string[], inline_styles: string } Colors CSS classes and inline styles.
  */
-function build_css_colors( $attributes ): array {
+function build_css_colors( array $attributes = [] ): array {
 	$colors = [
 		'css_classes'   => [],
 		'inline_styles' => '',
@@ -79,7 +79,7 @@ function build_css_colors( $attributes ): array {
  *
  * @return string Returns the align class.
  */
-function get_align_class( $attributes ): string {
+function get_align_class( array $attributes = [] ): string {
 	if ( ! is_array( $attributes ) ) {
 		return '';
 	}
@@ -105,7 +105,7 @@ function get_align_class( $attributes ): string {
  *
  * @return string Returns the classes for the block.
  */
-function get_css_classes( $attributes, $additional_classes = [] ) {
+function get_css_classes( array $attributes = [], $additional_classes = [] ): string {
 	if ( ! is_array( $attributes ) ) {
 		return '';
 	}
@@ -135,7 +135,7 @@ function get_css_classes( $attributes, $additional_classes = [] ) {
  *
  * @return string Returns the styles for the block.
  */
-function get_css_styles( $attributes ) {
+function get_css_styles( array $attributes = [] ): string {
 	if ( ! is_array( $attributes ) ) {
 		return '';
 	}
