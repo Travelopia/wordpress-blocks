@@ -47,7 +47,7 @@ function render( ?string $content = null, array $block = [] ): null|string {
 		BLOCK_NAME !== $block['blockName'] ||
 		empty( $block['innerHTML'] )
 	) {
-		return null;
+		return $content;
 	}
 
 	return wp_kses_post( $block['innerHTML'] );

@@ -52,7 +52,7 @@ function render( ?string $content = null, array $block = [] ): null|string {
 		empty( $block['innerBlocks'] ) ||
 		! is_array( $block['innerBlocks'] )
 	) {
-		return null;
+		return $content;
 	}
 
 	// Get block attributes.
