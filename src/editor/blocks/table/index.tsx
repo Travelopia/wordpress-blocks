@@ -21,6 +21,11 @@ import edit from './edit';
 import './editor.scss';
 
 /**
+ * Frontend styles.
+ */
+import '../../../front-end/table/index.scss';
+
+/**
  * Block data.
  */
 export const name: string = 'travelopia/table';

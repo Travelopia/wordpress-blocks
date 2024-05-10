@@ -1,11 +1,5 @@
 .travelopia-table {
 
-	table {
-		width: 100%;
-		border-collapse: collapse;
-		border-spacing: 0;
-	}
-
 	&__placeholder-input {
 		width: 8px * 14;
 
@@ -27,6 +21,33 @@
 
 		.components-base-control__field {
 			margin-bottom: 0;
+		}
+	}
+
+	&__column {
+
+		&.alignleft {
+
+			figure {
+				display: flex;
+				justify-content: flex-start;
+			}
+		}
+
+		&.aligncenter {
+
+			figure {
+				display: flex;
+				justify-content: center;
+			}
+		}
+
+		&.alignright {
+
+			figure {
+				display: flex;
+				justify-content: flex-end;
+			}
 		}
 	}
 }
