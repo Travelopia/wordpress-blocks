@@ -86,7 +86,6 @@ function register_front_end_styles(): void {
  * @return void
  */
 function register_blocks(): void {
-
 	// Include helper functions.
 	require_once __DIR__ . '/blocks/helpers.php';
 

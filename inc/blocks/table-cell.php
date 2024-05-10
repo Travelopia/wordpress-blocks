@@ -50,5 +50,5 @@ function render( ?string $content = null, array $block = [] ): null|string {
 		return $content;
 	}
 
-	return wp_kses_post( $block['innerHTML'] );
+	return $block['innerHTML'];
 }
