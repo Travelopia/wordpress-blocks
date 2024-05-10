@@ -81,6 +81,6 @@ function render( ?string $content = null, array $block = [] ): null|string {
 		$cells_content .= render_block( $cell_block );
 	}
 
-	$column_content = sprintf( '<%1$s %2$s>%3$s</%1$s>', $html_tag, $column_attributes, $cells_content );
+	$column_content = sprintf( '<%1$s %2$s>%3$s</%1$s>', $html_tag, wp_kses_data( $column_attributes ), $cells_content );
 	return $column_content;
 }

@@ -80,7 +80,7 @@ function render( ?string $content = null, array $block = [] ): null|string {
 	$row_container_content = sprintf(
 		'<%1$s %2$s>%3$s</%1$s>',
 		$html_tag,
-		$block_attributes,
+		wp_kses_data( $block_attributes ),
 		$row_block_content
 	);
 

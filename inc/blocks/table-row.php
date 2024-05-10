@@ -69,7 +69,7 @@ function render( ?string $content = null, array $block = [] ): null|string {
 
 	$row_content = sprintf(
 		'<tr %1$s>%2$s</tr>',
-		$row_attributes,
+		wp_kses_data( $row_attributes ),
 		$columns_content
 	);
 	return $row_content;

@@ -65,7 +65,7 @@ function render( ?string $content = null, array $block = [] ): null|string {
 
 	$table_content = sprintf(
 		'<div class="travelopia-table"><table %1$s>%2$s</table></div>',
-		$table_attributes,
+		wp_kses_data( $table_attributes ),
 		$row_containers_content
 	);
 	return $table_content;
