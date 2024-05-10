@@ -58,23 +58,15 @@ function render( ?string $content = null, array $block = [] ): null|string {
 		]
 	);
 
-	ob_start();
-	?>
-
-	<div class="travelopia-table">
-		<table <?php echo wp_kses_data( $table_attributes ); ?>>
-			<?php
-			foreach ( $block['innerBlocks'] as $row_container_block ) {
-				echo render_block( $row_container_block ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			}
-			?>
-		</table>
-	</div>
-
-	<?php
-	$block_content = ob_get_clean();
-	if ( empty( $block_content ) ) {
-		return $content;
+	$row_containers_content = '';
+	foreach ( $block['innerBlocks'] as $row_container_block ) {
+		$row_containers_content .= render_block( $row_container_block );
 	}
-	return $block_content;
+
+	$table_content = sprintf(
+		'<div class="travelopia-table"><table %1$s>%2$s</table></div>',
+		$table_attributes,
+		$row_containers_content
+	);
+	return $table_content;
 }

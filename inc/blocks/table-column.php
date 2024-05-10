@@ -71,31 +71,16 @@ function render( ?string $content = null, array $block = [] ): null|string {
 		]
 	);
 
-	ob_start();
-	?>
-
-	<?php if ( empty( $block['attrs']['type'] ) ) : ?>
-		<td <?php echo wp_kses_data( $column_attributes ); ?>>
-	<?php else : ?>
-		<th <?php echo wp_kses_data( $column_attributes ); ?>>
-	<?php endif; ?>
-
-		<?php
-		foreach ( $block['innerBlocks'] as $cell_block ) {
-			echo render_block( $cell_block ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		}
-		?>
-
-	<?php if ( empty( $block['attrs']['type'] ) ) : ?>
-		</td>
-	<?php else : ?>
-		</th>
-	<?php endif; ?>
-
-	<?php
-	$column_content = ob_get_clean();
-	if ( empty( $column_content ) ) {
-		return null;
+	$html_tag = 'td';
+	if ( ! empty( $block['attrs']['type'] ) ) {
+		$html_tag = 'th';
 	}
+
+	$cells_content = '';
+	foreach ( $block['innerBlocks'] as $cell_block ) {
+		$cells_content .= render_block( $cell_block );
+	}
+
+	$column_content = sprintf( '<%1$s %2$s>%3$s</%1$s>', $html_tag, $column_attributes, $cells_content );
 	return $column_content;
 }

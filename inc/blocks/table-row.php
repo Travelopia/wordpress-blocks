@@ -62,21 +62,15 @@ function render( ?string $content = null, array $block = [] ): null|string {
 		]
 	);
 
-	ob_start();
-	?>
-
-	<tr <?php echo wp_kses_data( $row_attributes ); ?>>
-		<?php
-		foreach ( $block['innerBlocks'] as $column_block ) {
-			echo render_block( $column_block ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		}
-		?>
-	</tr>
-
-	<?php
-	$row_content = ob_get_clean();
-	if ( empty( $row_content ) ) {
-		return null;
+	$columns_content = '';
+	foreach ( $block['innerBlocks'] as $column_block ) {
+		$columns_content .= render_block( $column_block );
 	}
+
+	$row_content = sprintf(
+		'<tr %1$s>%2$s</tr>',
+		$row_attributes,
+		$columns_content
+	);
 	return $row_content;
 }

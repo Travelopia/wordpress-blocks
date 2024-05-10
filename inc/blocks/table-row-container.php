@@ -66,39 +66,23 @@ function render( ?string $content = null, array $block = [] ): null|string {
 			),
 		]
 	);
-	ob_start();
-	?>
 
-	<?php if ( empty( $block['attrs']['type'] ) ) : ?>
-		<tbody <?php echo wp_kses_data( $block_attributes ); ?>>
-	<?php elseif ( 'thead' === $block['attrs']['type'] ) : ?>
-		<thead <?php echo wp_kses_data( $block_attributes ); ?>>
-	<?php elseif ( 'tfoot' === $block['attrs']['type'] ) : ?>
-		<tfoot <?php echo wp_kses_data( $block_attributes ); ?>>
-	<?php else : ?>
-		<tbody <?php echo wp_kses_data( $block_attributes ); ?>>
-	<?php endif; ?>
-
-		<?php
-		foreach ( $block['innerBlocks'] as $row_block ) {
-			echo render_block( $row_block ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		}
-		?>
-
-	<?php if ( empty( $block['attrs']['type'] ) ) : ?>
-		</tbody>
-	<?php elseif ( 'thead' === $block['attrs']['type'] ) : ?>
-		</thead>
-	<?php elseif ( 'tfoot' === $block['attrs']['type'] ) : ?>
-		</tfoot>
-	<?php else : ?>
-		</tbody>
-	<?php endif; ?>
-
-	<?php
-	$row_container_content = ob_get_clean();
-	if ( empty( $row_container_content ) ) {
-		return null;
+	$row_block_content = '';
+	foreach ( $block['innerBlocks'] as $row_block ) {
+		$row_block_content .= render_block( $row_block );
 	}
+
+	$html_tag = 'tbody';
+	if ( ! empty( $block['attrs']['type'] ) ) {
+		$html_tag = $block['attrs']['type'];
+	}
+
+	$row_container_content = sprintf(
+		'<%1$s %2$s>%3$s</%1$s>',
+		$html_tag,
+		$block_attributes,
+		$row_block_content
+	);
+
 	return $row_container_content;
 }
