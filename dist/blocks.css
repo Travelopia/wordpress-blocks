@@ -1,0 +1,3 @@
+.travelopia-table table{width:100%;border-collapse:collapse;border-spacing:0}.travelopia-table__placeholder-input{width:112px}.travelopia-table__placeholder-input input{height:36px}.travelopia-table td,.travelopia-table th{border:1px solid #ddd;padding:8px}.travelopia-table__placeholder-form{display:flex;flex-direction:column;align-items:flex-start;gap:8px}@media screen and (min-width: 768px){.travelopia-table__placeholder-form{flex-direction:row;align-items:flex-end}}.travelopia-table__placeholder-form .components-base-control__field{margin-bottom:0}.travelopia-table span[data-rich-text-placeholder]{visibility:hidden}.travelopia-table span{white-space:nowrap !important}
+
+/*# sourceMappingURL=blocks.css.map*/
