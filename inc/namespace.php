@@ -86,9 +86,16 @@ function register_front_end_styles(): void {
  * @return void
  */
 function register_blocks(): void {
+	// Include helper functions.
+	require_once __DIR__ . '/blocks/helpers.php';
+
 	// List of blocks to register.
 	$blocks = [
-		'Table' => 'table.php',
+		'Table'             => 'table.php',
+		'TableRowContainer' => 'table-row-container.php',
+		'TableRow'          => 'table-row.php',
+		'TableColumn'       => 'table-column.php',
+		'TableCell'         => 'table-cell.php',
 	];
 
 	// Register blocks.

@@ -1,16 +1,16 @@
 <?php
 /**
- * Block: Table.
+ * Block: Table Row
  *
  * @package travelopia-blocks
  */
 
-namespace Travelopia\Blocks\Table;
+namespace Travelopia\Blocks\TableRow;
 
 use function Travelopia\Blocks\Helpers\get_css_classes;
 use function Travelopia\Blocks\Helpers\get_css_styles;
 
-const BLOCK_NAME = 'travelopia/table';
+const BLOCK_NAME = 'travelopia/table-row';
 
 /**
  * Bootstrap this block.
@@ -43,30 +43,34 @@ function register(): void {
  * @return null|string
  */
 function render( ?string $content = null, array $block = [] ): null|string {
-	// Check for block.
-	if ( BLOCK_NAME !== $block['blockName'] || empty( $block['attrs'] ) || empty( $block['innerBlocks'] ) || ! is_array( $block['innerBlocks'] ) ) {
+	if (
+		empty( $block ) ||
+		! is_array( $block ) ||
+		empty( $block['blockName'] ) ||
+		BLOCK_NAME !== $block['blockName'] ||
+		empty( $block['innerBlocks'] ) ||
+		! is_array( $block['innerBlocks'] )
+	) {
 		return $content;
 	}
 
-	// Enqueue table block styles.
-	wp_enqueue_style( 'travelopia-table' );
-
-	$table_attributes = get_block_wrapper_attributes(
+	// Get block attributes.
+	$row_attributes = get_block_wrapper_attributes(
 		[
-			'class' => get_css_classes( $block['attrs'] ),
-			'style' => get_css_styles( $block['attrs'] ),
+			'class' => get_css_classes( $block['attrs'] ?? [], [ 'travelopia-table__row ' ] ),
+			'style' => get_css_styles( $block['attrs'] ?? [] ),
 		]
 	);
 
-	$row_containers_content = '';
-	foreach ( $block['innerBlocks'] as $row_container_block ) {
-		$row_containers_content .= render_block( $row_container_block );
+	$columns_content = '';
+	foreach ( $block['innerBlocks'] as $column_block ) {
+		$columns_content .= render_block( $column_block );
 	}
 
-	$table_content = sprintf(
-		'<div class="travelopia-table"><table %1$s>%2$s</table></div>',
-		wp_kses_data( $table_attributes ),
-		$row_containers_content
+	$row_content = sprintf(
+		'<tr %1$s>%2$s</tr>',
+		wp_kses_data( $row_attributes ),
+		$columns_content
 	);
-	return $table_content;
+	return $row_content;
 }
