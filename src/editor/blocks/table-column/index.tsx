@@ -46,7 +46,7 @@ export const settings: BlockConfiguration = {
 		},
 		blockId: {
 			type: 'string',
-		}
+		},
 	},
 	providesContext: {
 		'travelopia/table-row': 'row' as never,

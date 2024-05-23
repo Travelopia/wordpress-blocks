@@ -43,6 +43,7 @@ import { name as rowContainerBlockName } from '../table-row-container';
  * @param {number}  props.tableRow       Table row index.
  * @param {number}  props.tableColumn    Table column index.
  * @param {string}  props.rowContainerId Table row container ID.
+ * @param {string}  props.columnId       Column block ID.
  *
  * @return {JSX.Element} JSX Component.
  */

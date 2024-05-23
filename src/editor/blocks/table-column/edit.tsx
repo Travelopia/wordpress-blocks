@@ -79,7 +79,6 @@ function TableColumnEdit( {
 			return {
 				row: rowIndex + 1, // Start index at 1.
 				column: columnIndex + 1,
-				rowClientId: rowClientId,
 			};
 		},
 		[ clientId ],
@@ -92,7 +91,7 @@ function TableColumnEdit( {
 
 	useEffect( () => {
 		setAttributes( { blockId: clientId } );
-	}, [clientId, setAttributes] );
+	}, [ clientId, setAttributes ] );
 
 	// Determine tag.
 	let Tag: string = 'td';

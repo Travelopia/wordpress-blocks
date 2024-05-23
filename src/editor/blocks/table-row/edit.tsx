@@ -43,7 +43,7 @@ function TableRowEdit( props: BlockEditProps<any> ): JSX.Element {
 
 	useEffect( () => {
 		setAttributes( { blockId: clientId } );
-	}, [clientId] );
+	}, [ clientId, setAttributes ] );
 
 	return (
 		<tr { ...innerBlocksProps } />
