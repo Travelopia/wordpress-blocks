@@ -52,7 +52,6 @@ export default function Toolbar( {
 	tableRow,
 	tableColumn,
 	rowContainerId,
-	rowId,
 	columnId,
 }: {
 	isSelected: boolean;
@@ -60,7 +59,6 @@ export default function Toolbar( {
 	tableRow: number;
 	tableColumn: number;
 	rowContainerId: string;
-	rowId: string;
 	columnId: string;
 } ): JSX.Element {
 	const {
@@ -83,7 +81,7 @@ export default function Toolbar( {
 
 	const [ maximumColumnsInCurrentRow, setMaximumColumnsInCurrentRow ] = useState( 0 );
 
-	const rowContainerBlock = useMemo( () => getBlock( rowContainerId ), [ rowContainerId, getBlock ] );
+	const rowContainerBlockType = useMemo( () => getBlock( rowContainerId )?.attributes?.type, [ rowContainerId, getBlock ] );
 
 	/**
 	 * Set maximum columns in current row.
@@ -166,6 +164,10 @@ export default function Toolbar( {
 			return;
 		}
 
+		// Get current row container block.
+		const rowContainerBlock = getBlock( rowContainerId );
+
+		// Check if the row container block exists.
 		if ( ! rowContainerBlock ) {
 			return;
 		}
@@ -204,6 +206,10 @@ export default function Toolbar( {
 			return;
 		}
 
+		// Get current row container block.
+		const rowContainerBlock = getBlock( rowContainerId );
+
+		// Check if the row container block exists.
 		if ( ! rowContainerBlock ) {
 			return;
 		}
@@ -306,22 +312,18 @@ export default function Toolbar( {
 			return;
 		}
 
-		console.log('initiated on ', rowId, columnId);
 		const currentBlock = getBlock( columnId );
 		if ( ! currentBlock ) {
-			console.log('No current block');
 			return;
 		}
 
 		const previousBlockClientId = getAdjacentBlockClientId( columnId, -1 );
 		if ( ! previousBlockClientId ) {
-			console.log('No previous exists');
 			return;
 		}
 
 		const previousBlock = getBlock( previousBlockClientId );
 		if ( ! previousBlock ) {
-			console.log('No previous block');
 			return;
 		}
 
@@ -341,21 +343,17 @@ export default function Toolbar( {
 			return;
 		}
 
-		console.log('initiated on ', rowId, columnId);
 		const currentBlock = getBlock( columnId );
 		if ( ! currentBlock ) {
-			console.log('No current block');
 			return;
 		}
 		const nextBlockClientId = getAdjacentBlockClientId( columnId, 1 );
 		if ( ! nextBlockClientId ) {
-			console.log('No next exists');
 			return;
 		}
 
 		const nextBlock = getBlock( nextBlockClientId );
 		if ( ! nextBlock ) {
-			console.log('No next block');
 			return;
 		}
 
@@ -372,6 +370,14 @@ export default function Toolbar( {
 
 		// Check if the table block exists.
 		if ( ! tableBlock ) {
+			return;
+		}
+
+		// Get current row container block.
+		const rowContainerBlock = getBlock( rowContainerId );
+
+		// Check if the row container block exists.
+		if ( ! rowContainerBlock ) {
 			return;
 		}
 
@@ -440,6 +446,14 @@ export default function Toolbar( {
 
 		// Check if the table block exists.
 		if ( ! tableBlock ) {
+			return;
+		}
+
+		// Get current row container block.
+		const rowContainerBlock = getBlock( rowContainerId );
+
+		// Check if the row container block exists.
+		if ( ! rowContainerBlock ) {
 			return;
 		}
 
@@ -580,19 +594,19 @@ export default function Toolbar( {
 		{
 			icon: tableRowBefore,
 			title: __( 'Insert row before', 'tp' ),
-			isDisabled: ( ! isSelected || rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead' ),
+			isDisabled: ( ! isSelected || rowContainerBlockType === 'tfoot' || rowContainerBlockType === 'thead' ),
 			onClick: () => onInsertRow( -1 ),
 		},
 		{
 			icon: tableRowAfter,
 			title: __( 'Insert row after', 'tp' ),
-			isDisabled: ( ! isSelected || rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead' ),
+			isDisabled: ( ! isSelected || rowContainerBlockType === 'tfoot' || rowContainerBlockType === 'thead' ),
 			onClick: onInsertRow,
 		},
 		{
 			icon: tableRowDelete,
 			title: __( 'Delete row', 'tp' ),
-			isDisabled: ( ! isSelected || rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead' ),
+			isDisabled: ( ! isSelected || rowContainerBlockType === 'tfoot' || rowContainerBlockType === 'thead' ),
 			onClick: onDeleteRow,
 		},
 		{
@@ -628,13 +642,13 @@ export default function Toolbar( {
 		{
 			icon: arrowUp,
 			title: __( 'Merge column up', 'tp' ),
-			isDisabled: ( tableRow < 2 || rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead' ),
+			isDisabled: ( tableRow < 2 || rowContainerBlockType === 'tfoot' || rowContainerBlockType === 'thead' ),
 			onClick: onMergeColumnUp,
 		},
 		{
 			icon: arrowDown,
 			title: __( 'Merge column down', 'tp' ),
-			isDisabled: ( rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead' ),
+			isDisabled: ( rowContainerBlockType === 'tfoot' || rowContainerBlockType === 'thead' ),
 			onClick: onMergeColumnDown,
 		},
 	] as DropdownOption[];

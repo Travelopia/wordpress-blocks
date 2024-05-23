@@ -33,9 +33,6 @@ export const settings: BlockConfiguration = {
 			type: 'string',
 		}
 	},
-	providesContext: {
-		'travelopia/table-row-id': 'blockId' as never,
-	},
 	usesContext: [
 		'travelopia/table-row-container-type',
 	],

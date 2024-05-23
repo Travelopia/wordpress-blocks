@@ -68,7 +68,7 @@ function TableColumnEdit( {
 	);
 
 	// Get the row and column index.
-	const { row, column, rowClientId } = useSelect(
+	const { row, column } = useSelect(
 		( select: any ) => {
 			// Calculate the row and column index.
 			const columnIndex = select( blockEditorStore ).getBlockIndex( clientId );
@@ -104,12 +104,6 @@ function TableColumnEdit( {
 		<>
 			<InspectorControls>
 				<PanelBody title={ __( 'Column Options', 'tp' ) }>
-					<p>Row client ID: {rowClientId}</p>
-					<p>Column Client ID: {clientId}</p>
-					<p>Row number: {row}</p>
-					<p>Column number: {column}</p>
-					<p>Rowspan: {attributes?.rowSpan ?? 1}</p>
-					<p>Colspan: {attributes?.colSpan ?? 1}</p>
 					<ToggleControl
 						label={ __( 'Is Sticky', 'tp' ) }
 						checked={ attributes.isSticky }
@@ -124,7 +118,6 @@ function TableColumnEdit( {
 				tableColumn={ column }
 				tableId={ tableId }
 				rowContainerId={ rowContainerId }
-				rowId={ rowClientId }
 				columnId={ clientId }
 			/>
 			<Tag
