@@ -28,7 +28,11 @@ export const settings: BlockConfiguration = {
 	parent: [ 'travelopia/table-row-container' ],
 	category: 'text',
 	keywords: [ __( 'row', 'tp' ) ],
-	attributes: {},
+	attributes: {
+		blockId: {
+			type: 'string',
+		},
+	},
 	usesContext: [
 		'travelopia/table-row-container-type',
 	],

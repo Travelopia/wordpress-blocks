@@ -43,6 +43,7 @@ import { name as rowContainerBlockName } from '../table-row-container';
  * @param {number}  props.tableRow       Table row index.
  * @param {number}  props.tableColumn    Table column index.
  * @param {string}  props.rowContainerId Table row container ID.
+ * @param {string}  props.columnId       Column block ID.
  *
  * @return {JSX.Element} JSX Component.
  */
@@ -52,12 +53,14 @@ export default function Toolbar( {
 	tableRow,
 	tableColumn,
 	rowContainerId,
+	columnId,
 }: {
 	isSelected: boolean;
 	tableId: string;
 	tableRow: number;
 	tableColumn: number;
 	rowContainerId: string;
+	columnId: string;
 } ): JSX.Element {
 	const {
 		getBlock,
@@ -65,6 +68,7 @@ export default function Toolbar( {
 		getBlockAttributes,
 		// @ts-ignore
 		canRemoveBlock,
+		getAdjacentBlockClientId,
 	} = select( 'core/block-editor' );
 
 	const {
@@ -78,7 +82,7 @@ export default function Toolbar( {
 
 	const [ maximumColumnsInCurrentRow, setMaximumColumnsInCurrentRow ] = useState( 0 );
 
-	const rowContainerBlock = useMemo( () => getBlock( rowContainerId ), [ rowContainerId, getBlock ] );
+	const rowContainerBlockType = useMemo( () => getBlock( rowContainerId )?.attributes?.type, [ rowContainerId, getBlock ] );
 
 	/**
 	 * Set maximum columns in current row.
@@ -161,6 +165,10 @@ export default function Toolbar( {
 			return;
 		}
 
+		// Get current row container block.
+		const rowContainerBlock = getBlock( rowContainerId );
+
+		// Check if the row container block exists.
 		if ( ! rowContainerBlock ) {
 			return;
 		}
@@ -199,6 +207,10 @@ export default function Toolbar( {
 			return;
 		}
 
+		// Get current row container block.
+		const rowContainerBlock = getBlock( rowContainerId );
+
+		// Check if the row container block exists.
 		if ( ! rowContainerBlock ) {
 			return;
 		}
@@ -301,60 +313,23 @@ export default function Toolbar( {
 			return;
 		}
 
-		// Traverse rows.
-		tableBlock.innerBlocks.some( ( currentRowContainerBlock ) => {
-			if ( currentRowContainerBlock.name !== rowContainerBlockName ) {
-				return false;
-			}
+		const currentBlock = getBlock( columnId );
+		if ( ! currentBlock ) {
+			return;
+		}
 
-			// Avoid merging thead/tfoot column with tbody column.
-			const currentRowContainerBlockAttributes = getBlockAttributes( currentRowContainerBlock.clientId );
-			if ( currentRowContainerBlockAttributes?.type !== rowContainerBlock?.attributes?.type ) {
-				return false;
-			}
+		const previousBlockClientId = getAdjacentBlockClientId( columnId, -1 );
+		if ( ! previousBlockClientId ) {
+			return;
+		}
 
-			return currentRowContainerBlock.innerBlocks.some( ( rowBlock, index ): boolean => {
-				// Get current row.
-				const rowNumber: number = index + 1;
-				if ( rowBlock.name !== rowBlockName || rowNumber !== tableRow || ! rowBlock.innerBlocks.length ) {
-					return false;
-				}
+		const previousBlock = getBlock( previousBlockClientId );
+		if ( ! previousBlock ) {
+			return;
+		}
 
-				// Prepare variables.
-				let columnToMergeInto: BlockInstance | undefined;
-				let columnToMergeFrom: BlockInstance | undefined;
-
-				// Traverse columns in current row.
-				rowBlock.innerBlocks.some( ( columnBlock, columnIndex ): boolean => {
-					// Get column to merge from and into.
-					const columnNumber: number = columnIndex + 1;
-					if ( columnNumber === tableColumn - 1 ) {
-						columnToMergeInto = columnBlock;
-					} else if ( columnNumber === tableColumn ) {
-						columnToMergeFrom = columnBlock;
-					}
-
-					// Short circuit if we found them.
-					if ( columnToMergeInto && columnToMergeFrom ) {
-						return true;
-					}
-
-					// We haven't found them, loop some more.
-					return false;
-				} );
-
-				// Check if we have a "to" and "from" column.
-				if ( ! columnToMergeFrom || ! columnToMergeInto ) {
-					return false;
-				}
-
-				// Merge columns.
-				mergeColumnsHorizontally( columnToMergeFrom, columnToMergeInto );
-
-				// Short-circuit loop.
-				return true;
-			} );
-		} );
+		// Merge columns.
+		mergeColumnsHorizontally( currentBlock, previousBlock );
 	};
 
 	/**
@@ -369,60 +344,22 @@ export default function Toolbar( {
 			return;
 		}
 
-		// Traverse rows.
-		tableBlock.innerBlocks.some( ( currentRowContainerBlock ) => {
-			if ( currentRowContainerBlock.name !== rowContainerBlockName ) {
-				return false;
-			}
+		const currentBlock = getBlock( columnId );
+		if ( ! currentBlock ) {
+			return;
+		}
+		const nextBlockClientId = getAdjacentBlockClientId( columnId, 1 );
+		if ( ! nextBlockClientId ) {
+			return;
+		}
 
-			// Avoid merging thead/tfoot column with tbody column.
-			const currentRowContainerBlockAttributes = getBlockAttributes( currentRowContainerBlock.clientId );
-			if ( currentRowContainerBlockAttributes?.type !== rowContainerBlock?.attributes?.type ) {
-				return false;
-			}
+		const nextBlock = getBlock( nextBlockClientId );
+		if ( ! nextBlock ) {
+			return;
+		}
 
-			return currentRowContainerBlock.innerBlocks.some( ( rowBlock, index ): boolean => {
-				// Get current row.
-				const rowNumber: number = index + 1;
-				if ( rowBlock.name !== rowBlockName || rowNumber !== tableRow || ! rowBlock.innerBlocks.length ) {
-					return false;
-				}
-
-				// Prepare variables.
-				let columnToMergeInto: BlockInstance | undefined;
-				let columnToMergeFrom: BlockInstance | undefined;
-
-				// Traverse columns in current row.
-				rowBlock.innerBlocks.some( ( columnBlock, columnIndex ): boolean => {
-					// Get column to merge from and into.
-					const columnNumber: number = columnIndex + 1;
-					if ( columnNumber === tableColumn ) {
-						columnToMergeInto = columnBlock;
-					} else if ( columnNumber === tableColumn + 1 ) {
-						columnToMergeFrom = columnBlock;
-					}
-
-					// Short circuit if we found them.
-					if ( columnToMergeInto && columnToMergeFrom ) {
-						return true;
-					}
-
-					// We haven't found them, loop some more.
-					return false;
-				} );
-
-				// Check if we have a "to" and "from" column.
-				if ( ! columnToMergeFrom || ! columnToMergeInto ) {
-					return false;
-				}
-
-				// Merge columns.
-				mergeColumnsHorizontally( columnToMergeFrom, columnToMergeInto );
-
-				// Short-circuit loop.
-				return true;
-			} );
-		} );
+		// Merge columns.
+		mergeColumnsHorizontally( nextBlock, currentBlock );
 	};
 
 	/**
@@ -434,6 +371,14 @@ export default function Toolbar( {
 
 		// Check if the table block exists.
 		if ( ! tableBlock ) {
+			return;
+		}
+
+		// Get current row container block.
+		const rowContainerBlock = getBlock( rowContainerId );
+
+		// Check if the row container block exists.
+		if ( ! rowContainerBlock ) {
 			return;
 		}
 
@@ -502,6 +447,14 @@ export default function Toolbar( {
 
 		// Check if the table block exists.
 		if ( ! tableBlock ) {
+			return;
+		}
+
+		// Get current row container block.
+		const rowContainerBlock = getBlock( rowContainerId );
+
+		// Check if the row container block exists.
+		if ( ! rowContainerBlock ) {
 			return;
 		}
 
@@ -642,19 +595,19 @@ export default function Toolbar( {
 		{
 			icon: tableRowBefore,
 			title: __( 'Insert row before', 'tp' ),
-			isDisabled: ( ! isSelected || rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead' ),
+			isDisabled: ( ! isSelected || rowContainerBlockType === 'tfoot' || rowContainerBlockType === 'thead' ),
 			onClick: () => onInsertRow( -1 ),
 		},
 		{
 			icon: tableRowAfter,
 			title: __( 'Insert row after', 'tp' ),
-			isDisabled: ( ! isSelected || rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead' ),
+			isDisabled: ( ! isSelected || rowContainerBlockType === 'tfoot' || rowContainerBlockType === 'thead' ),
 			onClick: onInsertRow,
 		},
 		{
 			icon: tableRowDelete,
 			title: __( 'Delete row', 'tp' ),
-			isDisabled: ( ! isSelected || rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead' ),
+			isDisabled: ( ! isSelected || rowContainerBlockType === 'tfoot' || rowContainerBlockType === 'thead' ),
 			onClick: onDeleteRow,
 		},
 		{
@@ -690,13 +643,13 @@ export default function Toolbar( {
 		{
 			icon: arrowUp,
 			title: __( 'Merge column up', 'tp' ),
-			isDisabled: ( tableRow < 2 || rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead' ),
+			isDisabled: ( tableRow < 2 || rowContainerBlockType === 'tfoot' || rowContainerBlockType === 'thead' ),
 			onClick: onMergeColumnUp,
 		},
 		{
 			icon: arrowDown,
 			title: __( 'Merge column down', 'tp' ),
-			isDisabled: ( rowContainerBlock?.attributes?.type === 'tfoot' || rowContainerBlock?.attributes?.type === 'thead' ),
+			isDisabled: ( rowContainerBlockType === 'tfoot' || rowContainerBlockType === 'thead' ),
 			onClick: onMergeColumnDown,
 		},
 	] as DropdownOption[];

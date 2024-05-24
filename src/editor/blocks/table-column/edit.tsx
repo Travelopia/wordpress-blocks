@@ -89,6 +89,10 @@ function TableColumnEdit( {
 		setAttributes( { row, column } );
 	}, [ row, column, setAttributes ] );
 
+	useEffect( () => {
+		setAttributes( { blockId: clientId } );
+	}, [ clientId, setAttributes ] );
+
 	// Determine tag.
 	let Tag: string = 'td';
 	if ( 'tbody' !== rowContainerType ) {
@@ -113,6 +117,7 @@ function TableColumnEdit( {
 				tableColumn={ column }
 				tableId={ tableId }
 				rowContainerId={ rowContainerId }
+				columnId={ clientId }
 			/>
 			<Tag
 				{ ...innerBlocksProps }
