@@ -7,6 +7,7 @@
 
 namespace Travelopia\Blocks\TableColumn;
 
+use function Travelopia\Blocks\Helpers\get_border_styles;
 use function Travelopia\Blocks\Helpers\get_css_classes;
 use function Travelopia\Blocks\Helpers\get_css_styles;
 
@@ -55,6 +56,8 @@ function render( ?string $content = null, array $block = [] ): null|string {
 		return $content;
 	}
 
+	$border_styles = get_border_styles( $block['attrs'] );
+
 	// Get block attributes.
 	$column_attributes = get_block_wrapper_attributes(
 		[
@@ -63,9 +66,10 @@ function render( ?string $content = null, array $block = [] ): null|string {
 				[
 					'travelopia-table__column',
 					! empty( $block['attrs']['isSticky'] ) ? 'travelopia-table__column--sticky' : '',
+					$border_styles['css_classes'],
 				]
 			),
-			'style'   => get_css_styles( $block['attrs'] ),
+			'style'   => get_css_styles( $block['attrs'] ) . $border_styles['inline_styles'],
 			'colspan' => $block['attrs']['colSpan'] ?? '',
 			'rowspan' => $block['attrs']['rowSpan'] ?? '',
 		]

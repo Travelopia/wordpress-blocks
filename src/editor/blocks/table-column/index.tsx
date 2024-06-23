@@ -64,6 +64,17 @@ export const settings: BlockConfiguration = {
 			background: true,
 		},
 		align: [ 'left', 'center', 'right' ],
+		// @ts-ignore
+		__experimentalBorder: {
+			color: true,
+			style: true,
+			width: true,
+			__experimentalDefaultControls: {
+				color: true,
+				style: true,
+				width: true,
+			},
+		},
 	},
 	edit,
 	save() {
