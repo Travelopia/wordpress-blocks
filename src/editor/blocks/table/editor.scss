@@ -23,4 +23,17 @@
 			margin-bottom: 0;
 		}
 	}
+
+	&__column {
+
+		&.alignleft {
+			float: unset;
+			z-index: unset;
+		}
+
+		&.alignright {
+			float: unset;
+			z-index: unset;
+		}
+	}
 }
