@@ -144,3 +144,58 @@ function get_css_styles( array $attributes = [] ): string {
 	$block_styles = isset( $attributes['styles'] ) ? $attributes['styles'] : '';
 	return $block_styles . $colors['inline_styles'];
 }
+
+/**
+ * Get border styles.
+ *
+ * @param mixed[] $attributes The block attributes.
+ *
+ * @return array{css_classes: string, inline_styles: string} Returns the border styles for the block.
+ */
+function get_border_styles( array $attributes = [] ): array {
+	if ( ! is_array( $attributes ) ) {
+		return [
+			'css_classes'   => '',
+			'inline_styles' => '',
+		];
+	}
+
+	$border_block_styles = [];
+
+	// Border width.
+	if ( isset( $attributes['style']['border']['width'] ) ) {
+		$border_width = $attributes['style']['border']['width'];
+
+		if ( is_numeric( $border_width ) ) {
+			$border_width .= 'px';
+		}
+
+		$border_block_styles['width'] = $border_width;
+	}
+
+	// Border color.
+	$preset_border_color          = array_key_exists( 'borderColor', $attributes ) ? "var:preset|color|{$attributes['borderColor']}" : null;
+	$custom_border_color          = isset( $attributes['style']['border']['color'] ) ? $attributes['style']['border']['color'] : null;
+	$border_block_styles['color'] = $preset_border_color ? $preset_border_color : $custom_border_color;
+
+	// Generates the border styles for individual border sides.
+	foreach ( array( 'top', 'right', 'bottom', 'left' ) as $side ) {
+		$border                       = isset( $attributes['style']['border'][ $side ] ) ? $attributes['style']['border'][ $side ] : null;
+		$border_side_values           = array(
+			'width' => isset( $border['width'] ) ? $border['width'] : null,
+			'color' => isset( $border['color'] ) ? $border['color'] : null,
+			'style' => isset( $border['style'] ) ? $border['style'] : null,
+		);
+		$border_block_styles[ $side ] = $border_side_values;
+	}
+
+	// Collect classes and styles.
+	$styles        = wp_style_engine_get_styles( array( 'border' => $border_block_styles ) );
+	$classes       = ! empty( $styles['classnames'] ) ? $styles['classnames'] : '';
+	$inline_styles = ! empty( $styles['css'] ) ? $styles['css'] : '';
+
+	return [
+		'css_classes'   => $classes,
+		'inline_styles' => $inline_styles,
+	];
+}

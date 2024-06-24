@@ -27,27 +27,13 @@
 	&__column {
 
 		&.alignleft {
-
-			figure {
-				display: flex;
-				justify-content: flex-start;
-			}
-		}
-
-		&.aligncenter {
-
-			figure {
-				display: flex;
-				justify-content: center;
-			}
+			float: unset;
+			z-index: unset;
 		}
 
 		&.alignright {
-
-			figure {
-				display: flex;
-				justify-content: flex-end;
-			}
+			float: unset;
+			z-index: unset;
 		}
 	}
 }
