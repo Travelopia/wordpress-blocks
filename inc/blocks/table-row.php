@@ -7,6 +7,7 @@
 
 namespace Travelopia\Blocks\TableRow;
 
+use function Travelopia\Blocks\Helpers\get_border_styles;
 use function Travelopia\Blocks\Helpers\get_css_classes;
 use function Travelopia\Blocks\Helpers\get_css_styles;
 
@@ -54,11 +55,19 @@ function render( ?string $content = null, array $block = [] ): null|string {
 		return $content;
 	}
 
+	$border_styles = get_border_styles( $block['attrs'] );
+
 	// Get block attributes.
 	$row_attributes = get_block_wrapper_attributes(
 		[
-			'class' => get_css_classes( $block['attrs'] ?? [], [ 'travelopia-table__row ' ] ),
-			'style' => get_css_styles( $block['attrs'] ?? [] ),
+			'class' => get_css_classes(
+				$block['attrs'] ?? [],
+				[
+					'travelopia-table__row ',
+					$border_styles['css_classes'],
+				]
+			),
+			'style' => get_css_styles( $block['attrs'] ?? [] ) . $border_styles['inline_styles'],
 		]
 	);
 
