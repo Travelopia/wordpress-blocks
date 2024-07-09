@@ -203,7 +203,7 @@ function get_border_styles( array $attributes = [] ): array {
 /**
  * Get block wrapper attributes.
  *
- * @param array $attributes The block attributes.
+ * @param mixed[] $attributes The block attributes.
  *
  * @return string
  */
