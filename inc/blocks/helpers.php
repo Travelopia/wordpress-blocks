@@ -199,3 +199,23 @@ function get_border_styles( array $attributes = [] ): array {
 		'inline_styles' => $inline_styles,
 	];
 }
+
+/**
+ * Get block wrapper attributes.
+ *
+ * @param array $attributes The block attributes.
+ *
+ * @return string
+ */
+function get_block_wrapper_attributes( array $attributes = [] ): string {
+	if ( ! is_array( $attributes ) ) {
+		return '';
+	}
+
+	$normalized_attributes = [];
+	foreach ( $attributes as $key => $value ) {
+		$normalized_attributes[] = $key . '="' . esc_attr( $value ) . '"';
+	}
+
+	return implode( ' ', $normalized_attributes );
+}
