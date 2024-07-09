@@ -7,6 +7,7 @@
 
 namespace Travelopia\Blocks\TableRowContainer;
 
+use function Travelopia\Blocks\Helpers\get_block_wrapper_attributes;
 use function Travelopia\Blocks\Helpers\get_css_classes;
 
 const BLOCK_NAME = 'travelopia/table-row-container';

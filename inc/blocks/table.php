@@ -7,6 +7,7 @@
 
 namespace Travelopia\Blocks\Table;
 
+use function Travelopia\Blocks\Helpers\get_block_wrapper_attributes;
 use function Travelopia\Blocks\Helpers\get_css_classes;
 use function Travelopia\Blocks\Helpers\get_css_styles;
 
