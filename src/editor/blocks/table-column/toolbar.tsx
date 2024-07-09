@@ -81,6 +81,7 @@ export default function Toolbar( {
 	} = dispatch( 'core/block-editor' );
 
 	const [ maximumColumnsInCurrentRow, setMaximumColumnsInCurrentRow ] = useState( 0 );
+	const [ maximumRowsInCurrentColumn, setMaximumRowsInCurrentColumn ] = useState( 0 );
 
 	const rowContainerBlockType = useMemo( () => getBlock( rowContainerId )?.attributes?.type, [ rowContainerId, getBlock ] );
 
@@ -97,19 +98,36 @@ export default function Toolbar( {
 			return;
 		}
 
-		// Traverse rows.
-		tableBlock.innerBlocks.some( ( rowBlock, index ): boolean => {
-			// Get current row.
-			if ( rowBlock.name !== rowBlockName || index + 1 !== tableRow || ! rowBlock.innerBlocks.length ) {
+		// Traverse table.
+		tableBlock.innerBlocks.some( ( rowContainerBlock ): boolean => {
+
+			if ( rowContainerBlock.name !== rowContainerBlockName || ! rowContainerBlock.innerBlocks.length ) {
 				return false;
 			}
 
-			// Set maximum columns in current row.
-			setMaximumColumnsInCurrentRow( rowBlock.innerBlocks.length );
+			let maxRows = 0;
+			rowContainerBlock.innerBlocks.forEach( ( rowBlock, rowIndex ) => {
+				if ( rowBlock.name !== rowBlockName || ! rowBlock.innerBlocks.length ) {
+					return;
+				}
 
-			// Short-circuit loop.
+				// Set maximum columns in current row.
+				if ( rowIndex + 1 === tableRow ) {
+					setMaximumColumnsInCurrentRow( rowBlock.innerBlocks.length );
+				}
+
+				rowBlock.innerBlocks.forEach( ( columnBlock, columnIndex ) => {
+					if ( columnBlock.name !== columnBlockName ||  columnIndex + 1 !== tableColumn ) {
+						return;
+					}
+
+					maxRows++;
+				} );
+			} );
+
+			setMaximumRowsInCurrentColumn( maxRows );
 			return true;
-		} );
+		});
 	}, [ tableRow, tableColumn, getBlock, tableId ] );
 
 	/**
@@ -649,7 +667,7 @@ export default function Toolbar( {
 		{
 			icon: arrowDown,
 			title: __( 'Merge column down', 'tp' ),
-			isDisabled: ( rowContainerBlockType === 'tfoot' || rowContainerBlockType === 'thead' ),
+			isDisabled: ( tableRow === maximumRowsInCurrentColumn || rowContainerBlockType === 'tfoot' || rowContainerBlockType === 'thead' ),
 			onClick: onMergeColumnDown,
 		},
 	] as DropdownOption[];
