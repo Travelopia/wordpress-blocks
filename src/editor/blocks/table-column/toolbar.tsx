@@ -100,7 +100,6 @@ export default function Toolbar( {
 
 		// Traverse table.
 		tableBlock.innerBlocks.some( ( rowContainerBlock ): boolean => {
-
 			if ( rowContainerBlock.name !== rowContainerBlockName || ! rowContainerBlock.innerBlocks.length ) {
 				return false;
 			}
@@ -117,7 +116,7 @@ export default function Toolbar( {
 				}
 
 				rowBlock.innerBlocks.forEach( ( columnBlock, columnIndex ) => {
-					if ( columnBlock.name !== columnBlockName ||  columnIndex + 1 !== tableColumn ) {
+					if ( columnBlock.name !== columnBlockName || columnIndex + 1 !== tableColumn ) {
 						return;
 					}
 
@@ -127,7 +126,7 @@ export default function Toolbar( {
 
 			setMaximumRowsInCurrentColumn( maxRows );
 			return true;
-		});
+		} );
 	}, [ tableRow, tableColumn, getBlock, tableId ] );
 
 	/**
