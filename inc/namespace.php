@@ -86,29 +86,50 @@ function register_front_end_styles(): void {
  * @return void
  */
 function register_blocks(): void {
+	// Avoid registering blocks in the admin to avoid a conflict with Blade.
+	if ( is_admin() ) {
+		return;
+	}
+
 	// Include helper functions.
 	require_once __DIR__ . '/blocks/helpers.php';
 
-	// List of blocks to register.
-	$blocks = [
-		'Table'             => 'table.php',
-		'TableRowContainer' => 'table-row-container.php',
-		'TableRow'          => 'table-row.php',
-		'TableColumn'       => 'table-column.php',
-		'TableCell'         => 'table-cell.php',
-	];
+	// Path to blocks file.
+	$blocks_path = dirname( __DIR__ ) . '/dist/blocks.php';
+
+	// Get blocks from file, if it exists.
+	if ( ! file_exists( $blocks_path ) ) {
+		// Block file does not exist, bail.
+		return;
+	}
+
+	// Load blocks.
+	$blocks = require $blocks_path;
+
+	// Check if we have blocks.
+	if ( empty( $blocks ) || ! is_array( $blocks ) ) {
+		return;
+	}
 
 	// Register blocks.
-	foreach ( $blocks as $namespace => $file_name ) {
+	foreach ( $blocks as $path => $namespace ) {
 		// Include and bootstrap blocks.
-		require_once __DIR__ . '/blocks/' . $file_name;
+		$block_path = dirname( __DIR__ ) . '/' . $path;
+
+		// Check if block file exists.
+		if ( ! file_exists( $block_path ) ) {
+			continue;
+		}
+
+		// Require block.
+		require_once $block_path;
 
 		// Get callable function name.
-		$callable = __NAMESPACE__ . '\\' . $namespace . '\\bootstrap';
+		$_function = $namespace . '\\bootstrap';
 
-		// If the function is callable, then call the function.
-		if ( is_callable( $callable ) ) {
-			call_user_func( $callable );
+		// Execute the function if it exists.
+		if ( function_exists( $_function ) ) {
+			$_function();
 		}
 	}
 }
