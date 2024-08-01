@@ -8,6 +8,7 @@ vendor
 
 # --- Root
 /*
+!.bin
 !.browserslistrc
 !.eslintignore
 !.eslintrc.json
