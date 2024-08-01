@@ -27,10 +27,12 @@ import { createAndInsertRowContainer } from './edit';
  * @return {JSX.Element} JSX Component.
  */
 export function TablePlaceholder( props: BlockEditProps<any> ): JSX.Element {
+	// Destructure properties.
 	const { setAttributes, clientId } = props;
 	const [ rows, setRows ] = useState( 2 );
 	const [ columns, setColumns ] = useState( 2 );
 
+	// Return placeholder.
 	return (
 		<Placeholder
 			label={ __( 'Table', 'tp' ) }

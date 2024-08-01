@@ -7,19 +7,10 @@ import {
 	useBlockProps,
 	useInnerBlocksProps,
 } from '@wordpress/block-editor';
-import {
-	BlockEditProps,
-	createBlock,
-} from '@wordpress/blocks';
+import { BlockEditProps, createBlock } from '@wordpress/blocks';
 import { useEffect } from '@wordpress/element';
-import {
-	PanelBody,
-	ToggleControl,
-} from '@wordpress/components';
-import {
-	select,
-	dispatch,
-} from '@wordpress/data';
+import { PanelBody, ToggleControl } from '@wordpress/components';
+import { select, dispatch } from '@wordpress/data';
 
 /**
  * External dependencies.
@@ -30,10 +21,10 @@ import classnames from 'classnames';
  * Internal dependencies.
  */
 import { TablePlaceholder } from './placeholder';
-import { name as rowContainerBlockName } from '../table-row-container';
-import { name as rowBlockName } from '../table-row';
-import { name as columnBlockName } from '../table-column';
-import { name as cellBlockName } from '../table-cell';
+import { name as rowContainerBlockName } from './children/row-container';
+import { name as rowBlockName } from './children/row';
+import { name as columnBlockName } from './children/column';
+import { name as cellBlockName } from './children/cell';
 
 /**
  * Create and insert a row container.
@@ -41,10 +32,16 @@ import { name as cellBlockName } from '../table-cell';
  * @param {string} type          Row container type.
  * @param {string} tableClientId The table block's client ID.
  */
-export const createAndInsertRowContainer = ( type: string = 'tbody', tableClientId: string = '' ): void => {
+export const createAndInsertRowContainer = (
+	type: string = 'tbody',
+	tableClientId: string = '',
+): void => {
 	// Get table block.
 	const tableBlock = select( 'core/block-editor' ).getBlock( tableClientId );
+
+	// Return if table block is not found.
 	if ( ! tableBlock ) {
+		// Exit early.
 		return;
 	}
 
@@ -53,6 +50,8 @@ export const createAndInsertRowContainer = ( type: string = 'tbody', tableClient
 
 	// Determine number of rows to create.
 	let totalRows = tableBlock.attributes.rows;
+
+	// Check if the type is not tbody.
 	if ( 'tbody' !== type ) {
 		totalRows = 1;
 	}
@@ -60,25 +59,32 @@ export const createAndInsertRowContainer = ( type: string = 'tbody', tableClient
 	// Add rows and columns to it.
 	for ( let i: number = 0; i < totalRows; i++ ) {
 		const columnBlocks = [];
+
+		// Loop through columns.
 		for ( let j: number = 0; j < tableBlock.attributes.columns; j++ ) {
 			columnBlocks.push(
-				createBlock( columnBlockName, {}, [
-					createBlock( cellBlockName ),
-				] )
+				createBlock( columnBlockName, {}, [ createBlock( cellBlockName ) ] ),
 			);
 		}
 
+		// Create row block.
 		rowContainerBlock.innerBlocks.push(
-			createBlock( rowBlockName, {}, columnBlocks )
+			createBlock( rowBlockName, {}, columnBlocks ),
 		);
 	}
 
 	// Add newly created row and column blocks to the table.
 	if ( 'tbody' === type ) {
-		dispatch( 'core/block-editor' ).replaceInnerBlocks( tableClientId, [ rowContainerBlock ] );
+		dispatch( 'core/block-editor' ).replaceInnerBlocks( tableClientId, [
+			rowContainerBlock,
+		] );
 	} else {
 		const position = 'thead' === type ? 0 : tableBlock.innerBlocks.length;
-		dispatch( 'core/block-editor' ).insertBlock( rowContainerBlock, position, tableClientId );
+		dispatch( 'core/block-editor' ).insertBlock(
+			rowContainerBlock,
+			position,
+			tableClientId,
+		);
 	}
 };
 
@@ -88,15 +94,22 @@ export const createAndInsertRowContainer = ( type: string = 'tbody', tableClient
  * @param {string} type          Row container type.
  * @param {string} tableClientId The table block's client ID.
  */
-export const deleteRowContainer = ( type: string = 'thead', tableClientId: string = '' ): void => {
+export const deleteRowContainer = (
+	type: string = 'thead',
+	tableClientId: string = '',
+): void => {
 	// Get table block.
 	const tableBlock = select( 'core/block-editor' ).getBlock( tableClientId );
+
+	// Return if table block is not found.
 	if ( ! tableBlock || ! tableBlock.innerBlocks.length ) {
+		// Exit early.
 		return;
 	}
 
 	// Find the child block and delete it.
 	tableBlock.innerBlocks.forEach( ( innerBlock ) => {
+		// Check if the block type matches.
 		if ( innerBlock.attributes?.type === type ) {
 			dispatch( 'core/block-editor' ).removeBlock( innerBlock.clientId );
 		}
@@ -110,18 +123,23 @@ export const deleteRowContainer = ( type: string = 'thead', tableClientId: strin
  *
  * @return {JSX.Element} JSX Component.
  */
-function TableEdit( props: BlockEditProps<any> ): JSX.Element {
+export default function Edit( props: BlockEditProps<any> ): JSX.Element {
+	// Destructure properties.
 	const { className, attributes, clientId, setAttributes } = props;
 	const blockProps = useBlockProps( {
 		className: classnames( className, 'travelopia-table' ),
 	} );
-	const innerBlocksProps = useInnerBlocksProps( {}, {
-		allowedBlocks: [ rowContainerBlockName ],
-		renderAppender: undefined,
-	} );
+	const innerBlocksProps = useInnerBlocksProps(
+		{},
+		{
+			allowedBlocks: [ rowContainerBlockName ],
+			renderAppender: undefined,
+		},
+	);
 
 	// Set blockId attribute.
 	useEffect( () => {
+		// Set blockId attribute.
 		setAttributes( { blockId: clientId } );
 	}, [ clientId, setAttributes ] );
 
@@ -131,6 +149,7 @@ function TableEdit( props: BlockEditProps<any> ): JSX.Element {
 	 * @param {boolean} hasThead Has THEAD.
 	 */
 	const handleTheadChange = ( hasThead: boolean ): void => {
+		// Create or delete THEAD row container.
 		if ( hasThead ) {
 			createAndInsertRowContainer( 'thead', clientId );
 		} else {
@@ -145,6 +164,7 @@ function TableEdit( props: BlockEditProps<any> ): JSX.Element {
 	 * @param {boolean} hasTfoot Has TFOOT.
 	 */
 	const handleTfootChange = ( hasTfoot: boolean ): void => {
+		// Create or delete TFOOT row container.
 		if ( hasTfoot ) {
 			createAndInsertRowContainer( 'tfoot', clientId );
 		} else {
@@ -153,6 +173,7 @@ function TableEdit( props: BlockEditProps<any> ): JSX.Element {
 		setAttributes( { hasTfoot } );
 	};
 
+	// Return the component.
 	return (
 		<>
 			<InspectorControls>
@@ -174,16 +195,14 @@ function TableEdit( props: BlockEditProps<any> ): JSX.Element {
 			<figure { ...blockProps }>
 				{
 					/* Placeholder for initial state. */
-					( 0 === attributes.rows || 0 === attributes.columns ) &&
+					( 0 === attributes.rows || 0 === attributes.columns ) && (
 						<TablePlaceholder { ...props } />
+					)
 				}
-				{
-					( 0 !== attributes.rows || 0 !== attributes.columns ) &&
-						<table { ...innerBlocksProps } />
-				}
+				{ ( 0 !== attributes.rows || 0 !== attributes.columns ) && (
+					<table { ...innerBlocksProps } />
+				) }
 			</figure>
 		</>
 	);
 }
-
-export default TableEdit;
