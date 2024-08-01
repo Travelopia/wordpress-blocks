@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "travelopia/table-cell",
+  "title": "Cell",
+  "description": "Individual cell of the table.",
+  "parent": ["travelopia/table-column"],
+  "category": "text",
+  "textdomain": "tp",
+  "keywords": ["cell", "table"],
+  "supports": {
+    "anchor": false,
+    "className": false,
+    "customClassName": false,
+    "html": true,
+    "alignWide": false
+  },
+  "attributes": {
+    "content": {
+      "type": "string",
+      "source": "html"
+    }
+  }
+}
