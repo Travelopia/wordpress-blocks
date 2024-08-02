@@ -86,11 +86,6 @@ function register_front_end_styles(): void {
  * @return void
  */
 function register_blocks(): void {
-	// Avoid registering blocks in the admin to avoid a conflict with Blade.
-	if ( is_admin() ) {
-		return;
-	}
-
 	// Include helper functions.
 	require_once __DIR__ . '/blocks/helpers.php';
 
