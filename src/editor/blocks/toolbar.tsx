@@ -20,19 +20,15 @@ import {
 	tableRowDelete,
 	table,
 } from '@wordpress/icons';
-import {
-	useState,
-	useEffect,
-	useMemo,
-} from '@wordpress/element';
+import { useState, useEffect, useMemo } from '@wordpress/element';
 
 /**
  * Internal dependencies.
  */
-import { name as columnBlockName } from './index';
-import { name as rowBlockName } from '../table-row';
-import { name as cellBlockName } from '../table-cell';
-import { name as rowContainerBlockName } from '../table-row-container';
+import { name as columnBlockName } from './table/children/column';
+import { name as rowBlockName } from './table/children/row';
+import { name as cellBlockName } from './table/children/cell';
+import { name as rowContainerBlockName } from './table/children/row-container';
 
 /**
  * Column block toolbar.
@@ -62,28 +58,39 @@ export default function Toolbar( {
 	rowContainerId: string;
 	columnId: string;
 } ): JSX.Element {
+	// Get block editor select and dispatch.
 	const {
 		getBlock,
 		canInsertBlockType,
 		getBlockAttributes,
-		// @ts-ignore
-		canRemoveBlock,
 		getAdjacentBlockClientId,
+
+		// @ts-ignore - Property 'canRemoveBlock' does not exist on type 'Store'.
+		canRemoveBlock,
 	} = select( 'core/block-editor' );
 
+	// Get block editor dispatch.
 	const {
 		removeBlock,
 		removeBlocks,
 		insertBlock,
 		updateBlockAttributes,
-		// @ts-ignore
+
+		// @ts-ignore - Property 'moveBlocksToPosition' does not exist on type 'Store'.
 		moveBlocksToPosition,
 	} = dispatch( 'core/block-editor' );
 
-	const [ maximumColumnsInCurrentRow, setMaximumColumnsInCurrentRow ] = useState( 0 );
-	const [ maximumRowsInCurrentColumn, setMaximumRowsInCurrentColumn ] = useState( 0 );
+	// State variables.
+	const [ maximumColumnsInCurrentRow, setMaximumColumnsInCurrentRow ] =
+		useState( 0 );
+	const [ maximumRowsInCurrentColumn, setMaximumRowsInCurrentColumn ] =
+		useState( 0 );
 
-	const rowContainerBlockType = useMemo( () => getBlock( rowContainerId )?.attributes?.type, [ rowContainerId, getBlock ] );
+	// Get row container block type.
+	const rowContainerBlockType = useMemo(
+		() => getBlock( rowContainerId )?.attributes?.type,
+		[ rowContainerId, getBlock ],
+	);
 
 	/**
 	 * Set maximum columns in current row.
@@ -95,18 +102,28 @@ export default function Toolbar( {
 		// Check if we have a block.
 		if ( ! tableBlock ) {
 			setMaximumColumnsInCurrentRow( 0 );
+
+			// Exit early.
 			return;
 		}
 
 		// Traverse table.
 		tableBlock.innerBlocks.some( ( rowContainerBlock ): boolean => {
-			if ( rowContainerBlock.name !== rowContainerBlockName || ! rowContainerBlock.innerBlocks.length ) {
+			// Check if the block is a row container.
+			if (
+				rowContainerBlock.name !== rowContainerBlockName ||
+				! rowContainerBlock.innerBlocks.length
+			) {
+				// Continue loop.
 				return false;
 			}
 
+			// Traverse row container.
 			let maxRows = 0;
 			rowContainerBlock.innerBlocks.forEach( ( rowBlock, rowIndex ) => {
+				// Check if the block is a row.
 				if ( rowBlock.name !== rowBlockName || ! rowBlock.innerBlocks.length ) {
+					// Continue loop.
 					return;
 				}
 
@@ -115,16 +132,26 @@ export default function Toolbar( {
 					setMaximumColumnsInCurrentRow( rowBlock.innerBlocks.length );
 				}
 
+				// Set maximum rows in current column.
 				rowBlock.innerBlocks.forEach( ( columnBlock, columnIndex ) => {
-					if ( columnBlock.name !== columnBlockName || columnIndex + 1 !== tableColumn ) {
+					// Check if the block is a column.
+					if (
+						columnBlock.name !== columnBlockName ||
+						columnIndex + 1 !== tableColumn
+					) {
+						// Continue loop.
 						return;
 					}
 
+					// Increment maximum rows.
 					maxRows++;
 				} );
 			} );
 
+			// Set maximum rows in current column.
 			setMaximumRowsInCurrentColumn( maxRows );
+
+			// Short-circuit loop.
 			return true;
 		} );
 	}, [ tableRow, tableColumn, getBlock, tableId ] );
@@ -140,11 +167,13 @@ export default function Toolbar( {
 
 		// Check if the table block exists.
 		if ( ! tableBlock ) {
+			// Exit early.
 			return;
 		}
 
 		// Check if the row block can be inserted.
 		if ( ! canInsertBlockType( rowBlockName, rowContainerId ) ) {
+			// Exit early.
 			return;
 		}
 
@@ -179,6 +208,7 @@ export default function Toolbar( {
 
 		// Check if the table block exists.
 		if ( ! tableBlock ) {
+			// Exit early.
 			return;
 		}
 
@@ -187,6 +217,7 @@ export default function Toolbar( {
 
 		// Check if the row container block exists.
 		if ( ! rowContainerBlock ) {
+			// Exit early.
 			return;
 		}
 
@@ -198,6 +229,7 @@ export default function Toolbar( {
 			! currentRowBlock?.clientId ||
 			! canRemoveBlock( currentRowBlock.clientId )
 		) {
+			// Exit early.
 			return;
 		}
 
@@ -221,6 +253,7 @@ export default function Toolbar( {
 
 		// Check if the table block exists.
 		if ( ! tableBlock ) {
+			// Exit early.
 			return;
 		}
 
@@ -229,6 +262,7 @@ export default function Toolbar( {
 
 		// Check if the row container block exists.
 		if ( ! rowContainerBlock ) {
+			// Exit early.
 			return;
 		}
 
@@ -236,6 +270,7 @@ export default function Toolbar( {
 		tableBlock.innerBlocks.forEach( ( currentRowContainerBlock ) => {
 			// Check the name of the row container block.
 			if ( currentRowContainerBlock.name !== rowContainerBlockName ) {
+				// Continue loop.
 				return;
 			}
 
@@ -243,11 +278,13 @@ export default function Toolbar( {
 			currentRowContainerBlock.innerBlocks.forEach( ( rowBlock ) => {
 				// Check the name of the row block.
 				if ( rowBlock.name !== rowBlockName ) {
+					// Continue loop.
 					return;
 				}
 
 				// Check if the column block can be inserted.
 				if ( ! canInsertBlockType( columnBlockName, rowBlock.clientId ) ) {
+					// Continue loop.
 					return;
 				}
 
@@ -257,7 +294,11 @@ export default function Toolbar( {
 				] );
 
 				// Insert the new column block.
-				insertBlock( newColumnBlock, tableColumn + insertionIndex, rowBlock.clientId );
+				insertBlock(
+					newColumnBlock,
+					tableColumn + insertionIndex,
+					rowBlock.clientId,
+				);
 			} );
 		} );
 
@@ -276,6 +317,7 @@ export default function Toolbar( {
 
 		// Check if the table block exists.
 		if ( ! tableBlock ) {
+			// Exit early.
 			return;
 		}
 
@@ -286,6 +328,7 @@ export default function Toolbar( {
 		tableBlock.innerBlocks.forEach( ( currentRowContainerBlock ) => {
 			// Check the name of the row container block.
 			if ( currentRowContainerBlock.name !== rowContainerBlockName ) {
+				// Continue loop.
 				return;
 			}
 
@@ -293,6 +336,7 @@ export default function Toolbar( {
 			currentRowContainerBlock.innerBlocks.forEach( ( rowBlock ) => {
 				// Check the name of the row block.
 				if ( rowBlock.name !== rowBlockName ) {
+					// Continue loop.
 					return;
 				}
 
@@ -327,21 +371,34 @@ export default function Toolbar( {
 
 		// Check if the table block exists.
 		if ( ! tableBlock ) {
+			// Exit early.
 			return;
 		}
 
+		// Get current column block.
 		const currentBlock = getBlock( columnId );
+
+		// Check if the current column block exists.
 		if ( ! currentBlock ) {
+			// Exit early.
 			return;
 		}
 
+		// Get previous block client ID.
 		const previousBlockClientId = getAdjacentBlockClientId( columnId, -1 );
+
+		// Check if the previous block client ID exists.
 		if ( ! previousBlockClientId ) {
+			// Exit early.
 			return;
 		}
 
+		// Previous block.
 		const previousBlock = getBlock( previousBlockClientId );
+
+		// Check if the previous block exists.
 		if ( ! previousBlock ) {
+			// Exit early.
 			return;
 		}
 
@@ -358,20 +415,34 @@ export default function Toolbar( {
 
 		// Check if the table block exists.
 		if ( ! tableBlock ) {
+			// Exit early.
 			return;
 		}
 
+		// Get current column block.
 		const currentBlock = getBlock( columnId );
+
+		// Check if the current column block exists.
 		if ( ! currentBlock ) {
-			return;
-		}
-		const nextBlockClientId = getAdjacentBlockClientId( columnId, 1 );
-		if ( ! nextBlockClientId ) {
+			// Exit early.
 			return;
 		}
 
+		// Get next block client ID.
+		const nextBlockClientId = getAdjacentBlockClientId( columnId, 1 );
+
+		// Check if the next block client ID exists.
+		if ( ! nextBlockClientId ) {
+			// Exit early.
+			return;
+		}
+
+		// Next block.
 		const nextBlock = getBlock( nextBlockClientId );
+
+		// Check if the next block exists.
 		if ( ! nextBlock ) {
+			// Exit early.
 			return;
 		}
 
@@ -388,6 +459,7 @@ export default function Toolbar( {
 
 		// Check if the table block exists.
 		if ( ! tableBlock ) {
+			// Exit early.
 			return;
 		}
 
@@ -396,6 +468,7 @@ export default function Toolbar( {
 
 		// Check if the row container block exists.
 		if ( ! rowContainerBlock ) {
+			// Exit early.
 			return;
 		}
 
@@ -405,53 +478,80 @@ export default function Toolbar( {
 
 		// Traverse rows.
 		tableBlock.innerBlocks.some( ( currentRowContainerBlock ) => {
+			// Check if the row container block is the current row container block.
 			if ( currentRowContainerBlock.name !== rowContainerBlockName ) {
+				// Continue loop.
 				return false;
 			}
 
 			// Avoid merging thead/tfoot row with tbody row.
-			const currentRowContainerBlockAttributes = getBlockAttributes( currentRowContainerBlock.clientId );
-			if ( currentRowContainerBlockAttributes?.type !== rowContainerBlock?.attributes?.type ) {
+			const currentRowContainerBlockAttributes = getBlockAttributes(
+				currentRowContainerBlock.clientId,
+			);
+
+			// Check if the row container block attributes are the same.
+			if (
+				currentRowContainerBlockAttributes?.type !==
+				rowContainerBlock?.attributes?.type
+			) {
+				// Continue loop.
 				return false;
 			}
 
-			return currentRowContainerBlock.innerBlocks.some( ( rowBlock, rowIndex ): boolean => {
-				// Get current row.
-				const rowNumber: number = rowIndex + 1;
-				if ( rowBlock.name !== rowBlockName || ( rowNumber !== tableRow && rowNumber !== tableRow - 1 ) || ! rowBlock.innerBlocks.length ) {
-					return false;
-				}
+			// Loop through the row container blocks.
+			return currentRowContainerBlock.innerBlocks.some(
+				( rowBlock, rowIndex ): boolean => {
+					// Get current row.
+					const rowNumber: number = rowIndex + 1;
 
-				// Traverse columns in current row.
-				rowBlock.innerBlocks.some( ( columnBlock, columnIndex ): boolean => {
-					// Get column to merge from and into.
-					const columnNumber: number = columnIndex + 1;
-					if ( columnNumber === tableColumn && rowNumber === tableRow ) {
-						columnToMergeFrom = columnBlock;
-					} else if ( columnNumber === tableColumn && rowNumber === tableRow - 1 ) {
-						columnToMergeInto = columnBlock;
+					// Check if the row block is the current row block.
+					if (
+						rowBlock.name !== rowBlockName ||
+						( rowNumber !== tableRow && rowNumber !== tableRow - 1 ) ||
+						! rowBlock.innerBlocks.length
+					) {
+						// Continue loop.
+						return false;
 					}
 
-					// Short circuit if we found them.
-					if ( columnToMergeInto && columnToMergeFrom ) {
-						return true;
+					// Traverse columns in current row.
+					rowBlock.innerBlocks.some( ( columnBlock, columnIndex ): boolean => {
+						// Get column to merge from and into.
+						const columnNumber: number = columnIndex + 1;
+
+						// Check if the column block is the current column block.
+						if ( columnNumber === tableColumn && rowNumber === tableRow ) {
+							columnToMergeFrom = columnBlock;
+						} else if (
+							columnNumber === tableColumn &&
+							rowNumber === tableRow - 1
+						) {
+							columnToMergeInto = columnBlock;
+						}
+
+						// Short circuit if we found them.
+						if ( columnToMergeInto && columnToMergeFrom ) {
+							// Exit early.
+							return true;
+						}
+
+						// We haven't found them, loop some more.
+						return false;
+					} );
+
+					// Check if we have a "to" and "from" column.
+					if ( ! columnToMergeFrom || ! columnToMergeInto ) {
+						// Exit early.
+						return false;
 					}
 
-					// We haven't found them, loop some more.
-					return false;
-				} );
+					// Merge columns.
+					mergeColumnsVertically( columnToMergeFrom, columnToMergeInto );
 
-				// Check if we have a "to" and "from" column.
-				if ( ! columnToMergeFrom || ! columnToMergeInto ) {
-					return false;
-				}
-
-				// Merge columns.
-				mergeColumnsVertically( columnToMergeFrom, columnToMergeInto );
-
-				// Short-circuit loop.
-				return true;
-			} );
+					// Short-circuit loop.
+					return true;
+				},
+			);
 		} );
 	};
 
@@ -464,6 +564,7 @@ export default function Toolbar( {
 
 		// Check if the table block exists.
 		if ( ! tableBlock ) {
+			// Exit early.
 			return;
 		}
 
@@ -472,6 +573,7 @@ export default function Toolbar( {
 
 		// Check if the row container block exists.
 		if ( ! rowContainerBlock ) {
+			// Exit early.
 			return;
 		}
 
@@ -481,53 +583,80 @@ export default function Toolbar( {
 
 		// Traverse rows.
 		tableBlock.innerBlocks.some( ( currentRowContainerBlock ) => {
+			// Check if the row container block is the current row container block.
 			if ( currentRowContainerBlock.name !== rowContainerBlockName ) {
+				// Continue loop.
 				return false;
 			}
 
 			// Avoid merging thead/tfoot row with tbody row.
-			const currentRowContainerBlockAttributes = getBlockAttributes( currentRowContainerBlock.clientId );
-			if ( currentRowContainerBlockAttributes?.type !== rowContainerBlock?.attributes?.type ) {
+			const currentRowContainerBlockAttributes = getBlockAttributes(
+				currentRowContainerBlock.clientId,
+			);
+
+			// Check if the row container block attributes are the same.
+			if (
+				currentRowContainerBlockAttributes?.type !==
+				rowContainerBlock?.attributes?.type
+			) {
+				// Continue loop.
 				return false;
 			}
 
-			return currentRowContainerBlock.innerBlocks.some( ( rowBlock, rowIndex ): boolean => {
-				// Get current row.
-				const rowNumber: number = rowIndex + 1;
-				if ( rowBlock.name !== rowBlockName || ( rowNumber !== tableRow && rowNumber !== tableRow + 1 ) || ! rowBlock.innerBlocks.length ) {
-					return false;
-				}
+			// Loop through the row container blocks.
+			return currentRowContainerBlock.innerBlocks.some(
+				( rowBlock, rowIndex ): boolean => {
+					// Get current row.
+					const rowNumber: number = rowIndex + 1;
 
-				// Traverse columns in current row.
-				rowBlock.innerBlocks.some( ( columnBlock, columnIndex ): boolean => {
-					// Get column to merge from and into.
-					const columnNumber: number = columnIndex + 1;
-					if ( columnNumber === tableColumn && rowNumber === tableRow ) {
-						columnToMergeInto = columnBlock;
-					} else if ( columnNumber === tableColumn && rowNumber === tableRow + 1 ) {
-						columnToMergeFrom = columnBlock;
+					// Check if the row block is the current row block.
+					if (
+						rowBlock.name !== rowBlockName ||
+						( rowNumber !== tableRow && rowNumber !== tableRow + 1 ) ||
+						! rowBlock.innerBlocks.length
+					) {
+						// Continue loop.
+						return false;
 					}
 
-					// Short circuit if we found them.
-					if ( columnToMergeInto && columnToMergeFrom ) {
-						return true;
+					// Traverse columns in current row.
+					rowBlock.innerBlocks.some( ( columnBlock, columnIndex ): boolean => {
+						// Get column to merge from and into.
+						const columnNumber: number = columnIndex + 1;
+
+						// Check if the column block is the current column block.
+						if ( columnNumber === tableColumn && rowNumber === tableRow ) {
+							columnToMergeInto = columnBlock;
+						} else if (
+							columnNumber === tableColumn &&
+							rowNumber === tableRow + 1
+						) {
+							columnToMergeFrom = columnBlock;
+						}
+
+						// Short circuit if we found them.
+						if ( columnToMergeInto && columnToMergeFrom ) {
+							// Exit early.
+							return true;
+						}
+
+						// We haven't found them, loop some more.
+						return false;
+					} );
+
+					// Check if we have a "to" and "from" column.
+					if ( ! columnToMergeFrom || ! columnToMergeInto ) {
+						// Exit early.
+						return false;
 					}
 
-					// We haven't found them, loop some more.
-					return false;
-				} );
+					// Merge columns.
+					mergeColumnsVertically( columnToMergeFrom, columnToMergeInto );
 
-				// Check if we have a "to" and "from" column.
-				if ( ! columnToMergeFrom || ! columnToMergeInto ) {
-					return false;
-				}
-
-				// Merge columns.
-				mergeColumnsVertically( columnToMergeFrom, columnToMergeInto );
-
-				// Short-circuit loop.
-				return true;
-			} );
+					// Short-circuit loop.
+					return true;
+				},
+			);
 		} );
 	};
 
@@ -537,31 +666,46 @@ export default function Toolbar( {
 	 * @param {Object} fromColumn From column block instance.
 	 * @param {Object} toColumn   To column block instance.
 	 */
-	const mergeColumnsHorizontally = ( fromColumn: BlockInstance, toColumn: BlockInstance ): void => {
+	const mergeColumnsHorizontally = (
+		fromColumn: BlockInstance,
+		toColumn: BlockInstance,
+	): void => {
 		// Get colspans.
 		const mergeIntoAttributes = getBlockAttributes( toColumn.clientId );
 		const mergeFromAttributes = getBlockAttributes( fromColumn.clientId );
 
 		// Get rowspans.
-		const mergeIntoRowspan: number = parseInt( mergeIntoAttributes?.rowSpan ?? 1 );
-		const mergeFromRowspan: number = parseInt( mergeFromAttributes?.rowSpan ?? 1 );
+		const mergeIntoRowspan: number = parseInt(
+			mergeIntoAttributes?.rowSpan ?? 1,
+		);
+		const mergeFromRowspan: number = parseInt(
+			mergeFromAttributes?.rowSpan ?? 1,
+		);
 
 		// Invalid merge.
 		if ( mergeIntoRowspan !== mergeFromRowspan ) {
+			// Exit early.
 			return;
 		}
 
-		const mergeIntoColspan: number = parseInt( mergeIntoAttributes?.colSpan ?? 1 );
-		const mergeFromColspan: number = parseInt( mergeFromAttributes?.colSpan ?? 1 );
+		// Get colspans.
+		const mergeIntoColspan: number = parseInt(
+			mergeIntoAttributes?.colSpan ?? 1,
+		);
+		const mergeFromColspan: number = parseInt(
+			mergeFromAttributes?.colSpan ?? 1,
+		);
 
 		// Update colspan.
-		updateBlockAttributes( toColumn.clientId, { colSpan: mergeIntoColspan + mergeFromColspan } );
+		updateBlockAttributes( toColumn.clientId, {
+			colSpan: mergeIntoColspan + mergeFromColspan,
+		} );
 
 		// If it is the current column, move children to previous column and delete current column.
 		moveBlocksToPosition(
 			fromColumn.innerBlocks.map( ( block ) => block.clientId ),
 			fromColumn.clientId,
-			toColumn.clientId
+			toColumn.clientId,
 		);
 
 		// Remove block that is being merged from.
@@ -574,31 +718,46 @@ export default function Toolbar( {
 	 * @param {Object} fromColumn From column block instance.
 	 * @param {Object} toColumn   To column block instance.
 	 */
-	const mergeColumnsVertically = ( fromColumn: BlockInstance, toColumn: BlockInstance ): void => {
+	const mergeColumnsVertically = (
+		fromColumn: BlockInstance,
+		toColumn: BlockInstance,
+	): void => {
 		// Get rowspans.
 		const mergeIntoAttributes = getBlockAttributes( toColumn.clientId );
 		const mergeFromAttributes = getBlockAttributes( fromColumn.clientId );
 
 		// Get colspans.
-		const mergeIntoColspan: number = parseInt( mergeIntoAttributes?.colSpan ?? 1 );
-		const mergeFromColspan: number = parseInt( mergeFromAttributes?.colSpan ?? 1 );
+		const mergeIntoColspan: number = parseInt(
+			mergeIntoAttributes?.colSpan ?? 1,
+		);
+		const mergeFromColspan: number = parseInt(
+			mergeFromAttributes?.colSpan ?? 1,
+		);
 
 		// Invalid merge.
 		if ( mergeIntoColspan !== mergeFromColspan ) {
+			// Exit early.
 			return;
 		}
 
-		const mergeIntoRowspan: number = parseInt( mergeIntoAttributes?.rowSpan ?? 1 );
-		const mergeFromRowspan: number = parseInt( mergeFromAttributes?.rowSpan ?? 1 );
+		// Get rowspans.
+		const mergeIntoRowspan: number = parseInt(
+			mergeIntoAttributes?.rowSpan ?? 1,
+		);
+		const mergeFromRowspan: number = parseInt(
+			mergeFromAttributes?.rowSpan ?? 1,
+		);
 
 		// Update rowspan.
-		updateBlockAttributes( toColumn.clientId, { rowSpan: mergeIntoRowspan + mergeFromRowspan } );
+		updateBlockAttributes( toColumn.clientId, {
+			rowSpan: mergeIntoRowspan + mergeFromRowspan,
+		} );
 
 		// If it is the current column, move children to previous column and delete current column.
 		moveBlocksToPosition(
 			fromColumn.innerBlocks.map( ( block ) => block.clientId ),
 			fromColumn.clientId,
-			toColumn.clientId
+			toColumn.clientId,
 		);
 
 		// Remove block that is being merged from.
@@ -612,19 +771,28 @@ export default function Toolbar( {
 		{
 			icon: tableRowBefore,
 			title: __( 'Insert row before', 'tp' ),
-			isDisabled: ( ! isSelected || rowContainerBlockType === 'tfoot' || rowContainerBlockType === 'thead' ),
+			isDisabled:
+				! isSelected ||
+				rowContainerBlockType === 'tfoot' ||
+				rowContainerBlockType === 'thead',
 			onClick: () => onInsertRow( -1 ),
 		},
 		{
 			icon: tableRowAfter,
 			title: __( 'Insert row after', 'tp' ),
-			isDisabled: ( ! isSelected || rowContainerBlockType === 'tfoot' || rowContainerBlockType === 'thead' ),
+			isDisabled:
+				! isSelected ||
+				rowContainerBlockType === 'tfoot' ||
+				rowContainerBlockType === 'thead',
 			onClick: onInsertRow,
 		},
 		{
 			icon: tableRowDelete,
 			title: __( 'Delete row', 'tp' ),
-			isDisabled: ( ! isSelected || rowContainerBlockType === 'tfoot' || rowContainerBlockType === 'thead' ),
+			isDisabled:
+				! isSelected ||
+				rowContainerBlockType === 'tfoot' ||
+				rowContainerBlockType === 'thead',
 			onClick: onDeleteRow,
 		},
 		{
@@ -660,13 +828,19 @@ export default function Toolbar( {
 		{
 			icon: arrowUp,
 			title: __( 'Merge column up', 'tp' ),
-			isDisabled: ( tableRow < 2 || rowContainerBlockType === 'tfoot' || rowContainerBlockType === 'thead' ),
+			isDisabled:
+				tableRow < 2 ||
+				rowContainerBlockType === 'tfoot' ||
+				rowContainerBlockType === 'thead',
 			onClick: onMergeColumnUp,
 		},
 		{
 			icon: arrowDown,
 			title: __( 'Merge column down', 'tp' ),
-			isDisabled: ( tableRow === maximumRowsInCurrentColumn || rowContainerBlockType === 'tfoot' || rowContainerBlockType === 'thead' ),
+			isDisabled:
+				tableRow === maximumRowsInCurrentColumn ||
+				rowContainerBlockType === 'tfoot' ||
+				rowContainerBlockType === 'thead',
 			onClick: onMergeColumnDown,
 		},
 	] as DropdownOption[];

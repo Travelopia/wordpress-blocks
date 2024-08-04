@@ -18,7 +18,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies.
  */
-import { name as columnBlockName } from '../table-column';
+import { name as columnBlockName } from '../column';
 import { useEffect } from '@wordpress/element';
 
 /**
@@ -28,7 +28,7 @@ import { useEffect } from '@wordpress/element';
  *
  * @return {JSX.Element} JSX Component.
  */
-function TableRowEdit( props: BlockEditProps<any> ): JSX.Element {
+export default function Edit( props: BlockEditProps<any> ): JSX.Element {
 	// Block props.
 	const { className, clientId, setAttributes } = props;
 
@@ -41,13 +41,14 @@ function TableRowEdit( props: BlockEditProps<any> ): JSX.Element {
 		templateLock: false,
 	} );
 
+	// Set block id.
 	useEffect( () => {
+		// Set block attributes.
 		setAttributes( { blockId: clientId } );
 	}, [ clientId, setAttributes ] );
 
+	// Return inner blocks.
 	return (
 		<tr { ...innerBlocksProps } />
 	);
 }
-
-export default TableRowEdit;

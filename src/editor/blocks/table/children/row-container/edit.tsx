@@ -23,7 +23,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies.
  */
-import { name as rowBlockName } from '../table-row';
+import { name as rowBlockName } from '../row';
 import { useEffect } from '@wordpress/element';
 
 /**
@@ -33,7 +33,7 @@ import { useEffect } from '@wordpress/element';
  *
  * @return {JSX.Element} JSX Component.
  */
-function TableRowContainerEdit( props: BlockEditProps<any> ): JSX.Element {
+export default function Edit( props: BlockEditProps<any> ): JSX.Element {
 	// Block props.
 	const { className, attributes, setAttributes, clientId } = props;
 
@@ -50,7 +50,9 @@ function TableRowContainerEdit( props: BlockEditProps<any> ): JSX.Element {
 	// Determine tag.
 	const Tag: string = attributes.type;
 
+	// Set block id.
 	useEffect( () => {
+		// Set block attributes.
 		setAttributes( { blockId: clientId } );
 	}, [ clientId, setAttributes ] );
 
@@ -73,5 +75,3 @@ function TableRowContainerEdit( props: BlockEditProps<any> ): JSX.Element {
 		</>
 	);
 }
-
-export default TableRowContainerEdit;

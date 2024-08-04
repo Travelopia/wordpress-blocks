@@ -15,12 +15,14 @@ import {
  *
  * @return {JSX.Element} JSX Component.
  */
-function TableCellEdit( props: BlockEditProps<any> ): JSX.Element {
+export default function Edit( props: BlockEditProps<any> ): JSX.Element {
+	// Destructure properties.
 	const { attributes, setAttributes } = props;
 	const blockProps = useBlockProps( {
 		className: 'travelopia-table__cell',
 	} );
 
+	// Return cell content.
 	return (
 		<RichText
 			tagName="span"
@@ -31,5 +33,3 @@ function TableCellEdit( props: BlockEditProps<any> ): JSX.Element {
 		/>
 	);
 }
-
-export default TableCellEdit;

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "travelopia/table-row",
+  "title": "Row",
+  "description": "Individual row of the table.",
+  "parent": ["travelopia/table-row-container"],
+  "category": "text",
+  "textdomain": "tp",
+  "keywords": ["row", "table"],
+  "supports": {
+    "html": true,
+    "color": {
+      "text": true,
+      "background": true
+    },
+    "__experimentalBorder": {
+      "color": true,
+      "style": true,
+      "width": true,
+      "__experimentalDefaultControls": {
+        "color": true,
+        "style": true,
+        "width": true
+      }
+    }
+  },
+  "usesContext": ["travelopia/table-row-container-type"],
+  "attributes": {
+    "blockId": {
+      "type": "string"
+    }
+  }
+}

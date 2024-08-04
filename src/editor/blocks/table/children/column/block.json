@@ -1,0 +1,58 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "travelopia/table-column",
+  "title": "Column",
+  "description": "Individual column of the table.",
+  "parent": ["travelopia/table-row"],
+  "category": "text",
+  "textdomain": "tp",
+  "keywords": ["column", "table"],
+  "supports": {
+    "html": true,
+    "color": {
+      "text": true,
+      "background": true
+    },
+    "align": ["left", "center", "right"],
+    "__experimentalBorder": {
+      "color": true,
+      "style": true,
+      "width": true,
+      "__experimentalDefaultControls": {
+        "color": true,
+        "style": true,
+        "width": true
+      }
+    }
+  },
+  "providesContext": {
+    "travelopia/table-row": "row",
+    "travelopia/table-column": "column",
+    "travelopia/table-column-id": "blockId"
+  },
+  "usesContext": [
+    "travelopia/table-row-container-type",
+    "travelopia/table-row-container-id"
+  ],
+  "attributes": {
+    "row": {
+      "type": "number"
+    },
+    "column": {
+      "type": "number"
+    },
+    "colSpan": {
+      "type": "number"
+    },
+    "rowSpan": {
+      "type": "number"
+    },
+    "isSticky": {
+      "type": "boolean"
+    },
+    "blockId": {
+      "type": "string"
+    }
+  }
+}

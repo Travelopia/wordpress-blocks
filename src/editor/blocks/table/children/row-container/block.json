@@ -1,0 +1,32 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "travelopia/table-row-container",
+  "title": "Row Container",
+  "description": "A container for a row (THEAD, TBODY, TFOOT).",
+  "parent": ["travelopia/table"],
+  "category": "text",
+  "textdomain": "tp",
+  "keywords": ["thead", "tbody", "tfoot", "table"],
+  "supports": {
+    "html": false
+  },
+  "providesContext": {
+    "travelopia/table-row-container-type": "type",
+    "travelopia/table-row-container-sticky": "isSticky",
+    "travelopia/table-row-container-id": "blockId"
+  },
+  "attributes": {
+    "type": {
+      "type": "string",
+      "default": "tbody"
+    },
+    "isSticky": {
+      "type": "boolean",
+      "default": false
+    },
+    "blockId": {
+      "type": "string"
+    }
+  }
+}

@@ -1,6 +1,7 @@
 /**
  * WordPress dependencies.
  */
+import { __ } from '@wordpress/i18n';
 import {
 	useBlockProps,
 	useInnerBlocksProps,
@@ -10,6 +11,7 @@ import {
 import { useEffect } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import { BlockEditProps } from '@wordpress/blocks';
+import { PanelBody, ToggleControl } from '@wordpress/components';
 
 /**
  * External dependencies.
@@ -19,10 +21,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies.
  */
-import Toolbar from './toolbar';
-import { name as cellBlockName } from '../table-cell';
-import { PanelBody, ToggleControl } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { name as cellBlockName } from '../cell';
 
 /**
  * Edit function.
@@ -32,29 +31,28 @@ import { __ } from '@wordpress/i18n';
  * @param {string}   props.clientId      Client ID.
  * @param {Object}   props.attributes    Attributes.
  * @param {Function} props.setAttributes Set attributes.
- * @param {boolean}  props.isSelected    Is block selected.
  * @param {Object}   props.context       Block context.
  *
  * @return {JSX.Element} JSX Component.
  */
-function TableColumnEdit( {
+export default function Edit( {
 	className,
 	clientId,
 	attributes,
 	setAttributes,
-	isSelected,
 	context,
 }: BlockEditProps<any> ): JSX.Element {
+	// Get block props.
 	const blockProps = useBlockProps( {
 		className: classnames( className, 'travelopia-table__column', {
 			'travelopia-table__column--sticky': attributes.isSticky,
 		} ),
 	} );
 
-	const tableId: string = context[ 'travelopia/table-id' ] as string;
+	// Get context.
 	const rowContainerType: string = context[ 'travelopia/table-row-container-type' ] as string;
-	const rowContainerId: string = context[ 'travelopia/table-row-container-id' ] as string;
 
+	// Get inner blocks props.
 	const innerBlocksProps = useInnerBlocksProps(
 		{
 			...blockProps,
@@ -76,6 +74,7 @@ function TableColumnEdit( {
 				select( blockEditorStore ).getBlockRootClientId( clientId );
 			const rowIndex = select( blockEditorStore ).getBlockIndex( rowClientId );
 
+			// Return the row and column index.
 			return {
 				row: rowIndex + 1, // Start index at 1.
 				column: columnIndex + 1,
@@ -86,19 +85,25 @@ function TableColumnEdit( {
 
 	// Update the row and column index.
 	useEffect( () => {
+		// Set the row and column index.
 		setAttributes( { row, column } );
 	}, [ row, column, setAttributes ] );
 
+	// Set the block ID.
 	useEffect( () => {
+		// Set the block ID.
 		setAttributes( { blockId: clientId } );
 	}, [ clientId, setAttributes ] );
 
 	// Determine tag.
 	let Tag: string = 'td';
+
+	// Check if the row container type is not tbody.
 	if ( 'tbody' !== rowContainerType ) {
 		Tag = 'th';
 	}
 
+	// Return the column block.
 	return (
 		<>
 			<InspectorControls>
@@ -111,19 +116,9 @@ function TableColumnEdit( {
 					/>
 				</PanelBody>
 			</InspectorControls>
-			<Toolbar
-				isSelected={ isSelected }
-				tableRow={ row }
-				tableColumn={ column }
-				tableId={ tableId }
-				rowContainerId={ rowContainerId }
-				columnId={ clientId }
-			/>
 			<Tag
 				{ ...innerBlocksProps }
 			/>
 		</>
 	);
 }
-
-export default TableColumnEdit;
