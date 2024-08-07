@@ -7,6 +7,8 @@
 
 namespace Travelopia\Blocks\Table\Column;
 
+use WP_Block;
+
 use function Travelopia\Blocks\Helpers\get_block_wrapper_attributes;
 use function Travelopia\Blocks\Helpers\get_css_classes;
 use function Travelopia\Blocks\Helpers\get_css_styles;
@@ -30,12 +32,13 @@ function bootstrap(): void {
 /**
  * Render this block.
  *
- * @param mixed[] $attributes The block attributes.
- * @param string  $content    The block default content.
+ * @param mixed[]  $attributes The block attributes.
+ * @param string   $content    The block default content.
+ * @param WP_Block $block      The block object.
  *
  * @return string
  */
-function render( array $attributes = [], string $content = '' ): string {
+function render( array $attributes = [], string $content = '', WP_Block $block = null ): string {
 	$border_styles = get_border_styles( $attributes );
 
 	// Get block attributes.
@@ -56,7 +59,9 @@ function render( array $attributes = [], string $content = '' ): string {
 	);
 
 	$html_tag = 'td';
-	if ( ! empty( $attributes['type'] ) ) {
+	if ( ! empty( $block->context['travelopia/table-row-container-type'] )
+		&& 'tbody' !== $block->context['travelopia/table-row-container-type']
+	) {
 		$html_tag = 'th';
 	}
 

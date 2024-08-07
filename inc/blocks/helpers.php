@@ -214,6 +214,12 @@ function get_block_wrapper_attributes( array $attributes = [] ): string {
 
 	$normalized_attributes = [];
 	foreach ( $attributes as $key => $value ) {
+
+		// Skip empty values.
+		if ( empty( $value ) ) {
+			continue;
+		}
+
 		$normalized_attributes[] = $key . '="' . esc_attr( $value ) . '"';
 	}
 
