@@ -46,7 +46,8 @@ function render( array $attributes = [], string $content = '' ): string {
 	);
 
 	return sprintf(
-		'<div class="travelopia-table"><table %1$s>%2$s</table></div>',
+		'<div class="travelopia-table %1$s"><table %2$s>%3$s</table></div>',
+		$attributes['className'] ?? '',
 		wp_kses_data( $table_attributes ),
 		$content
 	);
