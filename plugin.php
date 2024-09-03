@@ -4,7 +4,7 @@
  * Description: Custom blocks for the Gutenberg Block Editor.
  * Author: Travelopia Team
  * Author URI: https://www.travelopia.com
- * Version: 1.1.1
+ * Version: 1.1.2
  *
  * @package travelopia-blocks
  */
