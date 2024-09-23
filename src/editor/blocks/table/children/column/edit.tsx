@@ -5,8 +5,10 @@ import { __ } from '@wordpress/i18n';
 import {
 	useBlockProps,
 	useInnerBlocksProps,
-	store as blockEditorStore,
 	InspectorControls,
+	BlockControls,
+	BlockVerticalAlignmentToolbar,
+	store as blockEditorStore,
 } from '@wordpress/block-editor';
 import { useEffect } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
@@ -44,7 +46,7 @@ export default function Edit( {
 }: BlockEditProps<any> ): JSX.Element {
 	// Get block props.
 	const blockProps = useBlockProps( {
-		className: classnames( className, 'travelopia-table__column', {
+		className: classnames( className, 'travelopia-table__column', `travelopia-table__column--align-${ attributes.verticalAlign }`, {
 			'travelopia-table__column--sticky': attributes.isSticky,
 		} ),
 	} );
@@ -106,6 +108,13 @@ export default function Edit( {
 	// Return the column block.
 	return (
 		<>
+			{ /* @ts-ignore - Group is not defined in the prop-type. */ }
+			<BlockControls group="block">
+				<BlockVerticalAlignmentToolbar
+					onChange={ ( verticalAlign: string|undefined ) => setAttributes( { verticalAlign } ) }
+					value={ attributes.verticalAlign }
+				/>
+			</BlockControls>
 			<InspectorControls>
 				<PanelBody title={ __( 'Column Options', 'tp' ) }>
 					<ToggleControl

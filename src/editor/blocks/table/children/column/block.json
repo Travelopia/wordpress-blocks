@@ -53,6 +53,10 @@
     },
     "blockId": {
       "type": "string"
+    },
+    "verticalAlign": {
+      "type": "string",
+      "default": "center"
     }
   }
 }
