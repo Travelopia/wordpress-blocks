@@ -14,6 +14,15 @@
 			z-index: 1;
 		}
 
+		// Add vertical align classes. Default is middle.
+		&--align-top {
+			vertical-align: top;
+		}
+
+		&--align-bottom {
+			vertical-align: bottom;
+		}
+
 		&.alignleft {
 			text-align: left;
 
