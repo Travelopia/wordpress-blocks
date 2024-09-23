@@ -41,17 +41,28 @@ function bootstrap(): void {
 function render( array $attributes = [], string $content = '', WP_Block $block = null ): string {
 	$border_styles = get_border_styles( $attributes );
 
+	// Initialize CSS classes.
+	$css_classes = [ 'travelopia-table__column' ];
+
+	// Add vertical alignment class.
+	if ( 'center' !== $attributes['verticalAlign'] ) {
+		$css_classes[] = 'travelopia-table__column--align-' . $attributes['verticalAlign'];
+	}
+
+	// Add sticky class.
+	if ( ! empty( $attributes['isSticky'] ) ) {
+		$css_classes[] = 'travelopia-table__column--sticky';
+	}
+
+	// Add border styles.
+	if ( ! empty( $border_styles['css_classes'] ) ) {
+		$css_classes[] = $border_styles['css_classes'];
+	}
+
 	// Get block attributes.
 	$column_attributes = get_block_wrapper_attributes(
 		[
-			'class'   => get_css_classes(
-				$attributes,
-				[
-					'travelopia-table__column',
-					! empty( $attributes['isSticky'] ) ? 'travelopia-table__column--sticky' : '',
-					$border_styles['css_classes'],
-				]
-			),
+			'class'   => get_css_classes( $attributes, $css_classes ),
 			'style'   => get_css_styles( $attributes ) . $border_styles['inline_styles'],
 			'colspan' => $attributes['colSpan'] ?? '',
 			'rowspan' => $attributes['rowSpan'] ?? '',
