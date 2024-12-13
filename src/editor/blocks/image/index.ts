@@ -18,6 +18,7 @@ export const { name }: { name: string } = metadata;
 /**
  * Styles.
  */
+import '../../../front-end/image/index.scss';
 import './editor.scss';
 
 // @ts-ignore Ignore BlockConfiguration type error for providesContext.

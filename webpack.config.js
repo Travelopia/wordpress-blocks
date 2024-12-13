@@ -144,6 +144,7 @@ module.exports = ( env ) => {
 		...buildConfig,
 		entry: {
 			table: `./src/front-end/table/index.ts`,
+			image: `./src/front-end/image/index.ts`,
 		},
 		output: {
 			...buildConfig.output,
