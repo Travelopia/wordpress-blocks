@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "travelopia/image",
+  "title": "Image",
+  "description": "Insert an image to make a visual statement.",
+  "category": "media",
+  "textdomain": "tp",
+  "supports": {
+    "anchor": true,
+    "className": true,
+    "customClassName": true,
+    "html": false
+  },
+  "attributes": {
+    "id": {
+      "type": "number",
+      "default": 0
+    },
+    "src": {
+      "type": "string",
+      "default": ""
+    },
+    "width": {
+      "type": "number",
+      "default": 0
+    },
+    "height": {
+      "type": "number",
+      "default": 0
+    }
+  }
+}

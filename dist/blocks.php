@@ -4,6 +4,7 @@
  */
 
 return array (
+  'src/editor/blocks/image/index.php' => 'Travelopia\\Blocks\\Image',
   'src/editor/blocks/table/index.php' => 'Travelopia\\Blocks\\Table',
   'src/editor/blocks/table/children/column/index.php' => 'Travelopia\\Blocks\\Table\\Column',
   'src/editor/blocks/table/children/cell/index.php' => 'Travelopia\\Blocks\\Table\\Cell',

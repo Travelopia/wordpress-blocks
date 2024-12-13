@@ -2,12 +2,14 @@
  * Import blocks.
  */
 import * as table from './table';
+import * as image from './image';
 
 /**
  * Add blocks.
  */
 const blocks = [
 	table,
+	image,
 ];
 
 /**
