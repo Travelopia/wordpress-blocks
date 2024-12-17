@@ -21,3 +21,4 @@ blocks.forEach( ( { init } ) => init() );
  * Add block toolbar.
  */
 import './block-toolbar';
+import '../data/index';

@@ -1,13 +1,17 @@
 /**
  * WordPress dependencies.
  */
-// import { __ } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import {
+	InspectorControls,
 	MediaPlaceholder,
 	useBlockProps,
 } from '@wordpress/block-editor';
-import { BlockEditProps } from '@wordpress/blocks';
+import { PanelBody, TextareaControl } from '@wordpress/components';
+// import { BlockEditProps } from '@wordpress/blocks';
 import { applyFilters } from '@wordpress/hooks';
+import { compose } from '@wordpress/compose';
+import { withSelect, withDispatch } from '@wordpress/data';
 
 /**
  * External dependencies.
@@ -21,9 +25,9 @@ import classnames from 'classnames';
  *
  * @return {JSX.Element} JSX Component.
  */
-export default function Edit( props: BlockEditProps<any> ): JSX.Element {
+function Edit( props: any ): JSX.Element {
 	// Block Edit Props.
-	const { attributes, setAttributes, className } = props;
+	const { attributes, setAttributes, className, selectedMedia, onSetMedia } = props;
 
 	// Block props.
 	const blockProps = useBlockProps( {
@@ -32,6 +36,19 @@ export default function Edit( props: BlockEditProps<any> ): JSX.Element {
 
 	// Get the default size.
 	const defaultSize: string = String( applyFilters( 'travelopiaImage.defaultSize', 'large' ) );
+
+	// ALT text and caption.
+	let altText: string = '';
+	let caption: string = '';
+
+	if ( selectedMedia ) {
+		if ( 'alt_text' in selectedMedia ) {
+			altText = selectedMedia.alt_text.toString();
+		}
+		if ( 'caption' in selectedMedia && 'raw' in selectedMedia.caption ) {
+			caption = selectedMedia.caption.raw.toString();
+		}
+	}
 
 	/**
 	 * Handle when an image is selected.
@@ -65,11 +82,27 @@ export default function Edit( props: BlockEditProps<any> ): JSX.Element {
 
 		// Set attributes.
 		setAttributes( { id, src, width, height } );
+		onSetMedia( image );
 	};
 
 	// Return the component.
 	return (
 		<>
+			<InspectorControls>
+				<PanelBody title={ __( 'Image Settings', 'tp' ) }>
+					<TextareaControl
+						value={ altText }
+						onChange={ () => {} }
+						label={ __( 'Alternative Text', 'tp' ) }
+						help={ __( 'Describe the purpose of the image.', 'tp' ) }
+					/>
+					<TextareaControl
+						value={ caption }
+						onChange={ () => {} }
+						label={ __( 'Caption', 'tp' ) }
+					/>
+				</PanelBody>
+			</InspectorControls>
 			<figure { ...blockProps }>
 				{ 0 === attributes.id && (
 					<MediaPlaceholder
@@ -85,3 +118,21 @@ export default function Edit( props: BlockEditProps<any> ): JSX.Element {
 		</>
 	);
 }
+
+export default compose(
+	withSelect( ( select: any, ownProps: any ) => {
+		const { getMedia } = select( 'travelopia-blocks/media' );
+		const { attributes } = ownProps;
+
+		return {
+			selectedMedia: attributes.id ? getMedia( attributes.id ) : null,
+		};
+	} ),
+	withDispatch( ( dispatch: any ) => {
+		return {
+			onSetMedia( media: any ) {
+				dispatch( 'travelopia-blocks/media' ).setMedia( media );
+			},
+		};
+	} ),
+)( Edit );

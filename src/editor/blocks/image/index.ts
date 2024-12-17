@@ -25,6 +25,8 @@ import './editor.scss';
 export const settings: BlockConfiguration = {
 	...metadata,
 	icon,
+
+	// @ts-ignore
 	edit,
 };
 
