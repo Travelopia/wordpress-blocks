@@ -19,7 +19,6 @@ import classnames from 'classnames';
  * Internal dependencies.
  */
 import { name as columnBlockName } from '../column';
-import { useEffect } from '@wordpress/element';
 
 /**
  * Edit function.
@@ -30,7 +29,7 @@ import { useEffect } from '@wordpress/element';
  */
 export default function Edit( props: BlockEditProps<any> ): JSX.Element {
 	// Block props.
-	const { className, clientId, setAttributes } = props;
+	const { className } = props;
 
 	// Inner block props.
 	const blockProps = useBlockProps( {
@@ -40,12 +39,6 @@ export default function Edit( props: BlockEditProps<any> ): JSX.Element {
 		allowedBlocks: [ columnBlockName ],
 		templateLock: false,
 	} );
-
-	// Set block id.
-	useEffect( () => {
-		// Set block attributes.
-		setAttributes( { blockId: clientId } );
-	}, [ clientId, setAttributes ] );
 
 	// Return inner blocks.
 	return (

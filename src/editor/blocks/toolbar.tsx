@@ -3,9 +3,9 @@
  */
 import { __ } from '@wordpress/i18n';
 import { BlockInstance, createBlock } from '@wordpress/blocks';
-import { BlockControls } from '@wordpress/block-editor';
+import { BlockControls, store as blockEditorStore } from '@wordpress/block-editor';
 import { ToolbarDropdownMenu } from '@wordpress/components';
-import { select, dispatch } from '@wordpress/data';
+import { select, dispatch, useSelect } from '@wordpress/data';
 import { DropdownOption } from '@wordpress/components/build-types/dropdown-menu/types';
 import {
 	arrowLeft,
@@ -20,7 +20,6 @@ import {
 	tableRowDelete,
 	table,
 } from '@wordpress/icons';
-import { useState, useEffect, useMemo } from '@wordpress/element';
 
 /**
  * Internal dependencies.
@@ -33,31 +32,103 @@ import { name as rowContainerBlockName } from './table/children/row-container';
 /**
  * Column block toolbar.
  *
- * @param {Object}  props                Block properties.
- * @param {boolean} props.isSelected     Is block selected.
- * @param {string}  props.tableId        Table block ID.
- * @param {number}  props.tableRow       Table row index.
- * @param {number}  props.tableColumn    Table column index.
- * @param {string}  props.rowContainerId Table row container ID.
- * @param {string}  props.columnId       Column block ID.
+ * @param {Object} props              Block properties.
+ * @param {string} props.cellClientId The cell block's client ID.
  *
  * @return {JSX.Element} JSX Component.
  */
 export default function Toolbar( {
-	isSelected,
-	tableId,
-	tableRow,
-	tableColumn,
-	rowContainerId,
-	columnId,
+	cellClientId,
 }: {
-	isSelected: boolean;
-	tableId: string;
-	tableRow: number;
-	tableColumn: number;
-	rowContainerId: string;
-	columnId: string;
+	cellClientId: string;
 } ): JSX.Element {
+	// Walk up the block tree to compute all IDs and indices.
+	// Hierarchy: table → row-container → row → column → cell.
+	const {
+		tableId,
+		rowContainerId,
+		columnId,
+		tableRow,
+		tableColumn,
+		rowContainerBlockType,
+		maximumColumnsInCurrentRow,
+		maximumRowsInCurrentColumn,
+	} = useSelect(
+		( storeSelect: any ) => {
+			const {
+				getBlockRootClientId,
+				getBlockIndex,
+				getBlock: selectGetBlock,
+			} = storeSelect( blockEditorStore );
+
+			// Walk up the tree from cell.
+			const currentColumnId = getBlockRootClientId( cellClientId );
+			const rowId = getBlockRootClientId( currentColumnId );
+			const currentRowContainerId = getBlockRootClientId( rowId );
+			const currentTableId = getBlockRootClientId( currentRowContainerId );
+
+			// Compute 1-based indices.
+			const currentTableRow = getBlockIndex( rowId ) + 1;
+			const currentTableColumn = getBlockIndex( currentColumnId ) + 1;
+
+			// Get row container type.
+			const rowContainerBlock = selectGetBlock( currentRowContainerId );
+			const currentRowContainerBlockType = rowContainerBlock?.attributes?.type;
+
+			// Get table block to compute max columns/rows.
+			const tableBlock = selectGetBlock( currentTableId );
+			let maxCols = 0;
+			let maxRows = 0;
+
+			if ( tableBlock ) {
+				tableBlock.innerBlocks.some( ( rcBlock: BlockInstance ): boolean => {
+					if (
+						rcBlock.name !== rowContainerBlockName ||
+						! rcBlock.innerBlocks.length
+					) {
+						return false;
+					}
+
+					rcBlock.innerBlocks.forEach( ( rBlock: BlockInstance, rowIndex: number ) => {
+						if ( rBlock.name !== rowBlockName || ! rBlock.innerBlocks.length ) {
+							return;
+						}
+
+						// Max columns in the current row.
+						if ( rowIndex + 1 === currentTableRow ) {
+							maxCols = rBlock.innerBlocks.length;
+						}
+
+						// Count rows that have the same column index.
+						rBlock.innerBlocks.forEach( ( cBlock: BlockInstance, colIndex: number ) => {
+							if (
+								cBlock.name !== columnBlockName ||
+								colIndex + 1 !== currentTableColumn
+							) {
+								return;
+							}
+							maxRows++;
+						} );
+					} );
+
+					return true;
+				} );
+			}
+
+			return {
+				tableId: currentTableId,
+				rowContainerId: currentRowContainerId,
+				columnId: currentColumnId,
+				tableRow: currentTableRow,
+				tableColumn: currentTableColumn,
+				rowContainerBlockType: currentRowContainerBlockType,
+				maximumColumnsInCurrentRow: maxCols,
+				maximumRowsInCurrentColumn: maxRows,
+			};
+		},
+		[ cellClientId ],
+	);
+
 	// Get block editor select and dispatch.
 	const {
 		getBlock,
@@ -79,82 +150,6 @@ export default function Toolbar( {
 		// @ts-ignore - Property 'moveBlocksToPosition' does not exist on type 'Store'.
 		moveBlocksToPosition,
 	} = dispatch( 'core/block-editor' );
-
-	// State variables.
-	const [ maximumColumnsInCurrentRow, setMaximumColumnsInCurrentRow ] =
-		useState( 0 );
-	const [ maximumRowsInCurrentColumn, setMaximumRowsInCurrentColumn ] =
-		useState( 0 );
-
-	// Get row container block type.
-	const rowContainerBlockType = useMemo(
-		() => getBlock( rowContainerId )?.attributes?.type,
-		[ rowContainerId, getBlock ],
-	);
-
-	/**
-	 * Set maximum columns in current row.
-	 */
-	useEffect( (): void => {
-		// Get table block.
-		const tableBlock = getBlock( tableId );
-
-		// Check if we have a block.
-		if ( ! tableBlock ) {
-			setMaximumColumnsInCurrentRow( 0 );
-
-			// Exit early.
-			return;
-		}
-
-		// Traverse table.
-		tableBlock.innerBlocks.some( ( rowContainerBlock ): boolean => {
-			// Check if the block is a row container.
-			if (
-				rowContainerBlock.name !== rowContainerBlockName ||
-				! rowContainerBlock.innerBlocks.length
-			) {
-				// Continue loop.
-				return false;
-			}
-
-			// Traverse row container.
-			let maxRows = 0;
-			rowContainerBlock.innerBlocks.forEach( ( rowBlock, rowIndex ) => {
-				// Check if the block is a row.
-				if ( rowBlock.name !== rowBlockName || ! rowBlock.innerBlocks.length ) {
-					// Continue loop.
-					return;
-				}
-
-				// Set maximum columns in current row.
-				if ( rowIndex + 1 === tableRow ) {
-					setMaximumColumnsInCurrentRow( rowBlock.innerBlocks.length );
-				}
-
-				// Set maximum rows in current column.
-				rowBlock.innerBlocks.forEach( ( columnBlock, columnIndex ) => {
-					// Check if the block is a column.
-					if (
-						columnBlock.name !== columnBlockName ||
-						columnIndex + 1 !== tableColumn
-					) {
-						// Continue loop.
-						return;
-					}
-
-					// Increment maximum rows.
-					maxRows++;
-				} );
-			} );
-
-			// Set maximum rows in current column.
-			setMaximumRowsInCurrentColumn( maxRows );
-
-			// Short-circuit loop.
-			return true;
-		} );
-	}, [ tableRow, tableColumn, getBlock, tableId ] );
 
 	/**
 	 * Insert row.
@@ -772,7 +767,6 @@ export default function Toolbar( {
 			icon: tableRowBefore,
 			title: __( 'Insert row before', 'tp' ),
 			isDisabled:
-				! isSelected ||
 				rowContainerBlockType === 'tfoot' ||
 				rowContainerBlockType === 'thead',
 			onClick: () => onInsertRow( -1 ),
@@ -781,7 +775,6 @@ export default function Toolbar( {
 			icon: tableRowAfter,
 			title: __( 'Insert row after', 'tp' ),
 			isDisabled:
-				! isSelected ||
 				rowContainerBlockType === 'tfoot' ||
 				rowContainerBlockType === 'thead',
 			onClick: onInsertRow,
@@ -790,7 +783,6 @@ export default function Toolbar( {
 			icon: tableRowDelete,
 			title: __( 'Delete row', 'tp' ),
 			isDisabled:
-				! isSelected ||
 				rowContainerBlockType === 'tfoot' ||
 				rowContainerBlockType === 'thead',
 			onClick: onDeleteRow,
@@ -798,19 +790,16 @@ export default function Toolbar( {
 		{
 			icon: tableColumnBefore,
 			title: __( 'Insert column before', 'tp' ),
-			isDisabled: ! isSelected,
 			onClick: () => onInsertColumn( -1 ),
 		},
 		{
 			icon: tableColumnAfter,
 			title: __( 'Insert column after', 'tp' ),
-			isDisabled: ! isSelected,
 			onClick: onInsertColumn,
 		},
 		{
 			icon: tableColumnDelete,
 			title: __( 'Delete column', 'tp' ),
-			isDisabled: ! isSelected,
 			onClick: onDeleteColumn,
 		},
 		{

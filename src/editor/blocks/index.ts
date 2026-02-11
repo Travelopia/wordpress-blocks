@@ -15,7 +15,3 @@ const blocks = [
  */
 blocks.forEach( ( { init } ) => init() );
 
-/**
- * Add block toolbar.
- */
-import './block-toolbar';

@@ -24,7 +24,6 @@ import classnames from 'classnames';
  * Internal dependencies.
  */
 import { name as rowBlockName } from '../row';
-import { useEffect } from '@wordpress/element';
 
 /**
  * Edit function.
@@ -35,7 +34,7 @@ import { useEffect } from '@wordpress/element';
  */
 export default function Edit( props: BlockEditProps<any> ): JSX.Element {
 	// Block props.
-	const { className, attributes, setAttributes, clientId } = props;
+	const { className, attributes, setAttributes } = props;
 
 	// Inner block props.
 	const blockProps = useBlockProps( {
@@ -49,12 +48,6 @@ export default function Edit( props: BlockEditProps<any> ): JSX.Element {
 
 	// Determine tag.
 	const Tag: string = attributes.type;
-
-	// Set block id.
-	useEffect( () => {
-		// Set block attributes.
-		setAttributes( { blockId: clientId } );
-	}, [ clientId, setAttributes ] );
 
 	// Return component.
 	return (
