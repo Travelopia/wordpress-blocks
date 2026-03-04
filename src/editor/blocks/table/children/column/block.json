@@ -26,14 +26,9 @@
       }
     }
   },
-  "providesContext": {
-    "travelopia/table-row": "row",
-    "travelopia/table-column": "column",
-    "travelopia/table-column-id": "blockId"
-  },
+  "providesContext": {},
   "usesContext": [
-    "travelopia/table-row-container-type",
-    "travelopia/table-row-container-id"
+    "travelopia/table-row-container-type"
   ],
   "attributes": {
     "row": {

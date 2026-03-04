@@ -13,13 +13,7 @@
     "html": false,
     "alignWide": false
   },
-  "providesContext": {
-    "travelopia/table-id": "blockId",
-    "travelopia/table-total-rows": "rows",
-    "travelopia/table-total-columns": "columns",
-    "travelopia/table-has-thead": "hasThead",
-    "travelopia/table-has-tfoot": "hasTfoot"
-  },
+  "providesContext": {},
   "attributes": {
     "anchor": {
       "type": "string",

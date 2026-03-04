@@ -8,7 +8,6 @@ import {
 	useInnerBlocksProps,
 } from '@wordpress/block-editor';
 import { BlockEditProps, createBlock } from '@wordpress/blocks';
-import { useEffect } from '@wordpress/element';
 import { PanelBody, ToggleControl } from '@wordpress/components';
 import { select, dispatch } from '@wordpress/data';
 
@@ -136,12 +135,6 @@ export default function Edit( props: BlockEditProps<any> ): JSX.Element {
 			renderAppender: undefined,
 		},
 	);
-
-	// Set blockId attribute.
-	useEffect( () => {
-		// Set blockId attribute.
-		setAttributes( { blockId: clientId } );
-	}, [ clientId, setAttributes ] );
 
 	/**
 	 * Handle THEAD change.

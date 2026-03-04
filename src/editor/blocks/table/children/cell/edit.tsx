@@ -9,6 +9,11 @@ import {
 } from '@wordpress/block-editor';
 
 /**
+ * Internal dependencies.
+ */
+import Toolbar from '../../../toolbar';
+
+/**
  * Edit function.
  *
  * @param {Object} props Edit properties.
@@ -17,19 +22,22 @@ import {
  */
 export default function Edit( props: BlockEditProps<any> ): JSX.Element {
 	// Destructure properties.
-	const { attributes, setAttributes } = props;
+	const { attributes, setAttributes, clientId, isSelected } = props;
 	const blockProps = useBlockProps( {
 		className: 'travelopia-table__cell',
 	} );
 
 	// Return cell content.
 	return (
-		<RichText
-			tagName="span"
-			{ ...blockProps }
-			placeholder={ __( 'Cell content', 'tp' ) }
-			onChange={ ( content: string ) => setAttributes( { content } ) }
-			value={ attributes.content }
-		/>
+		<>
+			{ isSelected && <Toolbar cellClientId={ clientId } /> }
+			<RichText
+				tagName="span"
+				{ ...blockProps }
+				placeholder={ __( 'Cell content', 'tp' ) }
+				onChange={ ( content: string ) => setAttributes( { content } ) }
+				value={ attributes.content }
+			/>
+		</>
 	);
 }

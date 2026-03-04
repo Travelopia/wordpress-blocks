@@ -12,9 +12,7 @@
     "html": false
   },
   "providesContext": {
-    "travelopia/table-row-container-type": "type",
-    "travelopia/table-row-container-sticky": "isSticky",
-    "travelopia/table-row-container-id": "blockId"
+    "travelopia/table-row-container-type": "type"
   },
   "attributes": {
     "type": {
