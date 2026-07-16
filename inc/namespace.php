@@ -78,6 +78,19 @@ function register_front_end_styles(): void {
 	}
 
 	wp_register_style( 'travelopia-table', plugin_dir_url( __DIR__ ) . 'dist/front-end/table/index.css', $assets_data['dependencies'] ?? [], $assets_data['version'] ?? '1' );
+
+	// Get logo grid assets file.
+	$logo_grid_assets_file = __DIR__ . '/../dist/front-end/logo-grid/index.asset.php';
+	if ( file_exists( $logo_grid_assets_file ) ) {
+		$logo_grid_assets_data = include_once $logo_grid_assets_file;
+	} else {
+		$logo_grid_assets_data = [
+			'version'      => 1,
+			'dependencies' => [],
+		];
+	}
+
+	wp_register_style( 'travelopia-logo-grid', plugin_dir_url( __DIR__ ) . 'dist/front-end/logo-grid/index.css', $logo_grid_assets_data['dependencies'] ?? [], $logo_grid_assets_data['version'] ?? '1' );
 }
 
 /**

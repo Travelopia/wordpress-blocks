@@ -1,0 +1,32 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "travelopia/logo-grid-item",
+  "title": "Logo Grid Item",
+  "description": "Individual logo within the grid.",
+  "parent": ["travelopia/logo-grid"],
+  "category": "layout",
+  "textdomain": "tp",
+  "keywords": ["logo", "item"],
+  "supports": {
+    "anchor": false,
+    "className": false,
+    "customClassName": false,
+    "html": false,
+    "alignWide": false
+  },
+  "attributes": {
+    "imageId": {
+      "type": "number",
+      "default": 0
+    },
+    "imageUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "imageAlt": {
+      "type": "string",
+      "default": ""
+    }
+  }
+}

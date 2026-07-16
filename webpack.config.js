@@ -144,6 +144,7 @@ module.exports = ( env ) => {
 		...buildConfig,
 		entry: {
 			table: `./src/front-end/table/index.ts`,
+			'logo-grid': `./src/front-end/logo-grid/index.ts`,
 		},
 		output: {
 			...buildConfig.output,

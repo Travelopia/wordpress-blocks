@@ -1,0 +1,22 @@
+/**
+ * Logo Grid — editor-only styles.
+ *
+ * Front-end styles are shared from src/front-end/logo-grid/index.scss
+ * (imported by the block's index.ts). These rules only smooth over the
+ * block-editor experience.
+ */
+.travelopia-logo-grid {
+
+	// Keep the inner-block appender inline with the logos.
+	.block-editor-block-list__layout {
+		display: contents;
+	}
+
+	// Give an empty logo item a visible drop target in the editor.
+	.travelopia-logo-grid__logo:empty {
+		min-width: 60px;
+		min-height: 60px;
+		border: 1px dashed currentcolor;
+		opacity: 0.4;
+	}
+}

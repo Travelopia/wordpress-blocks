@@ -1,0 +1,79 @@
+/**
+ * Logo Grid.
+ *
+ * Self-contained styles for the travelopia/logo-grid block. Sizing is driven
+ * by a --logo-size custom property so brands can override it in their own
+ * stylesheet without touching this file.
+ */
+.travelopia-logo-grid {
+	$self: &;
+
+	--logo-size: 60px;
+
+	@media screen and (min-width: 768px) {
+		--logo-size: 90px;
+	}
+
+	&--large {
+		--logo-size: 120px;
+
+		@media screen and (min-width: 768px) {
+			--logo-size: 200px;
+		}
+	}
+
+	&__title {
+		text-align: center;
+
+		@media screen and (min-width: 768px) {
+			text-align: left;
+		}
+	}
+
+	&__items {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(var(--logo-size), max-content));
+		gap: 25px;
+		margin-top: 20px;
+		justify-content: center;
+
+		@media screen and (min-width: 768px) {
+			justify-content: start;
+		}
+
+		#{$self}--large & {
+			gap: 40px;
+
+			@media screen and (min-width: 768px) {
+				gap: 70px;
+			}
+		}
+
+		&--center {
+
+			@media screen and (min-width: 768px) {
+				justify-content: center;
+			}
+		}
+
+		&--right {
+
+			@media screen and (min-width: 768px) {
+				justify-content: end;
+			}
+		}
+	}
+
+	&__logo {
+		display: inline-grid;
+		align-items: center;
+		margin: 0;
+		max-width: var(--logo-size);
+	}
+
+	&__img {
+		max-height: var(--logo-size);
+		max-width: 100%;
+		width: auto;
+	}
+}
