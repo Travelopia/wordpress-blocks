@@ -5,6 +5,8 @@
  * Author: Travelopia Team
  * Author URI: https://www.travelopia.com
  * Version: 1.1.3
+ * Requires at least: 6.5
+ * Requires PHP: 8.1
  *
  * @package travelopia-blocks
  */
