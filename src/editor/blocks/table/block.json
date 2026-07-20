@@ -6,6 +6,9 @@
   "description": "Create structured content in rows and columns to display information.",
   "category": "text",
   "textdomain": "tp",
+  "editorScript": "travelopia-blocks",
+  "editorStyle": "travelopia-blocks",
+  "viewStyle": "travelopia-table",
   "supports": {
     "anchor": true,
     "className": true,

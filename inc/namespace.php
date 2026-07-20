@@ -13,71 +13,77 @@ namespace Travelopia\Blocks;
  * @return void
  */
 function bootstrap(): void {
-	add_action( 'enqueue_block_assets', __NAMESPACE__ . '\\enqueue_block_editor_assets' );
-	add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\\register_front_end_styles' );
+	add_action( 'init', __NAMESPACE__ . '\\register_block_assets', 9 );
 	add_action( 'init', __NAMESPACE__ . '\\register_blocks' );
 }
 
 /**
- * Enqueue Editor Assets.
- */
-function enqueue_block_editor_assets(): void {
-	if ( ! is_admin() ) {
-		return;
-	}
-
-	// Get block asset details.
-	$block_assets = [];
-	$asset_file   = __DIR__ . '/../dist/editor/blocks.asset.php';
-
-	if ( file_exists( $asset_file ) ) {
-		$block_assets = require $asset_file;
-	}
-
-	if ( ! isset( $block_assets['dependencies'] ) ) {
-		$block_assets['dependencies'] = [];
-	}
-
-	if ( ! isset( $block_assets['version'] ) ) {
-		$block_assets['version'] = '1';
-	}
-
-	// Enqueue Block JavaScript.
-	wp_enqueue_script(
-		'travelopia-blocks',
-		plugin_dir_url( __DIR__ ) . 'dist/editor/blocks.js',
-		$block_assets['dependencies'],
-		$block_assets['version'],
-		false
-	);
-
-	// Enqueue Block CSS.
-	wp_enqueue_style(
-		'travelopia-blocks',
-		plugin_dir_url( __DIR__ ) . 'dist/editor/blocks.css',
-		[],
-		$block_assets['version']
-	);
-}
-
-/**
- * Register front-end styles.
+ * Register block assets.
+ *
+ * Registers the shared editor bundle and each block's front-end styles as
+ * handles. WordPress core enqueues them from the `editorScript`, `editorStyle`
+ * and `viewStyle` fields in every `block.json`, so no manual enqueue is needed
+ * and front-end styles load only on pages where the block is present.
  *
  * @return void
  */
-function register_front_end_styles(): void {
-	// Get assets file.
-	$assets_file = __DIR__ . '/../dist/front-end/table/index.asset.php';
-	if ( file_exists( $assets_file ) ) {
-		$assets_data = include_once $assets_file;
-	} else {
-		$assets_data = [
-			'version'      => 1,
-			'dependencies' => [],
-		];
+function register_block_assets(): void {
+	// Get editor bundle asset details (shared by every block).
+	$editor_assets = [];
+	$editor_file   = __DIR__ . '/../dist/editor/blocks.asset.php';
+
+	if ( file_exists( $editor_file ) ) {
+		$editor_assets = require $editor_file;
 	}
 
-	wp_register_style( 'travelopia-table', plugin_dir_url( __DIR__ ) . 'dist/front-end/table/index.css', $assets_data['dependencies'] ?? [], $assets_data['version'] ?? '1' );
+	if ( ! isset( $editor_assets['dependencies'] ) ) {
+		$editor_assets['dependencies'] = [];
+	}
+
+	if ( ! isset( $editor_assets['version'] ) ) {
+		$editor_assets['version'] = '1';
+	}
+
+	// Register the editor script (referenced as `editorScript` in block.json).
+	wp_register_script(
+		'travelopia-blocks',
+		plugin_dir_url( __DIR__ ) . 'dist/editor/blocks.js',
+		$editor_assets['dependencies'],
+		$editor_assets['version'],
+		false
+	);
+
+	// Register the editor style (referenced as `editorStyle` in block.json).
+	wp_register_style(
+		'travelopia-blocks',
+		plugin_dir_url( __DIR__ ) . 'dist/editor/blocks.css',
+		[],
+		$editor_assets['version']
+	);
+
+	// Get table front-end style asset details.
+	$table_assets = [];
+	$table_file   = __DIR__ . '/../dist/front-end/table/index.asset.php';
+
+	if ( file_exists( $table_file ) ) {
+		$table_assets = require $table_file;
+	}
+
+	if ( ! isset( $table_assets['dependencies'] ) ) {
+		$table_assets['dependencies'] = [];
+	}
+
+	if ( ! isset( $table_assets['version'] ) ) {
+		$table_assets['version'] = '1';
+	}
+
+	// Register the table front-end style (referenced as `viewStyle` in block.json).
+	wp_register_style(
+		'travelopia-table',
+		plugin_dir_url( __DIR__ ) . 'dist/front-end/table/index.css',
+		$table_assets['dependencies'],
+		$table_assets['version']
+	);
 }
 
 /**

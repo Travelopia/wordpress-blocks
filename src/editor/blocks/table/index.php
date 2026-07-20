@@ -35,9 +35,6 @@ function bootstrap(): void {
  * @return string
  */
 function render( array $attributes = [], string $content = '' ): string {
-	// Enqueue table block styles.
-	wp_enqueue_style( 'travelopia-table' );
-
 	$table_attributes = get_block_wrapper_attributes(
 		[
 			'class' => get_css_classes( $attributes ),
