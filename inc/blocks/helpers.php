@@ -8,6 +8,50 @@
 namespace Travelopia\Blocks\Helpers;
 
 /**
+ * Read a nested scalar attribute as a string.
+ *
+ * @param mixed[] $attributes Block attributes.
+ * @param string  ...$keys    Keys to walk, outermost first.
+ *
+ * @return string|null The value, or null when it is missing or not scalar.
+ */
+function get_attribute_string( array $attributes, string ...$keys ): ?string {
+	$value = $attributes;
+
+	foreach ( $keys as $key ) {
+		if ( ! is_array( $value ) || ! isset( $value[ $key ] ) ) {
+			return null;
+		}
+
+		$value = $value[ $key ];
+	}
+
+	return is_scalar( $value ) ? (string) $value : null;
+}
+
+/**
+ * Read a nested array attribute.
+ *
+ * @param mixed[] $attributes Block attributes.
+ * @param string  ...$keys    Keys to walk, outermost first.
+ *
+ * @return mixed[] The value, or an empty array when it is missing or not an array.
+ */
+function get_attribute_array( array $attributes, string ...$keys ): array {
+	$value = $attributes;
+
+	foreach ( $keys as $key ) {
+		if ( ! is_array( $value ) || ! isset( $value[ $key ] ) ) {
+			return [];
+		}
+
+		$value = $value[ $key ];
+	}
+
+	return is_array( $value ) ? $value : [];
+}
+
+/**
  * Build an array with CSS classes and inline styles defining the colors
  * which will be applied to the table markup in the front-end.
  *
@@ -21,52 +65,48 @@ function build_css_colors( array $attributes = [] ): array {
 		'inline_styles' => '',
 	];
 
-	if ( ! is_array( $attributes ) ) {
-		return $colors;
-	}
-
 	// Text color.
 	$has_named_text_color  = array_key_exists( 'textColor', $attributes );
 	$has_picked_text_color = array_key_exists( 'customTextColor', $attributes );
-	$has_custom_text_color = isset( $attributes['style']['color']['text'] );
+	$custom_text_color     = get_attribute_string( $attributes, 'style', 'color', 'text' );
 
 	// If has text color.
-	if ( $has_custom_text_color || $has_picked_text_color || $has_named_text_color ) {
+	if ( null !== $custom_text_color || $has_picked_text_color || $has_named_text_color ) {
 		// Add has-text-color class.
 		$colors['css_classes'][] = 'has-text-color';
 	}
 
 	if ( $has_named_text_color ) {
 		// Add the color class.
-		$colors['css_classes'][] = sprintf( 'has-%s-color', $attributes['textColor'] );
+		$colors['css_classes'][] = sprintf( 'has-%s-color', get_attribute_string( $attributes, 'textColor' ) ?? '' );
 	} elseif ( $has_picked_text_color ) {
 		// Add the picked color inline style.
-		$colors['inline_styles'] .= sprintf( 'color: %s;', $attributes['customTextColor'] );
-	} elseif ( $has_custom_text_color ) {
+		$colors['inline_styles'] .= sprintf( 'color: %s;', get_attribute_string( $attributes, 'customTextColor' ) ?? '' );
+	} elseif ( null !== $custom_text_color ) {
 		// Add the custom color inline style.
-		$colors['inline_styles'] .= sprintf( 'color: %s;', $attributes['style']['color']['text'] );
+		$colors['inline_styles'] .= sprintf( 'color: %s;', $custom_text_color );
 	}
 
 	// Background color.
 	$has_named_background_color  = array_key_exists( 'backgroundColor', $attributes );
 	$has_picked_background_color = array_key_exists( 'customBackgroundColor', $attributes );
-	$has_custom_background_color = isset( $attributes['style']['color']['background'] );
+	$custom_background_color     = get_attribute_string( $attributes, 'style', 'color', 'background' );
 
 	// If has background color.
-	if ( $has_custom_background_color || $has_picked_background_color || $has_named_background_color ) {
+	if ( null !== $custom_background_color || $has_picked_background_color || $has_named_background_color ) {
 		// Add has-background class.
 		$colors['css_classes'][] = 'has-background';
 	}
 
 	if ( $has_named_background_color ) {
 		// Add the background-color class.
-		$colors['css_classes'][] = sprintf( 'has-%s-background-color', $attributes['backgroundColor'] );
+		$colors['css_classes'][] = sprintf( 'has-%s-background-color', get_attribute_string( $attributes, 'backgroundColor' ) ?? '' );
 	} elseif ( $has_picked_background_color ) {
 		// Add the picked background-color inline style.
-		$colors['inline_styles'] .= sprintf( 'background-color: %s;', $attributes['customBackgroundColor'] );
-	} elseif ( $has_custom_background_color ) {
+		$colors['inline_styles'] .= sprintf( 'background-color: %s;', get_attribute_string( $attributes, 'customBackgroundColor' ) ?? '' );
+	} elseif ( null !== $custom_background_color ) {
 		// Add the custom background-color inline style.
-		$colors['inline_styles'] .= sprintf( 'background-color: %s;', $attributes['style']['color']['background'] );
+		$colors['inline_styles'] .= sprintf( 'background-color: %s;', $custom_background_color );
 	}
 
 	return $colors;
@@ -80,21 +120,19 @@ function build_css_colors( array $attributes = [] ): array {
  * @return string Returns the align class.
  */
 function get_align_class( array $attributes = [] ): string {
-	if ( ! is_array( $attributes ) ) {
-		return '';
-	}
-
 	$align_classes = [
 		'left'   => 'alignleft',
 		'center' => 'aligncenter',
 		'right'  => 'alignright',
 	];
 
-	if ( ! array_key_exists( 'align', $attributes ) || ! array_key_exists( $attributes['align'], $align_classes ) ) {
+	$align = get_attribute_string( $attributes, 'align' );
+
+	if ( null === $align || ! array_key_exists( $align, $align_classes ) ) {
 		return '';
 	}
 
-	return $align_classes[ $attributes['align'] ];
+	return $align_classes[ $align ];
 }
 
 /**
@@ -105,11 +143,7 @@ function get_align_class( array $attributes = [] ): string {
  *
  * @return string Returns the classes for the block.
  */
-function get_css_classes( array $attributes = [], $additional_classes = [] ): string {
-	if ( ! is_array( $attributes ) ) {
-		return '';
-	}
-
+function get_css_classes( array $attributes = [], array $additional_classes = [] ): string {
 	$colors      = build_css_colors( $attributes );
 	$align_class = get_align_class( $attributes );
 
@@ -136,12 +170,8 @@ function get_css_classes( array $attributes = [], $additional_classes = [] ): st
  * @return string Returns the styles for the block.
  */
 function get_css_styles( array $attributes = [] ): string {
-	if ( ! is_array( $attributes ) ) {
-		return '';
-	}
-
 	$colors       = build_css_colors( $attributes );
-	$block_styles = isset( $attributes['styles'] ) ? $attributes['styles'] : '';
+	$block_styles = get_attribute_string( $attributes, 'styles' ) ?? '';
 	return $block_styles . $colors['inline_styles'];
 }
 
@@ -153,19 +183,12 @@ function get_css_styles( array $attributes = [] ): string {
  * @return array{css_classes: string, inline_styles: string} Returns the border styles for the block.
  */
 function get_border_styles( array $attributes = [] ): array {
-	if ( ! is_array( $attributes ) ) {
-		return [
-			'css_classes'   => '',
-			'inline_styles' => '',
-		];
-	}
-
 	$border_block_styles = [];
 
 	// Border width.
-	if ( isset( $attributes['style']['border']['width'] ) ) {
-		$border_width = $attributes['style']['border']['width'];
+	$border_width = get_attribute_string( $attributes, 'style', 'border', 'width' );
 
+	if ( null !== $border_width ) {
 		if ( is_numeric( $border_width ) ) {
 			$border_width .= 'px';
 		}
@@ -174,29 +197,30 @@ function get_border_styles( array $attributes = [] ): array {
 	}
 
 	// Border color.
-	$preset_border_color          = array_key_exists( 'borderColor', $attributes ) ? "var:preset|color|{$attributes['borderColor']}" : null;
-	$custom_border_color          = isset( $attributes['style']['border']['color'] ) ? $attributes['style']['border']['color'] : null;
+	$preset_border_color          = array_key_exists( 'borderColor', $attributes ) ? 'var:preset|color|' . ( get_attribute_string( $attributes, 'borderColor' ) ?? '' ) : null;
+	$custom_border_color          = get_attribute_string( $attributes, 'style', 'border', 'color' );
 	$border_block_styles['color'] = $preset_border_color ? $preset_border_color : $custom_border_color;
 
 	// Generates the border styles for individual border sides.
 	foreach ( array( 'top', 'right', 'bottom', 'left' ) as $side ) {
-		$border                       = isset( $attributes['style']['border'][ $side ] ) ? $attributes['style']['border'][ $side ] : null;
+		$border                       = get_attribute_array( $attributes, 'style', 'border', $side );
 		$border_side_values           = array(
-			'width' => isset( $border['width'] ) ? $border['width'] : null,
-			'color' => isset( $border['color'] ) ? $border['color'] : null,
-			'style' => isset( $border['style'] ) ? $border['style'] : null,
+			'width' => get_attribute_string( $border, 'width' ),
+			'color' => get_attribute_string( $border, 'color' ),
+			'style' => get_attribute_string( $border, 'style' ),
 		);
 		$border_block_styles[ $side ] = $border_side_values;
 	}
 
 	// Collect classes and styles.
-	$styles        = wp_style_engine_get_styles( array( 'border' => $border_block_styles ) );
-	$classes       = ! empty( $styles['classnames'] ) ? $styles['classnames'] : '';
-	$inline_styles = ! empty( $styles['css'] ) ? $styles['css'] : '';
+	$styles = wp_style_engine_get_styles( array( 'border' => $border_block_styles ) );
+
+	$classes       = $styles['classnames'] ?? '';
+	$inline_styles = $styles['css'] ?? '';
 
 	return [
-		'css_classes'   => $classes,
-		'inline_styles' => $inline_styles,
+		'css_classes'   => is_string( $classes ) ? $classes : '',
+		'inline_styles' => is_string( $inline_styles ) ? $inline_styles : '',
 	];
 }
 
@@ -208,19 +232,15 @@ function get_border_styles( array $attributes = [] ): array {
  * @return string
  */
 function get_block_wrapper_attributes( array $attributes = [] ): string {
-	if ( ! is_array( $attributes ) ) {
-		return '';
-	}
-
 	$normalized_attributes = [];
 	foreach ( $attributes as $key => $value ) {
 
-		// Skip empty values.
-		if ( empty( $value ) ) {
+		// Skip empty and non-scalar values.
+		if ( empty( $value ) || ! is_scalar( $value ) ) {
 			continue;
 		}
 
-		$normalized_attributes[] = $key . '="' . esc_attr( $value ) . '"';
+		$normalized_attributes[] = $key . '="' . esc_attr( (string) $value ) . '"';
 	}
 
 	return implode( ' ', $normalized_attributes );
