@@ -32,13 +32,13 @@ function bootstrap(): void {
 /**
  * Render this block.
  *
- * @param mixed[]  $attributes The block attributes.
- * @param string   $content    The block default content.
- * @param WP_Block $block      The block object.
+ * @param mixed[]       $attributes The block attributes.
+ * @param string        $content    The block default content.
+ * @param WP_Block|null $block      The block object.
  *
  * @return string
  */
-function render( array $attributes = [], string $content = '', WP_Block $block = null ): string {
+function render( array $attributes = [], string $content = '', ?WP_Block $block = null ): string {
 	$border_styles = get_border_styles( $attributes );
 
 	// Initialize CSS classes.
